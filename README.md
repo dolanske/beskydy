@@ -1,2 +1,2 @@
 # beskydy
- Like Alps, but smaller.
+ Like alps, but smaller.
