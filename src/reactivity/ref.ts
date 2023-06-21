@@ -1,9 +1,10 @@
 import type { WatcherEffect } from './types'
 import { activeEffect } from './shared'
 
-export class Ref<T = unknown> {
+export class Nit<T = unknown> {
   #value: T | undefined
   effects = new Set<WatcherEffect<T>>()
+  __is_nit = true
 
   constructor(value?: T) {
     this.#value = value ?? undefined
@@ -21,8 +22,8 @@ export class Ref<T = unknown> {
   }
 
   track() {
-    if (activeEffect)
-      this.effects.add(activeEffect)
+    if (activeEffect.value)
+      this.effects.add(activeEffect.value)
   }
 
   watch(fn: WatcherEffect<T>) {
@@ -35,10 +36,10 @@ export class Ref<T = unknown> {
   }
 }
 
-export function ref<T = never>(initialValue?: T) {
-  return new Ref<T>(initialValue)
+export function nit<T = never>(initialValue?: T) {
+  return new Nit<T>(initialValue)
 }
 
-export function watchRef<T>(source: Ref<T>, fn: WatcherEffect<T>) {
+export function watchNit<T>(source: Nit<T>, fn: WatcherEffect<T>) {
   source.watch(fn)
 }
