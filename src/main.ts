@@ -2,23 +2,6 @@ import { getAttr } from './attr'
 import { execute } from './evaluate'
 import { stack, watchStack } from './reactivity/stack'
 
-// onst test = stack(new Map())
-
-// watchStack(() => {
-// console.log(test)
-// })
-
-// test.set('world', 'bello')
-
-// function createContext() {
-//   const effects = []
-//   return {
-//     effect: (fn) => {
-//       effects.push(fn)
-//     },
-//   }
-// }
-
 function main() {
   // const $el = document.createElement('div')
   // const $scope = { message: 'first' }
