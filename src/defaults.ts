@@ -1,3 +1,3 @@
-const PREFIX = "x-"
+const PREFIX = 'x-'
 
 export { PREFIX }

@@ -43,7 +43,7 @@ function getOrCreateDep(target: RawObject, key: any) {
   return dependency
 }
 
-const proxyValidator: ProxyHandler<{}> = {
+const proxyValidator: ProxyHandler<object> = {
   get(target: RawObject, key: PropertyKey, receiver: any): any {
     if (target instanceof Set || target instanceof Map) {
       const ret = Reflect.get(target, key)
@@ -81,7 +81,7 @@ const proxyValidator: ProxyHandler<{}> = {
  * 1. If the value passed in is an object/array/map/set, it will return reactive proxy object        (reactive())
  * 2. If the value is a basic type string/number/boolean, it will return a reactive reference class  (ref())
  */
-export function stack<T extends {}>(obj: T) {
+export function stack<T extends object>(obj: T) {
   return new Proxy<T>(obj, proxyValidator)
 }
 

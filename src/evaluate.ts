@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-types */
+
 /**
  * Thank you so much Evan You, I love you
  */
