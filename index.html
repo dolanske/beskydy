@@ -9,22 +9,22 @@
       rel="icon"
       type="image/x-icon"
     />
-
-    <style>
-      html,body {
-        background-color: #000;
-      }
-    </style>
   </head>
   <body>
     <div id="app">
-      <div x-scope x-data="{ count: 0 }">
+      <!-- <div x-scope x-data="{ count: 0 }">
         <button
           x-data="{ increment: 2 }"
           @click="count += increment"
           x-text="`Add ${increment}`"
         ></button>
         <span x-text="count"></span>
+      </div> -->
+
+      <div x-scope>
+        <button @click="">
+          Change
+        </button>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>

@@ -10,10 +10,10 @@ export function evaluate(scope: any, exp: string, el?: Node) {
   return execute(scope, `return(${exp})`, el)
 }
 
-export function execute(scope: any, exp: string, el?: Node) {
+export function execute(scope: any, exp: string, el?: Node, event?: Event) {
   const fn = evalCache[exp] || (evalCache[exp] = toFunction(exp))
   try {
-    return fn(scope, el)
+    return fn(scope, el, event)
   }
   catch (e) {
     if (import.meta.env.DEV)
@@ -26,10 +26,10 @@ export function execute(scope: any, exp: string, el?: Node) {
 function toFunction(exp: string): Function {
   try {
     // eslint-disable-next-line no-new-func
-    return new Function('$data', '$el', `with($data){${exp}}`)
+    return new Function('$data', '$el', '$event', `with($data){${exp}}`)
   }
   catch (e) {
     console.error(`${(e as Error).message} in expression: ${exp}`)
-    return () => {}
+    return () => { }
   }
 }

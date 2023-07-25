@@ -4,8 +4,11 @@ import type { Effect, RawObject } from './types'
 class DependencyTracker {
   effects = new Set<Effect>()
 
-  track() {
-    if (activeEffect.value)
+  track(fn?: Effect) {
+    if (fn)
+      this.effects.add(fn)
+
+    else if (activeEffect.value)
       this.effects.add(activeEffect.value)
   }
 
@@ -45,10 +48,13 @@ function getOrCreateDep(target: RawObject, key: any) {
 
 const proxyValidator: ProxyHandler<object> = {
   get(target: RawObject, key: PropertyKey, receiver: any): any {
+    // TODO: add effect(fn) fn which will simply append a new effect
+
     if (target instanceof Set || target instanceof Map) {
-      const ret = Reflect.get(target, key)
-      ret.bind(target)
-      return ret
+      console.warn('Sets and Maps are currently unsupported. Please use objects only.')
+      // const ret = Reflect.get(target, key)
+      // ret.bind(target)
+      // return ret
     }
     else {
       if (typeof target[key] === 'object')

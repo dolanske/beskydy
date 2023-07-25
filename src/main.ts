@@ -72,14 +72,27 @@ function main() {
           if ((attrValue = getAttr(el, 'x-text'))) {
             watchStack(() => {
               const text = execute(scopeStack, `return ${attrValue}`)
-              el.textContent = text
+              el.innerText = text
             })
+          }
+
+          // SECTION event listeners `@`
+          if (el.attributes.length > 0) {
+            for (const attr of Array.from(el.attributes)) {
+              const name = attr.name
+              if (name.startsWith('@')) {
+                const eventKey = name.substring(1)
+                const eventFn = attr.value
+                el.addEventListener(eventKey, event => execute(scopeStack, eventFn, el, event))
+              }
+            }
           }
 
           break
         }
 
         // NOTE Text
+        // Should transform whatever content is within {{ }}
         // case 3: {
         //   // Idk
         //   break
@@ -90,12 +103,13 @@ function main() {
           console.log('Unknown Node', node)
         }
       }
+
       node = walker.nextNode()
     }
 
-    watchStack(() => {
-      console.log(scopeStack)
-    })
+    // watchStack(() => {
+    //   console.log(scopeStack)
+    // })
   }
 }
 
