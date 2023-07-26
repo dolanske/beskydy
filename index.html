@@ -22,20 +22,11 @@
       <div x-scope x-data="{ count: 0 }">
         <button
           x-data="{ increment: 2 }"
-          @click="count += increment"
+          x-on:click="count += increment"
           x-text="`Add ${increment}`"
         ></button>
         <span x-text="count"></span>
       </div>
-
-      <!-- <div x-scope>
-        <button @click="() => {
-          const test = 'hello'
-          console.log(test)
-        }">
-          Change
-        </button>
-      </div> -->
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

@@ -1,6 +1,8 @@
 import { getAttr } from './util/domUtils'
 import { evaluate, execute } from './evaluate'
 import { stack, watchStack } from './reactivity/stack'
+import { processIf } from './directives/x-if'
+import { processOn } from './directives/x-on'
 
 function main() {
   // const $el = document.createElement('div')
@@ -58,41 +60,25 @@ function main() {
           if ((attrValue = getAttr(el, 'x-text'))) {
             // Save expression value because when the stack has changed, the value might be null already
             const expr = attrValue
-
             watchStack(() => {
               const text = evaluate(scopeStack, expr)
               el.innerText = text
             })
           }
 
-          // SECTON ----
+          // SECTION ----
           // x-if, x-else and x-else-if
-          if ((attrValue = getAttr(el, 'x-if'))) {
-            // Can be used anytime
-          }
-
-          if ((attrValue = getAttr(el, 'x-else-if'))) {
-            // Only allowed if the previous sibling is x-if or x-else-if
-          }
-
-          if ((attrValue = getAttr(el, 'x-else'))) {
-            // Only allowed if the previous sibling contains and x-if or x-else-if
-          }
+          if ((attrValue = getAttr(el, 'x-if')))
+            processIf(scopeStack, el, attrValue)
 
           // SECTION ----
-          // event listeners starting with `@`
+          // All other directives
           if (el.attributes.length > 0) {
             for (const attr of Array.from(el.attributes)) {
               const name = attr.name
-              if (name.startsWith('@')) {
-                const eventKey = name.substring(1)
-                let eventFn = attr.value
 
-                if (eventFn.startsWith('()'))
-                  eventFn = `(${eventFn})()`
-
-                el.addEventListener(eventKey, event => execute(scopeStack, eventFn, el, event))
-              }
+              if (name.startsWith('@') || name.startsWith('x-on'))
+                processOn(scopeStack, el, name, attr.value)
             }
           }
 
@@ -108,7 +94,7 @@ function main() {
 
         default: {
           // idk
-          console.log('Unknown Node', node)
+          // console.log('Unknown Node', node)
         }
       }
 
