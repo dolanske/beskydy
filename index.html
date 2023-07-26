@@ -9,23 +9,33 @@
       rel="icon"
       type="image/x-icon"
     />
+    <style>
+      html,
+      body,
+      * {
+        filter: invert(1);
+      }
+    </style>
   </head>
   <body>
     <div id="app">
-      <!-- <div x-scope x-data="{ count: 0 }">
+      <div x-scope x-data="{ count: 0 }">
         <button
           x-data="{ increment: 2 }"
           @click="count += increment"
           x-text="`Add ${increment}`"
         ></button>
         <span x-text="count"></span>
-      </div> -->
+      </div>
 
-      <div x-scope>
-        <button @click="">
+      <!-- <div x-scope>
+        <button @click="() => {
+          const test = 'hello'
+          console.log(test)
+        }">
           Change
         </button>
-      </div>
+      </div> -->
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

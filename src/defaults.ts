@@ -1,3 +1,8 @@
-const PREFIX = 'x-'
+const cfg = {
+  PREFIX: 'x-',
+  DELIMITERS: ['{{', '}}'],
+}
 
-export { PREFIX }
+export {
+  cfg,
+}

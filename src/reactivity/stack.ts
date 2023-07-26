@@ -48,27 +48,19 @@ function getOrCreateDep(target: RawObject, key: any) {
 
 const proxyValidator: ProxyHandler<object> = {
   get(target: RawObject, key: PropertyKey, receiver: any): any {
-    // TODO: add effect(fn) fn which will simply append a new effect
+    // console.log(key, receiver)
 
-    if (target instanceof Set || target instanceof Map) {
-      console.warn('Sets and Maps are currently unsupported. Please use objects only.')
-      // const ret = Reflect.get(target, key)
-      // ret.bind(target)
-      // return ret
-    }
-    else {
-      if (typeof target[key] === 'object')
-        return new Proxy(target[key], proxyValidator)
+    if (typeof target[key] === 'object')
+      return new Proxy(target[key], proxyValidator)
 
-      // When we access a key, we run the dependency handler
-      const dependency = getOrCreateDep(target, key)
+    // When we access a key, we run the dependency handler
+    const dependency = getOrCreateDep(target, key)
 
-      // And we track the function we passed into the watcher (which currently is the activeEffect variable)
-      dependency.track()
+    // And we track the function we passed into the watcher (which currently is the activeEffect variable)
+    dependency.track()
 
-      // Return it from the original object
-      return Reflect.get(target, key, receiver)
-    }
+    // Return it from the original object
+    return Reflect.get(target, key, receiver)
   },
   set(target: RawObject, key: PropertyKey, value: any, receiver: any) {
     // Get the dependency

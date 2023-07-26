@@ -1,5 +1,5 @@
-import { getAttr } from './attr'
-import { execute } from './evaluate'
+import { getAttr } from './util/domUtils'
+import { evaluate, execute } from './evaluate'
 import { stack, watchStack } from './reactivity/stack'
 
 function main() {
@@ -20,10 +20,11 @@ function main() {
   const scopes = Array.from(document.querySelectorAll('[x-scope]'))
 
   for (const scope of scopes) {
+    // TODO
+    // Move into a specific function createScope()
+
     const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
     const scopeStack = stack({})
-    // const effects = []
-
     let node: Node | null = walker.root
 
     while (node !== null) {
@@ -33,7 +34,8 @@ function main() {
           const el = node as HTMLElement
           let attrValue: string | null
 
-          // SECTION x-data
+          // SECTION ----
+          // x-data
           if ((attrValue = getAttr(el, 'x-data'))) {
             try {
               const data = execute({}, `return ${attrValue}`)
@@ -51,21 +53,44 @@ function main() {
             }
           }
 
-          // SECTION x-text
+          // SECTION ----
+          // x-text
           if ((attrValue = getAttr(el, 'x-text'))) {
+            // Save expression value because when the stack has changed, the value might be null already
+            const expr = attrValue
+
             watchStack(() => {
-              const text = execute(scopeStack, `return ${attrValue}`)
+              const text = evaluate(scopeStack, expr)
               el.innerText = text
             })
           }
 
-          // SECTION event listeners `@`
+          // SECTON ----
+          // x-if, x-else and x-else-if
+          if ((attrValue = getAttr(el, 'x-if'))) {
+            // Can be used anytime
+          }
+
+          if ((attrValue = getAttr(el, 'x-else-if'))) {
+            // Only allowed if the previous sibling is x-if or x-else-if
+          }
+
+          if ((attrValue = getAttr(el, 'x-else'))) {
+            // Only allowed if the previous sibling contains and x-if or x-else-if
+          }
+
+          // SECTION ----
+          // event listeners starting with `@`
           if (el.attributes.length > 0) {
             for (const attr of Array.from(el.attributes)) {
               const name = attr.name
               if (name.startsWith('@')) {
                 const eventKey = name.substring(1)
-                const eventFn = attr.value
+                let eventFn = attr.value
+
+                if (eventFn.startsWith('()'))
+                  eventFn = `(${eventFn})()`
+
                 el.addEventListener(eventKey, event => execute(scopeStack, eventFn, el, event))
               }
             }
