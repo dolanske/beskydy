@@ -7,12 +7,12 @@ interface ModifierListenerState {
 type Modifier = (e: Event, state: ModifierListenerState) => boolean
 
 export const builtInModifiers: Record<string, Modifier> = {
-  once: (_, { calledTimes }) => {
-    return calledTimes < 1
-  },
-  self: (e) => {
-    return e.target === e.currentTarget
-  },
+  // TODO
+  // Add option to provide parameters to modifiers
+  // .only(amountofTimes) =>
+  // .debounce(debounceBy) =>
+  once: (_, { calledTimes }) => calledTimes < 1,
+  self: e => e.target === e.currentTarget,
   left: e => 'button' in e && (e as MouseEvent).button === 0,
   middle: e => 'button' in e && (e as MouseEvent).button === 1,
   right: e => 'button' in e && (e as MouseEvent).button === 2,

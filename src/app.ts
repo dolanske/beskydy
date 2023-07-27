@@ -4,29 +4,16 @@ import { stack, watchStack } from './reactivity/stack'
 import { processIf } from './directives/x-if'
 import { processOn } from './directives/x-on'
 
-function main() {
-  // const $el = document.createElement('div')
-  // const $scope = { message: 'first' }
-  // const exp = `
-  //   $data.message = 'second'
-  //   $el.textContent = $data.message
-  //   return {
-  //     $template: '<span>B</span>'
-  //   }
-  // `
-
-  // const res = execute($scope, exp, $el)
-  // console.log($el.textContent)
-  // console.log(res)
+export function createApp(appOptions: Record<string, any>) {
+  // Global scope
+  const $ctx = stack({})
+  Object.assign($ctx, appOptions)
 
   const scopes = Array.from(document.querySelectorAll('[x-scope]'))
 
   for (const scope of scopes) {
-    // TODO
-    // Move into a specific function createScope()
-
     const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
-    const scopeStack = stack({})
+    const scopeStack = stack(Object.assign({}, $ctx))
     let node: Node | null = walker.root
 
     while (node !== null) {
@@ -38,7 +25,10 @@ function main() {
 
           // SECTION ----
           // x-data
-          if ((attrValue = getAttr(el, 'x-data'))) {
+          if (
+            (attrValue = getAttr(el, 'x-data'))
+            || (attrValue = getAttr(el, 'x-scope'))
+          ) {
             try {
               const data = execute({}, `return ${attrValue}`)
               for (const key of Object.keys(data)) {
@@ -100,11 +90,5 @@ function main() {
 
       node = walker.nextNode()
     }
-
-    // watchStack(() => {
-    //   console.log(scopeStack)
-    // })
   }
 }
-
-main()

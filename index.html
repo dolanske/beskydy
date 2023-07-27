@@ -26,5 +26,14 @@
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
+    <script type="module">
+      import { createApp } from '/src/app.ts'
+
+      createApp({
+        test(ctx) {
+          console.log(ctx)
+        },
+      })
+    </script>
   </body>
 </html>
