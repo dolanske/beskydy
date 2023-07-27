@@ -4,6 +4,8 @@ export function isSibling(el: HTMLElement, el2: HTMLElement) {
 
 export function getAttr(el: HTMLElement, key: string) {
   const attr = el.getAttribute(key)
+  console.log(el.attributes.getNamedItem(key))
+
   if (attr)
     el.removeAttribute(key)
   return attr

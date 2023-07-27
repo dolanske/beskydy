@@ -1,4 +1,6 @@
+import { evaluate } from '../evaluate'
 import { getAttr } from '../util/domUtils'
+import { watchStack } from '../reactivity/stack'
 
 interface Block {
   expr: string | null
@@ -16,7 +18,7 @@ export function processIf(
 
   // This serves as an "anchor" to mount the element back in if the provided expression returns true
   const anchor = new Comment('x-if')
-  parent.insertBefore(el, anchor)
+  parent.insertBefore(anchor, el)
 
   const blocks: Block[] = [{ el, expr }]
 
@@ -24,8 +26,10 @@ export function processIf(
   let elseEl: Element | null
   let elseExpr: string | null
   while ((elseEl = el.nextElementSibling) !== null) {
+    console.log(getAttr(el, 'x-else'))
+
     if (
-      getAttr(el, 'x-else') !== null
+      getAttr(el, 'x-else')
       || (elseExpr = getAttr(el, 'x-else-if'))
     ) {
       parent.removeChild(elseEl)
@@ -42,18 +46,35 @@ export function processIf(
     }
   }
 
-  let currentIndex
-  let currentResult
+  parent.removeChild(el)
 
-  // watchStack(() => {
-  //   // Iterate over each block and execute
-  //   for (const block of blocks) {
-  //     if (block.expr) {
-  //       const result = evaluate(scopeStack, block.expr)
-  //     }
-  //     else {
+  console.log(blocks)
 
-  //     }
-  //   }
-  // })
+  // let currentIndex: number
+  let currentResult: boolean
+
+  /**
+   * Iterate over each block and execute its expression
+   *
+   * 1. If expression passed, break from the loop
+   * 2. If expression is not provided (x-else), the result is always the
+   *    opposite of the previous result
+   */
+
+  watchStack(() => {
+    // Iterate over each block and execute
+    for (let index = 0; index < blocks.length; index++) {
+      const block = blocks[index]
+
+      if (block.expr)
+        currentResult = evaluate(scopeStack, block.expr, el) as boolean
+      else if (!currentResult === true)
+        currentResult = true
+
+      if (currentResult)
+        parent.insertBefore(block.el, anchor)
+      else
+        parent.removeChild(block.el)
+    }
+  })
 }

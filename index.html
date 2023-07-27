@@ -19,13 +19,10 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope x-data="{ count: 0 }">
-        <button
-          x-data="{ increment: 2 }"
-          x-on:click="count += increment"
-          x-text="`Add ${increment}`"
-        ></button>
-        <span x-text="count"></span>
+      <div x-scope x-data="{ visible: true }">
+        <button x-on:click="visible = !visible">Flip</button>
+        <span x-if="visible">I am visible</span>
+        <span x-else>I am not</span>
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
