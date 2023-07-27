@@ -1,6 +1,6 @@
 import { evaluate } from '../evaluate'
-import { getAttr } from '../util/domUtils'
 import { watchStack } from '../reactivity/stack'
+import { getAttr } from '../util/domUtils'
 
 interface Block {
   expr: string | null
@@ -13,7 +13,7 @@ export function processIf(
   expr: string,
 ) {
   // Holds the reference to the element and its parent node
-  const savedEl = el
+  // const savedEl = el
   const parent = el.parentElement!
 
   // This serves as an "anchor" to mount the element back in if the provided expression returns true
@@ -26,11 +26,9 @@ export function processIf(
   let elseEl: Element | null
   let elseExpr: string | null
   while ((elseEl = el.nextElementSibling) !== null) {
-    console.log(getAttr(el, 'x-else'))
-
     if (
-      getAttr(el, 'x-else')
-      || (elseExpr = getAttr(el, 'x-else-if'))
+      getAttr(elseEl, 'x-else') !== null
+      || (elseExpr = getAttr(elseEl, 'x-else-if'))
     ) {
       parent.removeChild(elseEl)
       blocks.push({
@@ -47,8 +45,6 @@ export function processIf(
   }
 
   parent.removeChild(el)
-
-  console.log(blocks)
 
   // let currentIndex: number
   let currentResult: boolean

@@ -19,7 +19,7 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope x-data="{ visible: true }">
+      <div x-scope="{ visible: true }">
         <button x-on:click="visible = !visible">Flip</button>
         <span x-if="visible">I am visible</span>
         <span x-else>I am not</span>
@@ -29,11 +29,7 @@
     <script type="module">
       import { createApp } from '/src/app.ts'
 
-      createApp({
-        test(ctx) {
-          console.log(ctx)
-        },
-      })
+      createApp()
     </script>
   </body>
 </html>

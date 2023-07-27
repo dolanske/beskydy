@@ -2,11 +2,9 @@ export function isSibling(el: HTMLElement, el2: HTMLElement) {
   return el !== el2 && el.parentNode === el2.parentNode
 }
 
-export function getAttr(el: HTMLElement, key: string) {
+export function getAttr(el: HTMLElement | Element, key: string) {
   const attr = el.getAttribute(key)
-  console.log(el.attributes.getNamedItem(key))
+  el.removeAttribute(key)
 
-  if (attr)
-    el.removeAttribute(key)
-  return attr
+  return attr === null ? attr : ''
 }
