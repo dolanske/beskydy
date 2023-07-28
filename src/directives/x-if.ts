@@ -7,8 +7,17 @@ interface Block {
   el: HTMLElement
 }
 
+/**
+ * Takes in an expression and based on its result, the elements are
+ * either completely removed or (re)added to the DOM.
+ *
+ * The usage syntax and rules
+ *  x-if        // Requires expression
+ *  x-else-if   // Requires expression and adjacent x-if or x-if-else
+ *  x-else      // Requires adjacent x-if or x-else
+ */
 export function processIf(
-  scopeStack: object,
+  scope: object,
   el: HTMLElement,
   expr: string,
 ) {
@@ -20,6 +29,7 @@ export function processIf(
   const anchor = new Comment('x-if')
   parent.insertBefore(anchor, el)
 
+  // Store each element as a block with its expression
   const blocks: Block[] = [{ el, expr }]
 
   // Look for v-else-if and v-else elements and their expression
@@ -34,6 +44,7 @@ export function processIf(
         el: elseEl as HTMLElement,
         expr: elseExpr,
       })
+      // Remove them because they can be re-added during evaluation process
       parent.removeChild(elseEl)
     }
     else {
@@ -57,11 +68,11 @@ export function processIf(
   }
 
   watchStack(() => {
-    // Iterate over each block and execute
+    // Iterate over each block and evaluate block expressions
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
-      if (!block.expr || evaluate(scopeStack, block.expr, el)) {
+      if (!block.expr || evaluate(scope, block.expr, el)) {
         // Passed
         if (currentIndex !== index) {
           if (currentResult)

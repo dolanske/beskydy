@@ -4,6 +4,7 @@ import { stack, watchStack } from './reactivity/stack'
 import { processIf } from './directives/x-if'
 import { processOn } from './directives/x-on'
 import { nit } from './reactivity/nit'
+import { processHTML } from './directives/x-html'
 
 export function createApp(appOptions: Record<string, any>) {
   // Global dataset shared across scopes
@@ -32,7 +33,7 @@ export function createApp(appOptions: Record<string, any>) {
           let attrValue: string | null
 
           // SECTION ----
-          // x-data
+          // x-data / x-scope
           if (
             (attrValue = getAttr(el, 'x-data'))
             || (attrValue = getAttr(el, 'x-scope'))
@@ -68,6 +69,11 @@ export function createApp(appOptions: Record<string, any>) {
           // x-if, x-else and x-else-if
           if ((attrValue = getAttr(el, 'x-if')))
             processIf(scopeStack, el, attrValue)
+
+          // SECTION ----
+          // x-html
+          if ((attrValue = getAttr(el, 'x-html')))
+            processHTML(scopeStack, el, attrValue)
 
           // SECTION ----
           // All other directives

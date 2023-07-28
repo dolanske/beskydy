@@ -26,8 +26,13 @@ export const builtInModifiers: Record<string, Modifier> = {
   },
 }
 
+/**
+ * Binds an event listener with optional modifiers to the selected
+ * element. The provided expression is evaluated whenever the event is
+ * fired.
+ */
 export function processOn(
-  scopeStack: object,
+  scope: object,
   el: HTMLElement,
   eventName: string,
   eventExpr: string,
@@ -60,7 +65,7 @@ export function processOn(
     if (!modifiers.every(modifier => builtInModifiers[modifier](event, state)))
       return
 
-    execute(scopeStack, eventExpr, el, event)
+    execute(scope, eventExpr, el, event)
     state.calledTimes++
   })
 }
