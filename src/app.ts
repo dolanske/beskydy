@@ -1,20 +1,28 @@
 import { getAttr } from './util/domUtils'
-import { evaluate, execute } from './evaluate'
+import { evaluate } from './evaluate'
 import { stack, watchStack } from './reactivity/stack'
 import { processIf } from './directives/x-if'
 import { processOn } from './directives/x-on'
+import { nit } from './reactivity/nit'
 
 export function createApp(appOptions: Record<string, any>) {
-  // Global scope
+  // Global dataset shared across scopes
   const $ctx = stack({})
   Object.assign($ctx, appOptions)
 
+  // Get all scopes in the document and initialize them
   const scopes = Array.from(document.querySelectorAll('[x-scope]'))
 
   for (const scope of scopes) {
     const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
-    const scopeStack = stack(Object.assign({}, $ctx))
     let node: Node | null = walker.root
+    const scopeStack = stack(Object.assign({}, $ctx))
+    const mountedScope = nit(false)
+
+    scope.setAttribute('style', 'display:none;')
+    mountedScope.watch(() => {
+      scope.removeAttribute('style')
+    })
 
     while (node !== null) {
       switch (node.nodeType) {
@@ -30,7 +38,7 @@ export function createApp(appOptions: Record<string, any>) {
             || (attrValue = getAttr(el, 'x-scope'))
           ) {
             try {
-              const data = execute({}, `return ${attrValue}`)
+              const data = evaluate({}, attrValue)
               for (const key of Object.keys(data)) {
                 Object.defineProperty(scopeStack, key, {
                   value: data[key],
@@ -82,6 +90,10 @@ export function createApp(appOptions: Record<string, any>) {
         //   break
         // }
 
+        // case 11: {
+        //   Document fragment
+        // }
+
         default: {
           // idk
           // console.log('Unknown Node', node)
@@ -90,5 +102,7 @@ export function createApp(appOptions: Record<string, any>) {
 
       node = walker.nextNode()
     }
+
+    mountedScope.val = true
   }
 }

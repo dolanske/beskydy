@@ -1,5 +1,6 @@
 import { evaluate } from '../evaluate'
 import { watchStack } from '../reactivity/stack'
+import { isNil } from '../util'
 import { getAttr } from '../util/domUtils'
 
 interface Block {
@@ -49,28 +50,32 @@ export function processIf(
   // let currentIndex: number
   let currentResult: boolean
 
-  /**
-   * Iterate over each block and execute its expression
-   *
-   * 1. If expression passed, break from the loop
-   * 2. If expression is not provided (x-else), the result is always the
-   *    opposite of the previous result
-   */
-
   watchStack(() => {
     // Iterate over each block and execute
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
+      /**
+       * Iterate over blocks and evaluate each
+       *  - If has expression
+       *    - If expression is true, replace elements and break out of loop
+       *    - If false, continue loop
+       *  - If no expression
+       *    - If previous result is true, ignore and break out of loop
+       *    - If previous result is false, set to true, replace elements and break out of loop
+       */
+
+      console.log(currentResult)
+
       if (block.expr)
         currentResult = evaluate(scopeStack, block.expr, el) as boolean
-      else if (!currentResult === true)
-        currentResult = true
-
-      if (currentResult)
-        parent.insertBefore(block.el, anchor)
       else
-        parent.removeChild(block.el)
+        currentResult = isNil(currentResult) ? true : !currentResult
+
+      if (currentResult === true)
+        parent.insertBefore(block.el, anchor)
+      else if (currentResult === false)
+        block.el.remove()
     }
   })
 }

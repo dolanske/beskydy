@@ -22,10 +22,11 @@
       <div x-scope="{ visible: true }">
         <button x-on:click="visible = !visible">Flip</button>
         <span x-if="visible">I am visible</span>
-        <span x-else>I am not</span>
+        <span x-else="false">I am not</span>
+        <!-- <span x-else>Huh</span> -->
       </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
+    <!-- <script type="module" src="/src/main.ts"></script> -->
     <script type="module">
       import { createApp } from '/src/app.ts'
 
