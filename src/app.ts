@@ -5,6 +5,7 @@ import { processIf } from './directives/x-if'
 import { processOn } from './directives/x-on'
 import { nit } from './reactivity/nit'
 import { processHTML } from './directives/x-html'
+import { processClass } from './directives/x-class'
 
 export function createApp(appOptions: Record<string, any>) {
   // Global dataset shared across scopes
@@ -74,6 +75,11 @@ export function createApp(appOptions: Record<string, any>) {
           // x-html
           if ((attrValue = getAttr(el, 'x-html')))
             processHTML(scopeStack, el, attrValue)
+
+          // SECTION ----
+          // x-class
+          if ((attrValue = getAttr(el, 'x-class')))
+            processClass(scopeStack, el, attrValue)
 
           // SECTION ----
           // All other directives

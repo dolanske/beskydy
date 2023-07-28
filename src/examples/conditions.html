@@ -1,0 +1,6 @@
+<div x-scope="{ count: 0 }">
+  <button x-on:click="count++">Flip</button>
+  <span x-if="count < 3">Less than 3</span>
+  <span x-else-if="count >= 3 && count <= 6">Between and including 3 and 6</span>
+  <span x-else>More than 6</span>
+</div>
