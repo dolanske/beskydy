@@ -19,11 +19,11 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ visible: true }">
-        <button x-on:click="visible = !visible">Flip</button>
-        <span x-if="visible">I am visible</span>
-        <span x-else="false">I am not</span>
-        <!-- <span x-else>Huh</span> -->
+      <div x-scope="{ count: 0 }">
+        <button x-on:click="count++">Flip</button>
+        <span x-if="count < 3">Less than 3</span>
+        <span x-else-if="count >= 3 && count <= 6">Between 3 and 6</span>
+        <span x-else>More than 6</span>
       </div>
     </div>
     <!-- <script type="module" src="/src/main.ts"></script> -->

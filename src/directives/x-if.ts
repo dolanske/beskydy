@@ -1,6 +1,5 @@
 import { evaluate } from '../evaluate'
 import { watchStack } from '../reactivity/stack'
-import { isNil } from '../util'
 import { getAttr } from '../util/domUtils'
 
 interface Block {
@@ -28,14 +27,14 @@ export function processIf(
   let elseExpr: string | null
   while ((elseEl = el.nextElementSibling) !== null) {
     if (
-      getAttr(elseEl, 'x-else') !== null
+      (elseExpr = getAttr(elseEl, 'x-else')) !== null
       || (elseExpr = getAttr(elseEl, 'x-else-if'))
     ) {
-      parent.removeChild(elseEl)
       blocks.push({
         el: elseEl as HTMLElement,
-        expr: elseExpr!,
+        expr: elseExpr,
       })
+      parent.removeChild(elseEl)
     }
     else {
       // If the NEXT sibling does not contain one of these,
@@ -47,35 +46,37 @@ export function processIf(
 
   parent.removeChild(el)
 
-  // let currentIndex: number
-  let currentResult: boolean
+  let currentIndex: number
+  let currentResult: Block | null
+
+  function clear() {
+    if (currentResult) {
+      parent.removeChild(currentResult.el)
+      currentResult = null
+    }
+  }
 
   watchStack(() => {
     // Iterate over each block and execute
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
-      /**
-       * Iterate over blocks and evaluate each
-       *  - If has expression
-       *    - If expression is true, replace elements and break out of loop
-       *    - If false, continue loop
-       *  - If no expression
-       *    - If previous result is true, ignore and break out of loop
-       *    - If previous result is false, set to true, replace elements and break out of loop
-       */
+      if (!block.expr || evaluate(scopeStack, block.expr, el)) {
+        // Passed
+        if (currentIndex !== index) {
+          if (currentResult)
+            clear()
 
-      console.log(currentResult)
+          parent.insertBefore(block.el, anchor)
+          currentResult = block
+          currentIndex = index
+        }
 
-      if (block.expr)
-        currentResult = evaluate(scopeStack, block.expr, el) as boolean
-      else
-        currentResult = isNil(currentResult) ? true : !currentResult
-
-      if (currentResult === true)
-        parent.insertBefore(block.el, anchor)
-      else if (currentResult === false)
-        block.el.remove()
+        return
+      }
     }
+
+    currentIndex = -1
+    clear()
   })
 }
