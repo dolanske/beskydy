@@ -9,6 +9,8 @@ export function processBind(
   attrKey: string,
   attrVal: string,
 ) {
+  el.removeAttribute(attrKey)
+
   /**
    * Dynamically bind attribute or attributes if the expression passes
    *
@@ -37,11 +39,13 @@ export function processBind(
   }
   else {
     // x-bind="{}" syntax
-    const results = evaluate(scope, attrVal, el) ?? {}
+    watchStack(() => {
+      const results = evaluate(scope, attrVal, el) ?? {}
 
-    for (const key of Object.keys(results)) {
-      const result = results[key]
-      setOrRemove(key, result)
-    }
+      for (const key of Object.keys(results)) {
+        const result = results[key]
+        setOrRemove(key, result)
+      }
+    })
   }
 }

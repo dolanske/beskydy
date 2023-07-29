@@ -1,0 +1,5 @@
+<div x-scope="{ show: false }">
+  <button x-on:click="show = !show">Show password</button>
+  <input  x-bind:type="show ? 'text' : 'password'">
+  <input x-bind="{ type: show ? 'text' : 'password', class: 'red' }">
+</div>
