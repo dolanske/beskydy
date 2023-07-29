@@ -5,11 +5,14 @@ import { processIf } from './directives/x-if'
 import { processOn } from './directives/x-on'
 import { nit } from './reactivity/nit'
 import { processHTML } from './directives/x-html'
+import { processClass } from './directives/x-class'
+import { processShow } from './directives/x-show'
 
 export function createApp(appOptions: Record<string, any>) {
-  // Global dataset shared across scopes
-  const $ctx = stack({})
-  Object.assign($ctx, appOptions)
+  // Global properties
+  const $data = stack({})
+  const $refs = new WeakSet<HTMLElement>()
+  // Object.assign($ctx, appOptions)
 
   // Get all scopes in the document and initialize them
   const scopes = Array.from(document.querySelectorAll('[x-scope]'))
@@ -17,7 +20,7 @@ export function createApp(appOptions: Record<string, any>) {
   for (const scope of scopes) {
     const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
     let node: Node | null = walker.root
-    const scopeStack = stack(Object.assign({}, $ctx))
+    const scopeStack = stack({})
     const mountedScope = nit(false)
 
     scope.setAttribute('style', 'display:none;')
@@ -71,9 +74,19 @@ export function createApp(appOptions: Record<string, any>) {
             processIf(scopeStack, el, attrValue)
 
           // SECTION ----
+          // x-show
+          if ((attrValue = getAttr(el, 'x-show')))
+            processShow(scopeStack, el, attrValue)
+
+          // SECTION ----
           // x-html
           if ((attrValue = getAttr(el, 'x-html')))
             processHTML(scopeStack, el, attrValue)
+
+          // SECTION ----
+          // x-class
+          if ((attrValue = getAttr(el, 'x-class')))
+            processClass(scopeStack, el, attrValue)
 
           // SECTION ----
           // All other directives
@@ -110,5 +123,11 @@ export function createApp(appOptions: Record<string, any>) {
     }
 
     mountedScope.val = true
+  }
+
+  return {
+    // Watch for when a property is updated
+    // on: (key, (newVal, prevVal))  => {
+    // }
   }
 }

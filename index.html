@@ -15,15 +15,22 @@
       * {
         filter: invert(1);
       }
+
+      .red {
+        color: red;
+      }
+
+      .blue {
+        color: blue
+      }
     </style>
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ count: 0 }">
-        <button x-on:click="count++">Flip</button>
-        <span x-if="count < 3">Less than 3</span>
-        <span x-else-if="count >= 3 && count <= 6">Between 3 and 6</span>
-        <span x-else>More than 6</span>
+      <div x-scope="{ open: true }">
+        <button x-on:click="open = !open">Toggle</button>
+
+        <p x-show="open">I am visible rn</p>
       </div>
     </div>
     <!-- <script type="module" src="/src/main.ts"></script> -->
