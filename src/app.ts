@@ -8,11 +8,14 @@ import { processHTML } from './directives/x-html'
 import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
 
+export interface Scope {
+  [key: string]: unknown
+  $refs: Record<string, HTMLElement>
+}
+
 export function createApp(appOptions: Record<string, any>) {
   // Global properties
-  const $data = stack({})
-  const $refs = new WeakSet<HTMLElement>()
-  // Object.assign($ctx, appOptions)
+  // const $data = stack({})
 
   // Get all scopes in the document and initialize them
   const scopes = Array.from(document.querySelectorAll('[x-scope]'))
@@ -20,11 +23,14 @@ export function createApp(appOptions: Record<string, any>) {
   for (const scope of scopes) {
     const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
     let node: Node | null = walker.root
-    const scopeStack = stack({})
-    const mountedScope = nit(false)
+    const scopeStack = stack<Scope>({
+      $refs: {},
+    })
+    const isScopeInit = nit(false)
 
+    // Hide scopes until they're fully initiated
     scope.setAttribute('style', 'display:none;')
-    mountedScope.watch(() => {
+    isScopeInit.watch(() => {
       scope.removeAttribute('style')
     })
 
@@ -35,8 +41,7 @@ export function createApp(appOptions: Record<string, any>) {
           const el = node as HTMLElement
           let attrValue: string | null
 
-          // SECTION ----
-          // x-data / x-scope
+          // SECTION x-data / x-scope
           if (
             (attrValue = getAttr(el, 'x-data'))
             || (attrValue = getAttr(el, 'x-scope'))
@@ -57,8 +62,11 @@ export function createApp(appOptions: Record<string, any>) {
             }
           }
 
-          // SECTION ----
-          // x-text
+          // SECTION x-ref
+          // if ((attrValue = getAttr(el, 'x-ref')))
+          //   processRef(scopeStack, el, attrValue)
+
+          // SECTION x-text
           if ((attrValue = getAttr(el, 'x-text'))) {
             // Save expression value because when the stack has changed, the value might be null already
             const expr = attrValue
@@ -68,28 +76,24 @@ export function createApp(appOptions: Record<string, any>) {
             })
           }
 
-          // SECTION ----
-          // x-if, x-else and x-else-if
+          // SECTION x-if, x-else and x-else-if
+          //
           if ((attrValue = getAttr(el, 'x-if')))
             processIf(scopeStack, el, attrValue)
 
-          // SECTION ----
-          // x-show
+          // SECTION x-show
           if ((attrValue = getAttr(el, 'x-show')))
             processShow(scopeStack, el, attrValue)
 
-          // SECTION ----
-          // x-html
+          // SECTION x-html
           if ((attrValue = getAttr(el, 'x-html')))
             processHTML(scopeStack, el, attrValue)
 
-          // SECTION ----
-          // x-class
+          // SECTION x-class
           if ((attrValue = getAttr(el, 'x-class')))
             processClass(scopeStack, el, attrValue)
 
-          // SECTION ----
-          // All other directives
+          // SECTION All other directives
           if (el.attributes.length > 0) {
             for (const attr of Array.from(el.attributes)) {
               const name = attr.name
@@ -122,7 +126,7 @@ export function createApp(appOptions: Record<string, any>) {
       node = walker.nextNode()
     }
 
-    mountedScope.val = true
+    isScopeInit.val = true
   }
 
   return {

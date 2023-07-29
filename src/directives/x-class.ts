@@ -1,5 +1,9 @@
 /**
- *
+ * Binds a class to the selected element based on the expression result.
+ * The allowed syntax is:
+ *  - x-class="isRed ? 'red' : null"
+ *  - x-class="{ red: isRed, blue: !isRed }"
+ *  - x-class="[isRed ? 'inlineClass' : null, { red: isRed, blue: !isRed }]"
  */
 
 import { evaluate } from '../evaluate'
