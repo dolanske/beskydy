@@ -30,9 +30,17 @@
       <div x-scope="{ open: true }">
         <button x-on:click="open = !open">Toggle</button>
 
+        <div x-skip x-data="{ huh: true }"> 
+          <div x-data="{ nope: true }">
+            <div x-data="{ nope2: true }">
+            </div>
+            <div x-data="{ nope3: true }"></div>
+          </div>
+        </div>
+
         <!-- <p x-show="open">I am visible rn</p> -->
         <h1 x-ref="title">I am a title</h1>
-        <h2 x-text="$refs.title.innerText"></h2>
+        <!-- <h2 x-text="$refs.title.innerText"></h2> -->
       </div>
     </div>
     <!-- <script type="module" src="/src/main.ts"></script> -->

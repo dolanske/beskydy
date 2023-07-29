@@ -9,8 +9,8 @@ import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
 
 export interface Scope {
-  [key: string]: unknown
-  $refs: Record<string, HTMLElement>
+  [key: PropertyKey]: unknown
+  // $refs: Record<string, HTMLElement>
 }
 
 export function createApp(appOptions: Record<string, any>) {
@@ -23,15 +23,15 @@ export function createApp(appOptions: Record<string, any>) {
   for (const scope of scopes) {
     const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
     let node: Node | null = walker.root
-    const scopeStack = stack<Scope>({
-      $refs: {},
-    })
+    const scopeStack = stack<Scope>({})
     const isScopeInit = nit(false)
 
     // Hide scopes until they're fully initiated
-    scope.setAttribute('style', 'display:none;')
-    isScopeInit.watch(() => {
-      scope.removeAttribute('style')
+    isScopeInit.watch((isInit) => {
+      if (isInit)
+        scope.removeAttribute('style')
+      else
+        scope.setAttribute('style', 'display:none;')
     })
 
     while (node !== null) {
@@ -40,6 +40,14 @@ export function createApp(appOptions: Record<string, any>) {
         case 1: {
           const el = node as HTMLElement
           let attrValue: string | null
+
+          // SECTION x-skip
+          // Elements with x-skip will be skipped during evaluation. The
+          // skip includes all elements children. Selects the next sibling.
+          if (getAttr(el, 'x-skip') !== null) {
+            node = walker.nextSibling()
+            continue
+          }
 
           // SECTION x-data / x-scope
           if (
@@ -127,6 +135,8 @@ export function createApp(appOptions: Record<string, any>) {
     }
 
     isScopeInit.val = true
+
+    console.log(scopeStack)
   }
 
   return {

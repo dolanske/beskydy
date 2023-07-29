@@ -1,0 +1,12 @@
+<!-- The mounted scope will only include the `open` field while skipping
+the `x-skip` node and all its children -->
+
+<div x-scope="{ open: true }">
+  <div x-skip x-data="{ nope: true }"> 
+    <div x-data="{ nope2: true }">
+      <div x-data="{ nope3: true }">
+      </div>
+      <div x-data="{ nope4: true }"></div>
+    </div>
+  </div>
+</div>
