@@ -9,9 +9,10 @@ import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
 
 export function createApp(appOptions: Record<string, any>) {
-  // Global dataset shared across scopes
-  const $ctx = stack({})
-  Object.assign($ctx, appOptions)
+  // Global properties
+  const $data = stack({})
+  const $refs = new WeakSet<HTMLElement>()
+  // Object.assign($ctx, appOptions)
 
   // Get all scopes in the document and initialize them
   const scopes = Array.from(document.querySelectorAll('[x-scope]'))
@@ -19,7 +20,7 @@ export function createApp(appOptions: Record<string, any>) {
   for (const scope of scopes) {
     const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
     let node: Node | null = walker.root
-    const scopeStack = stack(Object.assign({}, $ctx))
+    const scopeStack = stack({})
     const mountedScope = nit(false)
 
     scope.setAttribute('style', 'display:none;')
@@ -122,5 +123,11 @@ export function createApp(appOptions: Record<string, any>) {
     }
 
     mountedScope.val = true
+  }
+
+  return {
+    // Watch for when a property is updated
+    // on: (key, (newVal, prevVal))  => {
+    // }
   }
 }
