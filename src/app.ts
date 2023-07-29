@@ -7,6 +7,7 @@ import { nit } from './reactivity/nit'
 import { processHTML } from './directives/x-html'
 import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
+import { processBind } from './directives/x-bind'
 
 export interface Scope {
   [key: PropertyKey]: unknown
@@ -106,8 +107,13 @@ export function createApp(appOptions: Record<string, any>) {
             for (const attr of Array.from(el.attributes)) {
               const name = attr.name
 
+              // SECTION x-on
               if (name.startsWith('@') || name.startsWith('x-on'))
                 processOn(scopeStack, el, name, attr.value)
+
+              // SECTION x-bind
+              if (name.startsWith('x-bind'))
+                processBind(scopeStack, el, name, attr.value)
             }
           }
 
