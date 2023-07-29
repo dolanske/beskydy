@@ -27,11 +27,10 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ isRed: false }">
-        <button x-on:click="isRed = !isRed">Toggle Color</button>
-        <span x-class="isRed ? 'red' : null">Inline Example</span>
-        <span x-class="{ red: isRed, blue: !isRed }">Object Example</span>
-        <span x-class="[isRed ? 'inlineClass' : null, { red: isRed, blue: !isRed }]">Array Example</span>
+      <div x-scope="{ open: true }">
+        <button x-on:click="open = !open">Toggle</button>
+
+        <p x-show="open">I am visible rn</p>
       </div>
     </div>
     <!-- <script type="module" src="/src/main.ts"></script> -->
