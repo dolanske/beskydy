@@ -24,9 +24,10 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ show: 1 }">
-        <button x-on:click="show += 1">Increase</button>
-        <p x-style="{ 'fontSize': `${show * 5}px` }">I am not that visible to blind people</p>
+      <div x-scope="{ count: 1 }">
+        <input x-model="count" type="text" />
+        <input x-model="count" type="password" />
+
       </div>
     </div>
     <script type="module">

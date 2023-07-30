@@ -9,6 +9,7 @@ import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
 import { processBind } from './directives/x-bind'
 import { processStyle } from './directives/x-style'
+import { processModel } from './directives/x-model'
 
 export interface Scope {
   [key: PropertyKey]: unknown
@@ -119,6 +120,9 @@ export function createApp(appOptions: Record<string, any>) {
               // SECTION x-bind
               if (name.startsWith('x-bind'))
                 processBind(scopeStack, el, name, attr.value)
+
+              if (name.startsWith('x-model'))
+                processModel(scopeStack, el, name, attr.value)
             }
           }
 
@@ -146,8 +150,6 @@ export function createApp(appOptions: Record<string, any>) {
     }
 
     isScopeInit.val = true
-
-    console.log(scopeStack)
   }
 
   return {
