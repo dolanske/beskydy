@@ -9,6 +9,7 @@ import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
 import { processBind } from './directives/x-bind'
 import { processStyle } from './directives/x-style'
+import type { ModelElement } from './directives/x-model'
 import { processModel } from './directives/x-model'
 
 export interface Scope {
@@ -122,7 +123,7 @@ export function createApp(appOptions: Record<string, any>) {
                 processBind(scopeStack, el, name, attr.value)
 
               if (name.startsWith('x-model'))
-                processModel(scopeStack, el, name, attr.value)
+                processModel(scopeStack, el as ModelElement, name, attr.value)
             }
           }
 

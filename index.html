@@ -15,19 +15,17 @@
       * {
         filter: invert(1);
       }
-
       .red {
         color: red;
       }
-
     </style>
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ count: 1 }">
-        <input x-model="count" type="text" />
-        <input x-model="count" type="password" />
-
+      <div x-scope="{ selected: [] }">
+        <input x-model="selected" type="checkbox" checked="true" value="first" />
+        <input x-model="selected" type="checkbox" value="second" />
+        <input x-model="selected" type="checkbox" value="third" />
       </div>
     </div>
     <script type="module">

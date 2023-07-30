@@ -23,7 +23,7 @@ export function processBind(
 
   const [_, attrName] = attrKey.split(':')
 
-  const setOrRemove = (key: string, value: any) => {
+  const setOrDelAttr = (key: string, value: any) => {
     if (isNil(value))
       el.removeAttribute(key)
     else
@@ -34,7 +34,7 @@ export function processBind(
     // x-bind:attrName="" syntax
     watchStack(() => {
       const result = evaluate(scope, attrVal, el)
-      setOrRemove(attrName, result)
+      setOrDelAttr(attrName, result)
     })
   }
   else {
@@ -44,7 +44,7 @@ export function processBind(
 
       for (const key of Object.keys(results)) {
         const result = results[key]
-        setOrRemove(key, result)
+        setOrDelAttr(key, result)
       }
     })
   }
