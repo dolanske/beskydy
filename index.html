@@ -24,10 +24,9 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ show: false }">
-        <button x-on:click="show = !show">Show password</button>
-        <input  x-bind:type="show ? 'text' : 'password'">
-        <input x-bind="{ type: show ? 'text' : 'password', class: 'red' }">
+      <div x-scope="{ show: 1 }">
+        <button x-on:click="show += 1">Increase</button>
+        <p x-style="{ 'fontSize': `${show * 5}px` }">I am not that visible to blind people</p>
       </div>
     </div>
     <script type="module">

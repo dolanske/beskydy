@@ -15,8 +15,6 @@ export function processClass(
   el: HTMLElement,
   expr: string,
 ) {
-  expr = expr.trim()
-
   const assignObjectClasses = (parsed: Record<string, unknown>) => {
     for (const key of Object.keys(parsed)) {
       if (parsed[key])

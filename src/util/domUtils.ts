@@ -5,5 +5,5 @@ export function isSibling(el: HTMLElement, el2: HTMLElement) {
 export function getAttr(el: HTMLElement | Element, key: string) {
   const attr = el.getAttribute(key)
   el.removeAttribute(key)
-  return attr
+  return attr ? attr.trim() : null
 }

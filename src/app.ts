@@ -8,6 +8,7 @@ import { processHTML } from './directives/x-html'
 import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
 import { processBind } from './directives/x-bind'
+import { processStyle } from './directives/x-style'
 
 export interface Scope {
   [key: PropertyKey]: unknown
@@ -101,6 +102,10 @@ export function createApp(appOptions: Record<string, any>) {
           // SECTION x-class
           if ((attrValue = getAttr(el, 'x-class')))
             processClass(scopeStack, el, attrValue)
+
+          // SECTION x-style
+          if ((attrValue = getAttr(el, 'x-style')))
+            processStyle(scopeStack, el, attrValue)
 
           // SECTION All other directives
           if (el.attributes.length > 0) {
