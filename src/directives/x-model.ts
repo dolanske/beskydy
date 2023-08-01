@@ -13,21 +13,6 @@ export type ModelElement = HTMLInputElement | HTMLSelectElement | HTMLDetailsEle
 type Modifier = keyof typeof ModelModifiers
 
 /**
- * This variable is used whenever there are multiple checkboxes with the
- * same `x-model` expression in them. In that case, the result is saved
- * to a WeakMap where the key is the input element and it holds its
- * checked value.
- */
-const cachedCheckboxRefs: Record<string, WeakMap<HTMLInputElement, string>> = Object.create(null)
-
-function setCheckboxRef(id: string, el: HTMLInputElement, value: string) {
-  if (cachedCheckboxRefs[id])
-    cachedCheckboxRefs[id].set(el, value)
-  else
-    cachedCheckboxRefs[id] = new Map([[el, value]])
-}
-
-/**
  * Sets up a two way binding with an input/select element. This can be
  * used on
  * - <input />, <textarea>, <select />, <details />
@@ -45,9 +30,6 @@ export function processModel(
 ) {
   const [_, modifier] = attrKey.split('.') as [unknown, Modifier]
   const defaultValue = el.attributes.getNamedItem('value')?.value
-  // const defaultValue = defaultValueAttr ? defaultValueAttr.value : attrExpr
-
-  // Assign value to scope
 
   const modify = (value: string) => {
     if (!modifier)
@@ -80,24 +62,74 @@ export function processModel(
       switch (el.attributes.getNamedItem('type')?.value) {
         // Listen for 'change' event
         case 'checkbox': {
-          const isChecked = el.checked
-          // setCheckboxRef(attrExpr, el, isChecked)
+          const modelValue = scope[attrExpr] as Array<any> | string | undefined | null
 
-          // el.addEventListener('change', (evt) => {
-          //   const { checked } = (evt?.target as HTMLInputElement)
-          //   const currentValue = scope[attrExpr] as boolean | boolean[]
-          // })
+          /**
+           * With checkbox, there are multiple cases
+           *  - no value:       we toggle checked state as a boolean
+           *  - value:          we toggle checked state as its value
+           *  - array no value: nothing, array of random booleans makes no sense
+           *  - array values:   push / splice out if checked or not
+           */
 
-          // watchStack(() => {
-          //   setCheckboxRef(attrExpr, el, evaluate(scope,))
-          //   // Update in case some properties are removed etc
-          // })
+          const setCheckboxValue = (value: string, checked: boolean) => {
+            // Selected but something else: ARRAY
+            if (Array.isArray(modelValue)) {
+              if (modelValue.includes(value))
+                modelValue.splice(modelValue.indexOf(value), 1)
+              else
+                modelValue.push(value)
+            }
+            // Primitive
+            else {
+              scope[attrExpr] = isNil(value) ? !checked : value
+            }
+          }
 
+          // If no model value is provided and element contains checked, assign default value
+          if ((!modelValue || modelValue.length === 0) && el.hasAttribute('checked')) {
+            setCheckboxValue(el.value, true)
+            el.removeAttribute('checked')
+          }
+
+          el.addEventListener('change', (evt) => {
+            const { checked, value } = (evt?.target as HTMLInputElement)
+            setCheckboxValue(value, checked)
+          })
+
+          watchStack(() => {
+            el = el as HTMLInputElement
+            // Update in case some properties are removed or set elsewhere
+            const results = evaluate(scope, attrExpr)
+
+            if (results.includes(el.value) || el.value === results)
+              el.checked = true
+            else
+              el.checked = false
+          })
           break
         }
 
         // Listen for 'change' event
         case 'radio': {
+          // Default value
+          if (el.hasAttribute('checked')) {
+            el.removeAttribute('checked')
+            Object.assign(scope, { [attrExpr]: el.value })
+          }
+
+          el.addEventListener('change', (evt) => {
+            const { checked, value } = (evt.target as HTMLInputElement)
+            if (checked)
+              Object.assign(scope, { [attrExpr]: value })
+          })
+
+          // If evaluated value changes, make sure to update the HTML as well
+          watchStack(() => {
+            el = el as HTMLInputElement
+            const newValue = evaluate(scope, attrExpr)
+            el.checked = el.value === newValue
+          })
           break
         }
 
@@ -126,6 +158,7 @@ export function processModel(
         Object.assign(scope, { [attrExpr]: value })
       })
 
+      watchStack(() => (el as HTMLSelectElement).value = evaluate(scope, attrExpr))
       break
     }
 
@@ -142,6 +175,7 @@ export function processModel(
       })
 
       watchStack(() => (el as HTMLDetailsElement).open = evaluate(scope, attrExpr))
+      break
     }
 
     // Let all other elements fallthrough

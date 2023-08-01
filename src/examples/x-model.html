@@ -1,3 +1,5 @@
+
+<!-- Example with <select> -->
 <div x-scope="{ selected: 'Anna' }" >
   <select x-model="selected">
     <option value="Jan">Jan</option>
@@ -6,4 +8,34 @@
     <option value="Felix">Felix</option>
   </select>
   <span x-text="`Selected person ${selected}`"></span>
+</div>
+
+<!-- Example with <detail> -->
+<div x-scope="{ open: true }">
+  <button @click="open = !open">Open</button>
+  <details x-model="open">
+    <summary>
+      <span>
+        Open me normally
+      </span>
+    </summary>
+    <p>Hello person</p>
+  </details>
+</div>
+
+<!-- Example with <input type="radio"> -->
+<div x-scope="{ person: '' }">
+  <input x-model="person" name="person" id="Andrew" value="Andrew" type="radio" />
+  <input x-model="person" name="person" id="Aaron" value="Aaron" type="radio" checked />
+  <input x-model="person" name="person" id="America" value="America" type="radio" />
+  <span x-text="`Selected: ${person}`"></span>
+</div>
+
+<!-- Example with <input type="checkbox"> -->
+<div x-scope="{ selected: ['Felix'] }">
+  <input x-model="selected" type="checkbox" value="Jan" />
+  <input x-model="selected" type="checkbox" value="Anna" />
+  <input x-model="selected" type="checkbox" value="Felix" />
+  <input x-model="selected" type="checkbox" value="Jokler" />
+  <span x-text="selected"></span>
 </div>

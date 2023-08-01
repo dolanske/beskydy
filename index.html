@@ -10,38 +10,22 @@
       type="image/x-icon"
     />
     <style>
-      html,
+      /* html,
       body,
       * {
-        /* filter: invert(1); */
-      }
-      /* .red {
-        color: red;
+        filter: invert(1);
       } */
     </style>
   </head>
   <body>
     <div id="app">
-      <!-- <div x-scope="{ selected: [] }">
-        <input x-model="selected" type="checkbox" checked="true" value="first" />
-        <input x-model="selected" type="checkbox" value="second" />
-        <input x-model="selected" type="checkbox" value="third" />
-      </div> -->
-
-      <div x-scope="{ open: true }">
-        <button @click="open = !open">LET ME IN</button>
-        <hr>
-        <details x-model="open">
-          <summary>
-            <span>
-              Hello
-            </span>
-          </summary>
-          <p>I am now VISIBLE, bitch</p>
-        </details>
+      <div x-scope="{ selected: '' }">
+        <input x-model="selected" type="checkbox" value="Jan" checked />
+        <input x-model="selected" type="checkbox" value="Anna" />
+        <input x-model="selected" type="checkbox" value="Felix" />
+        <input x-model="selected" type="checkbox" value="Jokler" />
+        <span x-text="selected"></span>
       </div>
-      
-
     </div>
     <script type="module">
       import { createApp } from '/src/app.ts'
