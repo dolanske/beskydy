@@ -13,20 +13,35 @@
       html,
       body,
       * {
-        filter: invert(1);
+        /* filter: invert(1); */
       }
-      .red {
+      /* .red {
         color: red;
-      }
+      } */
     </style>
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ selected: [] }">
+      <!-- <div x-scope="{ selected: [] }">
         <input x-model="selected" type="checkbox" checked="true" value="first" />
         <input x-model="selected" type="checkbox" value="second" />
         <input x-model="selected" type="checkbox" value="third" />
+      </div> -->
+
+      <div x-scope="{ open: true }">
+        <button @click="open = !open">LET ME IN</button>
+        <hr>
+        <details x-model="open">
+          <summary>
+            <span>
+              Hello
+            </span>
+          </summary>
+          <p>I am now VISIBLE, bitch</p>
+        </details>
       </div>
+      
+
     </div>
     <script type="module">
       import { createApp } from '/src/app.ts'

@@ -1,6 +1,7 @@
 import type { Scope } from '../app'
 import { evaluate } from '../evaluate'
 import { watchStack } from '../reactivity/stack'
+import { isNil } from '../util'
 
 const ModelModifiers = {
   trim: (value: string) => value.trim(),
@@ -27,8 +28,13 @@ function setCheckboxRef(id: string, el: HTMLInputElement, value: string) {
 }
 
 /**
- * Sets up a two way binding with an input/select element. This can be used on
+ * Sets up a two way binding with an input/select element. This can be
+ * used on
  * - <input />, <textarea>, <select />, <details />
+ *
+ * This directive first checks wether the supplied model has a value and
+ * only then checks if a value attribute is available instead.
+ *
  */
 
 export function processModel(
@@ -38,8 +44,8 @@ export function processModel(
   attrExpr: string,
 ) {
   const [_, modifier] = attrKey.split('.') as [unknown, Modifier]
-  const defaultValueAttr = el.attributes.getNamedItem('value')
-  const defaultValue = defaultValueAttr ? defaultValueAttr.value : attrExpr
+  const defaultValue = el.attributes.getNamedItem('value')?.value
+  // const defaultValue = defaultValueAttr ? defaultValueAttr.value : attrExpr
 
   // Assign value to scope
 
@@ -47,6 +53,23 @@ export function processModel(
     if (!modifier)
       return value
     return ModelModifiers[modifier](value)
+  }
+
+  const assignSimpleDefaultValue = () => {
+    let finalValue
+    const modelValue = evaluate(scope, attrExpr)
+
+    if (!modelValue) {
+      if (defaultValue)
+        finalValue = defaultValue
+    }
+    else {
+      finalValue = modelValue
+    }
+
+    Object.assign(scope, { [attrExpr]: finalValue })
+    // @ts-expect-error Dont know how to inline cast ModelElement type
+    el.value = finalValue
   }
 
   switch (el.tagName) {
@@ -58,23 +81,17 @@ export function processModel(
         // Listen for 'change' event
         case 'checkbox': {
           const isChecked = el.checked
-          setCheckboxRef(attrExpr, el, isChecked)
+          // setCheckboxRef(attrExpr, el, isChecked)
 
-          el.addEventListener('change', (evt) => {
-            const { checked } = (evt?.target as HTMLInputElement)
+          // el.addEventListener('change', (evt) => {
+          //   const { checked } = (evt?.target as HTMLInputElement)
+          //   const currentValue = scope[attrExpr] as boolean | boolean[]
+          // })
 
-            const currentValue = scope[attrExpr] as boolean | boolean[]
-
-            if (ty)
-
-            // const cached = 
-            
-          })
-
-          watchStack(() => {
-            setCheckboxRef(attrExpr, el, evaluate(scope,))
-            // Update in case some properties are removed etc
-          })
+          // watchStack(() => {
+          //   setCheckboxRef(attrExpr, el, evaluate(scope,))
+          //   // Update in case some properties are removed etc
+          // })
 
           break
         }
@@ -86,15 +103,7 @@ export function processModel(
 
         // All other inputs
         default: {
-          // If item contains a default value, assign it
-          if (defaultValue) {
-            const currentValue = evaluate(scope, attrExpr)
-            if (currentValue === defaultValue)
-              return
-
-            Object.assign(scope, { [attrExpr]: defaultValue })
-            el.value = defaultValue
-          }
+          assignSimpleDefaultValue()
 
           el.addEventListener('input', (evt) => {
             const rawValue = (evt.target as HTMLInputElement).value
@@ -109,12 +118,30 @@ export function processModel(
     }
 
     case 'SELECT': {
-      // List for 'change' event
+      el = el as HTMLSelectElement
+      assignSimpleDefaultValue()
+
+      el.addEventListener('change', (evt) => {
+        const value = (evt.target as HTMLSelectElement).value
+        Object.assign(scope, { [attrExpr]: value })
+      })
+
       break
     }
 
     case 'DETAILS': {
-      // List for 'toggle' event
+      el = el as HTMLDetailsElement
+      const defaultOpen = el.attributes.getNamedItem('open')
+      const currentValue = evaluate(scope, attrExpr)
+
+      el.open = !isNil(currentValue) ? currentValue : (defaultOpen ?? false)
+
+      el.addEventListener('toggle', (evt) => {
+        const value = (evt.target as HTMLDetailsElement).open
+        Object.assign(scope, { [attrExpr]: value })
+      })
+
+      watchStack(() => (el as HTMLDetailsElement).open = evaluate(scope, attrExpr))
     }
 
     // Let all other elements fallthrough
