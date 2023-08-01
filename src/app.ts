@@ -9,6 +9,8 @@ import { processClass } from './directives/x-class'
 import { processShow } from './directives/x-show'
 import { processBind } from './directives/x-bind'
 import { processStyle } from './directives/x-style'
+import type { ModelElement } from './directives/x-model'
+import { processModel } from './directives/x-model'
 
 export interface Scope {
   [key: PropertyKey]: unknown
@@ -113,12 +115,21 @@ export function createApp(appOptions: Record<string, any>) {
               const name = attr.name
 
               // SECTION x-on
-              if (name.startsWith('@') || name.startsWith('x-on'))
+              if (name.startsWith('@') || name.startsWith('x-on')) {
                 processOn(scopeStack, el, name, attr.value)
+                el.removeAttribute(name)
+              }
 
               // SECTION x-bind
-              if (name.startsWith('x-bind'))
+              if (name.startsWith('x-bind')) {
                 processBind(scopeStack, el, name, attr.value)
+                el.removeAttribute(name)
+              }
+
+              if (name.startsWith('x-model')) {
+                processModel(scopeStack, el as ModelElement, name, attr.value)
+                el.removeAttribute(name)
+              }
             }
           }
 
@@ -146,8 +157,6 @@ export function createApp(appOptions: Record<string, any>) {
     }
 
     isScopeInit.val = true
-
-    console.log(scopeStack)
   }
 
   return {

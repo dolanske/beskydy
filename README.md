@@ -4,7 +4,7 @@
 
 ## TODO
 
-- [ ] x-model:modifiers
+- [ ] x-for
 - [ ] x-cloak
   - hide element (x-show) until the whole scope is processed
 - [ ] x-ref
