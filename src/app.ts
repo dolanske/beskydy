@@ -1,6 +1,6 @@
 import { getAttr } from './util/domUtils'
 import { evaluate } from './evaluate'
-import { stack, watchStack } from './reactivity/stack'
+import { stack } from './reactivity/stack'
 import { processIf } from './directives/x-if'
 import { processOn } from './directives/x-on'
 import { nit } from './reactivity/nit'
@@ -12,14 +12,11 @@ import { processStyle } from './directives/x-style'
 import type { ModelElement } from './directives/x-model'
 import { processModel } from './directives/x-model'
 import { prociessFor } from './directives/x-for'
+import { processText } from './directives/x-text'
 
 export interface Scope {
   [key: PropertyKey]: unknown
   // $refs: Record<string, HTMLElement>
-}
-
-function walk(root: HTMLElement) {
-
 }
 
 export function applyNonRootAttrs(scope: Scope, el: HTMLElement) {
@@ -33,14 +30,9 @@ export function applyNonRootAttrs(scope: Scope, el: HTMLElement) {
   //   processRef(scope, el, attrValue)
 
   // SECTION x-text
-  if ((attrValue = getAttr(el, 'x-text'))) {
   // Save expression value because when the stack has changed, the value might be null already
-    const expr = attrValue
-    watchStack(() => {
-      const text = evaluate(scope, expr)
-      el.innerText = text
-    })
-  }
+  if ((attrValue = getAttr(el, 'x-text')))
+    processText(scope, el, attrValue)
 
   // SECTION x-if, x-else and x-else-if
   //
@@ -88,94 +80,90 @@ export function applyNonRootAttrs(scope: Scope, el: HTMLElement) {
   }
 }
 
+export function walkRoot(root: Element, scope: Scope, isRootScope: boolean) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ALL)
+  let node: Node | null = walker.root
+
+  while (node !== null) {
+    switch (node.nodeType) {
+      // NOTE HTMLElement
+      case 1: {
+        const el = node as HTMLElement
+        let attrValue: string | null
+
+        // SECTION x-skip
+        // Elements with x-skip will be skipped during evaluation. The
+        // skip includes all elements children. Selects the next sibling.
+        if (getAttr(el, 'x-skip') !== null) {
+          node = walker.nextSibling()
+          continue
+        }
+
+        // SECTION x-data / x-scope
+        if (
+          isRootScope
+          && ((attrValue = getAttr(el, 'x-data'))
+            || (attrValue = getAttr(el, 'x-scope')))
+        ) {
+          try {
+            const data = evaluate({}, attrValue)
+            for (const key of Object.keys(data)) {
+              Object.defineProperty(scope, key, {
+                value: data[key],
+                writable: true,
+                enumerable: true,
+                configurable: true,
+              })
+            }
+          }
+          catch (e) {
+            continue
+          }
+        }
+
+        applyNonRootAttrs(scope, el)
+        break
+      }
+
+      // NOTE Text, transforms {{}}
+      // case 3: {}
+
+      // NOTE Document fragment idk llol
+      // case 11: {}
+
+      default: break
+    }
+
+    node = walker.nextNode()
+  }
+}
+
 export function createApp() {
   // Global properties
-  // const $data = stack({})
 
   // Get all scopes in the document and initialize them
-  const scopes = Array.from(document.querySelectorAll('[x-scope]'))
+  const scopeEls = Array.from(document.querySelectorAll('[x-scope]'))
 
-  for (const scope of scopes) {
-    const walker = document.createTreeWalker(scope, NodeFilter.SHOW_ALL)
-    let node: Node | null = walker.root
+  for (const scopeEl of scopeEls) {
+    // const walker = document.createTreeWalker(scopeEl, NodeFilter.SHOW_ALL)
+    // let node: Node | null = walker.root
     const scopeStack = stack<Scope>({})
     const isScopeInit = nit(false)
 
     // Hide scopes until they're fully initiated
     isScopeInit.watch((isInit) => {
       if (isInit)
-        scope.removeAttribute('style')
+        scopeEl.removeAttribute('style')
       else
-        scope.setAttribute('style', 'display:none;')
+        scopeEl.setAttribute('style', 'display:none;')
     })
 
-    while (node !== null) {
-      switch (node.nodeType) {
-        // NOTE HTMLElement
-        case 1: {
-          const el = node as HTMLElement
-          let attrValue: string | null
-
-          // SECTION x-skip
-          // Elements with x-skip will be skipped during evaluation. The
-          // skip includes all elements children. Selects the next sibling.
-          if (getAttr(el, 'x-skip') !== null) {
-            node = walker.nextSibling()
-            continue
-          }
-
-          // SECTION x-data / x-scope
-          if (
-            (attrValue = getAttr(el, 'x-data'))
-            || (attrValue = getAttr(el, 'x-scope'))
-          ) {
-            try {
-              const data = evaluate({}, attrValue)
-              for (const key of Object.keys(data)) {
-                Object.defineProperty(scopeStack, key, {
-                  value: data[key],
-                  writable: true,
-                  enumerable: true,
-                  configurable: true,
-                })
-              }
-            }
-            catch (e) {
-              continue
-            }
-          }
-
-          applyNonRootAttrs(scopeStack, el)
-
-          break
-        }
-
-        // NOTE Text
-        // Should transform whatever content is within {{ }}
-        // case 3: {
-        //   break
-        // }
-
-        //   Document fragment
-        // case 11: {
-        //   break;
-        // }
-
-        default: {
-          // idk
-          // console.log('Unknown Node', node)
-        }
-      }
-
-      node = walker.nextNode()
-    }
+    walkRoot(scopeEl, scopeStack, true)
 
     isScopeInit.val = true
   }
 
-  return {
-    // Watch for when a property is updated
-    // on: (key, (newVal, prevVal))  => {
-    // }
-  }
+  // return {
+  // some global properties/functions here
+  // }
 }

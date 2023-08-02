@@ -1,6 +1,6 @@
-import type { Scope } from '../app'
-import { applyNonRootAttrs } from '../app'
+import { type Scope, walkRoot } from '../app'
 import { evaluate } from '../evaluate'
+import { stack, watchStack } from '../reactivity/stack'
 import { isArr, isObj } from '../util'
 
 export function prociessFor(
@@ -23,49 +23,54 @@ export function prociessFor(
 
   // First, we split strings
   const [params, _, rawValue] = expr.split(/(?!\(.*)\s(?![^(]*?\))/g)
-  const value = evaluate(scope, rawValue)
-
   const parent = el.parentElement
-  let prevEl: HTMLElement | null = null
+  const elements: Record<number, Element> = {}
 
-  // Range
-  if (typeof value === 'number') {
-    for (const index in Array.from({ length: value })) {
-      const newEl = el.cloneNode(true) as HTMLElement
+  watchStack(() => {
+    let prevEl: HTMLElement | null = null
+    const value = evaluate(scope, rawValue)
 
-      // REVIEW Wouldn't this start a whole new context with a treewalker and everytthing
+    // Range
+    if (typeof value === 'number') {
+      for (const i in Array.from({ length: value })) {
+        const newEl = el.cloneNode(true) as HTMLElement
+        const index = Number(i)
 
-      // On first iteration, replace current element
-      if (!prevEl)
-        parent?.replaceChild(newEl, el)
-      // Append after the first iterated node
-      else
-        prevEl.after(newEl)
+        // On first iteration, replace current element
+        if (!prevEl)
+          parent?.replaceChild(newEl, el)
+        // Append after the first iterated node
+        else if (elements[index])
+          parent?.replaceChild(elements[index], newEl)
+        else
+          prevEl.after(newEl)
 
-      // Evaluate
-      // const result
-      const newScope = structuredClone({ ...scope })
-      Object.assign(newScope, { [params]: index })
+        // Evaluate
+        const newScope = stack({})
 
-      // Process non root
-      applyNonRootAttrs(newScope, newEl)
+        Object.assign(newScope, scope)
+        Object.assign(newScope, { [params]: index })
 
-      prevEl = newEl
+        // Walk and process all child nodes including self
+        walkRoot(newEl, newScope, false)
+
+        elements[index] = newEl
+
+        prevEl = newEl
+      }
     }
-  }
-  // Item in array
-  else if (isArr(value)) {
-    //
-  }
-  // Iterating in objecy
-  else if (isObj(value)) {
-    //
-  }
-  else {
-    throw new TypeError('Unsupported value was used in \'x-for\'. Please only use a number, array or an object')
-  }
+    // Item in array
+    else if (isArr(value)) {
+      //
+    }
+    // Iterating in objecy
+    else if (isObj(value)) {
+      //
+    }
+    else {
+      throw new TypeError('Unsupported value was used in \'x-for\'. Please only use a number, array or an object')
+    }
 
-  el.remove()
-
-  console.log(params, value)
+    el.remove()
+  })
 }
