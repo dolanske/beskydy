@@ -4,6 +4,7 @@
 
 ## TODO
 
+- [ ] Compute `{{ }}` denominators
 - [ ] x-for
 - [ ] x-cloak
   - hide element (x-show) until the whole scope is processed

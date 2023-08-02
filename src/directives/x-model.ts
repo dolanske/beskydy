@@ -1,7 +1,7 @@
 import type { Scope } from '../app'
 import { evaluate } from '../evaluate'
 import { watchStack } from '../reactivity/stack'
-import { isNil } from '../util'
+import { isArr, isNil } from '../util'
 
 const ModelModifiers = {
   trim: (value: string) => value.trim(),
@@ -74,7 +74,7 @@ export function processModel(
 
           const setCheckboxValue = (value: string, checked: boolean) => {
             // Selected but something else: ARRAY
-            if (Array.isArray(modelValue)) {
+            if (isArr(modelValue)) {
               if (modelValue.includes(value))
                 modelValue.splice(modelValue.indexOf(value), 1)
               else

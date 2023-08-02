@@ -10,21 +10,20 @@
       type="image/x-icon"
     />
     <style>
-      /* html,
+      html,
       body,
       * {
-        filter: invert(1);
-      } */
+        color: white;
+        background-color: black;
+      }
     </style>
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ selected: '' }">
-        <input x-model="selected" type="checkbox" value="Jan" checked />
-        <input x-model="selected" type="checkbox" value="Anna" />
-        <input x-model="selected" type="checkbox" value="Felix" />
-        <input x-model="selected" type="checkbox" value="Jokler" />
-        <span x-text="selected"></span>
+      <div x-scope>
+        <ul>
+          <li x-for="item in 10" x-text="item"></li>
+        </ul>
       </div>
     </div>
     <script type="module">

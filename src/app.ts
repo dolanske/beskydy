@@ -11,13 +11,84 @@ import { processBind } from './directives/x-bind'
 import { processStyle } from './directives/x-style'
 import type { ModelElement } from './directives/x-model'
 import { processModel } from './directives/x-model'
+import { prociessFor } from './directives/x-for'
 
 export interface Scope {
   [key: PropertyKey]: unknown
   // $refs: Record<string, HTMLElement>
 }
 
-export function createApp(appOptions: Record<string, any>) {
+function walk(root: HTMLElement) {
+
+}
+
+export function applyNonRootAttrs(scope: Scope, el: HTMLElement) {
+  let attrValue: string | null
+
+  if ((attrValue = getAttr(el, 'x-for')))
+    prociessFor(scope, el, attrValue)
+
+  // SECTION x-ref
+  // if ((attrValue = getAttr(el, 'x-ref')))
+  //   processRef(scope, el, attrValue)
+
+  // SECTION x-text
+  if ((attrValue = getAttr(el, 'x-text'))) {
+  // Save expression value because when the stack has changed, the value might be null already
+    const expr = attrValue
+    watchStack(() => {
+      const text = evaluate(scope, expr)
+      el.innerText = text
+    })
+  }
+
+  // SECTION x-if, x-else and x-else-if
+  //
+  if ((attrValue = getAttr(el, 'x-if')))
+    processIf(scope, el, attrValue)
+
+  // SECTION x-show
+  if ((attrValue = getAttr(el, 'x-show')))
+    processShow(scope, el, attrValue)
+
+  // SECTION x-html
+  if ((attrValue = getAttr(el, 'x-html')))
+    processHTML(scope, el, attrValue)
+
+  // SECTION x-class
+  if ((attrValue = getAttr(el, 'x-class')))
+    processClass(scope, el, attrValue)
+
+  // SECTION x-style
+  if ((attrValue = getAttr(el, 'x-style')))
+    processStyle(scope, el, attrValue)
+
+  // SECTION All other directives
+  if (el.attributes.length > 0) {
+    for (const attr of Array.from(el.attributes)) {
+      const name = attr.name
+
+      // SECTION x-on
+      if (name.startsWith('@') || name.startsWith('x-on')) {
+        processOn(scope, el, name, attr.value)
+        el.removeAttribute(name)
+      }
+
+      // SECTION x-bind
+      if (name.startsWith('x-bind')) {
+        processBind(scope, el, name, attr.value)
+        el.removeAttribute(name)
+      }
+
+      if (name.startsWith('x-model')) {
+        processModel(scope, el as ModelElement, name, attr.value)
+        el.removeAttribute(name)
+      }
+    }
+  }
+}
+
+export function createApp() {
   // Global properties
   // const $data = stack({})
 
@@ -74,64 +145,7 @@ export function createApp(appOptions: Record<string, any>) {
             }
           }
 
-          // SECTION x-ref
-          // if ((attrValue = getAttr(el, 'x-ref')))
-          //   processRef(scopeStack, el, attrValue)
-
-          // SECTION x-text
-          if ((attrValue = getAttr(el, 'x-text'))) {
-            // Save expression value because when the stack has changed, the value might be null already
-            const expr = attrValue
-            watchStack(() => {
-              const text = evaluate(scopeStack, expr)
-              el.innerText = text
-            })
-          }
-
-          // SECTION x-if, x-else and x-else-if
-          //
-          if ((attrValue = getAttr(el, 'x-if')))
-            processIf(scopeStack, el, attrValue)
-
-          // SECTION x-show
-          if ((attrValue = getAttr(el, 'x-show')))
-            processShow(scopeStack, el, attrValue)
-
-          // SECTION x-html
-          if ((attrValue = getAttr(el, 'x-html')))
-            processHTML(scopeStack, el, attrValue)
-
-          // SECTION x-class
-          if ((attrValue = getAttr(el, 'x-class')))
-            processClass(scopeStack, el, attrValue)
-
-          // SECTION x-style
-          if ((attrValue = getAttr(el, 'x-style')))
-            processStyle(scopeStack, el, attrValue)
-
-          // SECTION All other directives
-          if (el.attributes.length > 0) {
-            for (const attr of Array.from(el.attributes)) {
-              const name = attr.name
-
-              // SECTION x-on
-              if (name.startsWith('@') || name.startsWith('x-on')) {
-                processOn(scopeStack, el, name, attr.value)
-                el.removeAttribute(name)
-              }
-
-              // SECTION x-bind
-              if (name.startsWith('x-bind')) {
-                processBind(scopeStack, el, name, attr.value)
-                el.removeAttribute(name)
-              }
-
-              if (name.startsWith('x-model')) {
-                processModel(scopeStack, el as ModelElement, name, attr.value)
-                el.removeAttribute(name)
-              }
-            }
-          }
+          applyNonRootAttrs(scopeStack, el)
 
           break
         }
@@ -139,12 +153,12 @@ export function createApp(appOptions: Record<string, any>) {
         // NOTE Text
         // Should transform whatever content is within {{ }}
         // case 3: {
-        //   // Idk
         //   break
         // }
 
-        // case 11: {
         //   Document fragment
+        // case 11: {
+        //   break;
         // }
 
         default: {
