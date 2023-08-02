@@ -36,12 +36,13 @@ export function prociessFor(
         const newEl = el.cloneNode(true) as HTMLElement
         const index = Number(i)
 
+        elements[index]?.remove()
+
         // On first iteration, replace current element
         if (!prevEl)
           parent?.replaceChild(newEl, el)
+
         // Append after the first iterated node
-        else if (elements[index])
-          parent?.replaceChild(elements[index], newEl)
         else
           prevEl.after(newEl)
 
