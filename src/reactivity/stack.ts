@@ -71,6 +71,12 @@ const proxyValidator: ProxyHandler<object> = {
     dependency.notify()
     return result
   },
+  deleteProperty(target: RawObject, key: PropertyKey) {
+    const dependency = getOrCreateDep(target, key)
+    const result = Reflect.deleteProperty(target, key)
+    dependency.notify()
+    return result
+  },
 }
 
 /**

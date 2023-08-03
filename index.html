@@ -22,7 +22,6 @@
     <div id="app">
       <div x-scope="{ title: 'People' }">
         <input type="text" x-model="title">
-
         <ul>
           <li x-for="item in 10">
             <span x-text="`${item + 1} ${title}`"></span>

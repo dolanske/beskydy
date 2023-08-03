@@ -26,6 +26,15 @@ export function prociessFor(
   const parent = el.parentElement
   const elements: Record<number, Element> = {}
 
+  /**
+   * Evaluation process
+   *
+   * 1. Generate nodes once and save them to an array
+   * 2. On subsequent evaluations, we cache the expression. And iterate on the cached nodes only.
+   *  - If expression changes, we remoe all nodes and go back to step #1
+   *
+   */
+
   watchStack(() => {
     let prevEl: HTMLElement | null = null
     const value = evaluate(scope, rawValue)
