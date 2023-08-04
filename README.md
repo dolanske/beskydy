@@ -4,6 +4,8 @@
 
 ## TODO
 
+- [ ] add deleteProperty to proxy handler
+- [ ] Compute `{{ }}` denominators
 - [ ] x-for
 - [ ] x-cloak
   - hide element (x-show) until the whole scope is processed

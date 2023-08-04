@@ -5,3 +5,5 @@ export function isNil(value: unknown) {
 export function isObj(value: unknown) {
   return (!!value) && (value.constructor === Object)
 }
+
+export const isArr = Array.isArray
