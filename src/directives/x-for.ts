@@ -33,58 +33,62 @@ export function prociessFor(
    *  - If expression changes, we remoe all nodes and go back to step #1
    *
    */
-  const cached: Record<number, Element> = {}
+  const cached: Record<number, Element | undefined> = {}
 
   // Generate once
 
   watchStack(() => {
     let prevEl: HTMLElement | null = null
     const value = evaluate(scope, rawValue)
-    const cachedKeys = Object.keys(cached)
 
     // Range
     if (typeof value === 'number') {
-      if (cachedKeys.length === value) {
-        cachedKeys.forEach((key, index) => {
-          // const newEl = el.cloneNode(true) as HTMLElement
-          const newEl = cached[Number(key)]
-          const newScope = stack({})
+      // if (cachedKeys.length === value) {
+      //   cachedKeys.forEach((key, index) => {
+      //     // const newEl = el.cloneNode(true) as HTMLElement
+      //     const newEl = cached[Number(key)]
+      //     const newScope = stack({})
 
-          Object.assign(newScope, scope)
-          Object.assign(newScope, { [params]: index })
+      //     Object.assign(newScope, scope)
+      //     Object.assign(newScope, { [params]: index })
 
-          console.log(newScope)
+      //     console.log(newScope)
 
-          // Walk and process all child nodes including self
-          walkRoot(newEl, newScope, false)
-        })
-      }
-      else {
-        for (const i in Array.from({ length: value })) {
+      //     // Walk and process all child nodes including self
+      //     walkRoot(newEl, newScope, false)
+      //   })
+      // }
+      // else {
+      for (const i in Array.from({ length: value })) {
+        const index = Number(i)
+        const existingEl = cached[index]
+        // Evaluate and assign scope to a new "clone" of the scope for each branch
+        const newScope = stack({})
+        Object.assign(newScope, scope)
+        Object.assign(newScope, { [params]: index })
+
+        if (existingEl) {
+          // Update
+          // parent.repl
+
+        }
+        else {
+          // Create
           const newEl = el.cloneNode(true) as HTMLElement
-          const index = Number(i)
-
-          console.log(index)
-
-          // On first iteration, replace current element
           if (!prevEl)
             parent?.replaceChild(newEl, el)
-          // Append after the first iterated node
           else
             prevEl.after(newEl)
 
-          // Evaluate
-          const newScope = stack({})
-          Object.assign(newScope, scope)
-          Object.assign(newScope, { [params]: index })
-
+          // Cache element before it's processed. Leaving the original attributes
+          cached[index] = newEl
           // Walk and process all child nodes including self
           walkRoot(newEl, newScope, false)
-          cached[index] = newEl
 
           prevEl = newEl
         }
       }
+      // }
     }
     // Item in array
     else if (isArr(value)) {
