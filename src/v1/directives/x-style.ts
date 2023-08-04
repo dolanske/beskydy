@@ -10,7 +10,7 @@ export function processStyle(
   watchStack(() => {
     const result = evaluate(scope, expr, el)
     for (const key of Object.keys(result))
-    // Using reflect set allows us using camelCase and kebab-case styles
+      // Using reflect set allows us using camelCase and kebab-case styles
       Reflect.set(el.style, key, result[key])
   })
 }

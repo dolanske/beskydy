@@ -1,5 +1,4 @@
 import { getAttr } from './util/domUtils'
-import { evaluate } from './evaluate'
 import { stack } from './reactivity/stack'
 import { processIf } from './directives/x-if'
 import { processOn } from './directives/x-on'
@@ -13,6 +12,7 @@ import type { ModelElement } from './directives/x-model'
 import { processModel } from './directives/x-model'
 import { prociessFor } from './directives/x-for'
 import { processText } from './directives/x-text'
+import { evaluate } from './evaluate'
 
 export interface Scope {
   [key: PropertyKey]: unknown

@@ -1,7 +1,7 @@
-import type { Scope } from '../app'
 import { evaluate } from '../evaluate'
 import { watchStack } from '../reactivity/stack'
 import { isNil } from '../util'
+import type { Scope } from '../app'
 
 export function processBind(
   scope: Scope,
