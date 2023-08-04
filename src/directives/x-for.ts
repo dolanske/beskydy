@@ -24,7 +24,6 @@ export function prociessFor(
   // First, we split strings
   const [params, _, rawValue] = expr.split(/(?!\(.*)\s(?![^(]*?\))/g)
   const parent = el.parentElement
-  const elements: Record<number, Element> = {}
 
   /**
    * Evaluation process
@@ -34,39 +33,57 @@ export function prociessFor(
    *  - If expression changes, we remoe all nodes and go back to step #1
    *
    */
+  const cached: Record<number, Element> = {}
+
+  // Generate once
 
   watchStack(() => {
     let prevEl: HTMLElement | null = null
     const value = evaluate(scope, rawValue)
+    const cachedKeys = Object.keys(cached)
 
     // Range
     if (typeof value === 'number') {
-      for (const i in Array.from({ length: value })) {
-        const newEl = el.cloneNode(true) as HTMLElement
-        const index = Number(i)
+      if (cachedKeys.length === value) {
+        cachedKeys.forEach((key, index) => {
+          // const newEl = el.cloneNode(true) as HTMLElement
+          const newEl = cached[Number(key)]
+          const newScope = stack({})
 
-        elements[index]?.remove()
+          Object.assign(newScope, scope)
+          Object.assign(newScope, { [params]: index })
 
-        // On first iteration, replace current element
-        if (!prevEl)
-          parent?.replaceChild(newEl, el)
+          console.log(newScope)
 
-        // Append after the first iterated node
-        else
-          prevEl.after(newEl)
+          // Walk and process all child nodes including self
+          walkRoot(newEl, newScope, false)
+        })
+      }
+      else {
+        for (const i in Array.from({ length: value })) {
+          const newEl = el.cloneNode(true) as HTMLElement
+          const index = Number(i)
 
-        // Evaluate
-        const newScope = stack({})
+          console.log(index)
 
-        Object.assign(newScope, scope)
-        Object.assign(newScope, { [params]: index })
+          // On first iteration, replace current element
+          if (!prevEl)
+            parent?.replaceChild(newEl, el)
+          // Append after the first iterated node
+          else
+            prevEl.after(newEl)
 
-        // Walk and process all child nodes including self
-        walkRoot(newEl, newScope, false)
+          // Evaluate
+          const newScope = stack({})
+          Object.assign(newScope, scope)
+          Object.assign(newScope, { [params]: index })
 
-        elements[index] = newEl
+          // Walk and process all child nodes including self
+          walkRoot(newEl, newScope, false)
+          cached[index] = newEl
 
-        prevEl = newEl
+          prevEl = newEl
+        }
       }
     }
     // Item in array

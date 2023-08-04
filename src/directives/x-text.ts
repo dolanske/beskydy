@@ -8,9 +8,6 @@ export function processText(
   expr: string,
 ) {
   const rawExpr = expr
-
-  console.log(scope, rawExpr, evaluate(scope, rawExpr))
-
   watchStack(() => {
     const text = evaluate(scope, rawExpr)
     el.innerText = text
