@@ -1,5 +1,4 @@
-import { stack, watchStack } from '../v1/reactivity/stack'
-import type { EffectValue } from '../v1/reactivity/types'
+import { stack, watchStack } from './reactivity/stack'
 
 /**
  * Piece of DOM which holds its own state.
@@ -16,40 +15,38 @@ import type { EffectValue } from '../v1/reactivity/types'
  * scope, we check if parent.contains(el) or something
  */
 
-type Unsubscribe = () => void
-
 export class Context<R extends Element, T extends object> {
-  __effects: Set<EffectValue<T>>
   // Store the context root element
   $root: Element
   // Reactive dataset available to the entire scope
-  $scope: T
+  $data: T
   // Store all scope expressions for an element
   $expr: WeakMap<Element, { attr: string; expt: string }>
   // All the scope refs, which are accessible even if accessor is a child of the ref
   $refs: Record<string, Element>
+  $init: boolean
 
-  constructor(root: R, defaultScope: T) {
-    this.__effects = new Set()
+  constructor(root: R, initialDataset?: T) {
     this.$root = root
-    this.$scope = stack<T>(defaultScope)
+    this.$data = stack<T>(Object.assign({}, initialDataset))
     this.$refs = {}
     this.$expr = new WeakMap()
-
-    watchStack(() => {
-      console.log(this.$scope)
-      for (const fn of this.__effects)
-        fn(this.$scope)
-    })
+    this.$init = false
   }
 
-  effect(fn: EffectValue<T>): Unsubscribe {
-    this.__effects.add(fn)
-    return () => this.__effects.delete(fn)
+  //
+  // Public API
+  //
+  effect = watchStack
+
+  addRef(key: string, ref: Element) {
+    Object.defineProperty(this.$refs, key, ref)
   }
 
-  // extend(ctx: Context) {
-  //   if (ctx.$scope)
-  //     Object.assign(this.$scope, ctx.$scope)
-  // }
+  extend(ctx: ContextAny) {
+    if (ctx.$data)
+      Object.assign(this.$data, ctx.$data)
+  }
 }
+
+export type ContextAny = Context<Element, object>

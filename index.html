@@ -20,6 +20,10 @@
   </head>
   <body>
     <div id="app">
+      <div x-scope="{msg: 'hello'}">
+        <span x-ref="test" x-text="`${$refs.text.textContent = msg}`"></span>
+      </div>
+
       <!-- <div x-scope="{ title: 'People' }">
         <input type="text" x-model="title">
         <ul>
@@ -29,10 +33,11 @@
         </ul>
       </div> -->
     </div>
-    <script type="module" src="./src/v2/main.ts"></script>
-    <!-- <script type="module">
-      import { createApp } from '/src/app.ts'
+    <!-- <script type="module" src="./src/v2/main.ts"></script> -->
+    <script type="module">
+      import { createApp } from './src/v2/scope.ts'
+
       createApp()
-    </script> -->
+    </script>
   </body>
 </html>

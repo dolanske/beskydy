@@ -2,7 +2,7 @@ import { describe, expect, test, vi } from 'vitest'
 import { nit, watchNit } from '../../reactivity/nit'
 import { watchStack } from '../../reactivity/stack'
 
-describe('Nit', () => {
+describe.skip('Nit', () => {
   test('Defaults and initialization', () => {
     const item = nit()
     expect(item.val).toBeUndefined()

@@ -12,7 +12,6 @@ import type { ModelElement } from './directives/x-model'
 import { processModel } from './directives/x-model'
 import { prociessFor } from './directives/x-for'
 import { processText } from './directives/x-text'
-import { evaluate } from './evaluate'
 
 export interface Scope {
   [key: PropertyKey]: unknown
@@ -73,6 +72,8 @@ export function applyNonRootAttrs(scope: Scope, el: HTMLElement) {
       }
 
       if (name.startsWith('x-model')) {
+        // TODO:
+        // Pass in any element and do error handling within processModel
         processModel(scope, el as ModelElement, name, attr.value)
         el.removeAttribute(name)
       }
@@ -97,28 +98,6 @@ export function walkRoot(root: Element, scope: Scope, isRootScope: boolean) {
         if (getAttr(el, 'x-skip') !== null) {
           node = walker.nextSibling()
           continue
-        }
-
-        // SECTION x-data / x-scope
-        if (
-          isRootScope
-          && ((attrValue = getAttr(el, 'x-data'))
-            || (attrValue = getAttr(el, 'x-scope')))
-        ) {
-          try {
-            const data = evaluate({}, attrValue)
-            for (const key of Object.keys(data)) {
-              Object.defineProperty(scope, key, {
-                value: data[key],
-                writable: true,
-                enumerable: true,
-                configurable: true,
-              })
-            }
-          }
-          catch (e) {
-            continue
-          }
         }
 
         applyNonRootAttrs(scope, el)
