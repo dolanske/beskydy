@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { createScope } from '../scope'
-import { useExampleWithRef } from './_test-dom-setups'
+import { useExampleWithRef } from './util/dom'
 
 /**
  * @vitest-environment jsdom
