@@ -2,6 +2,7 @@ import { evaluate } from '../v1/evaluate'
 import { getAttr, isObj } from './helpers'
 import type { ContextAny } from './context'
 import { processRef } from './directives/x-ref'
+import { processText } from './directives/x-text'
 
 export function walkRoot(ctx: ContextAny, isRootContext: boolean) {
   const walker = document.createTreeWalker(ctx.$root)
@@ -42,6 +43,10 @@ export function processNonRootAttrs(ctx: ContextAny, node: HTMLElement) {
     processRef(ctx, node, attrVal)
 
   // 2
+
+  // Other
+  if ((attrVal = getAttr(node, 'x-text')))
+    processText(ctx, node, attrVal)
 }
 
 // Ran only when x-scope is being initialized

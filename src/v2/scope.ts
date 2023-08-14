@@ -14,4 +14,13 @@ export function createScope(scopeRoot: Element) {
   walkRoot(ctx, true)
   ctx.$init = true
   scopeRoot.removeAttribute('style')
+
+  return {
+    ctx,
+    scopeRoot,
+    dispose: () => {
+      // TODO
+      // Remove element from DOM etc
+    },
+  }
 }

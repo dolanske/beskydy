@@ -40,7 +40,7 @@ export class Context<R extends Element, T extends object> {
   effect = watchStack
 
   addRef(key: string, ref: Element) {
-    Object.defineProperty(this.$refs, key, ref)
+    Object.assign(this.$refs, { [key]: ref })
   }
 
   extend(ctx: ContextAny) {
