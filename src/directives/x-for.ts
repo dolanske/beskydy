@@ -1,5 +1,5 @@
 import { evaluate } from '../evaluate'
-import { stack } from '../reactivity/stack'
+import { isArr, isObj } from '../helpers'
 import type { Directive } from '.'
 
 export const prociessFor: Directive = function (ctx, node, { value, name }) {
@@ -28,12 +28,10 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
    *  - If expression changes, we remoe all nodes and go back to step #1
    *
    */
-  const cached: Record<number, Element | undefined> = {}
-
-  // Generate once
+  // const cached: Record<number, Element | undefined> = {}
 
   ctx.effect(() => {
-    let prevEl: HTMLElement | null = null
+    const prevEl: HTMLElement | null = null
     const value = evaluate(ctx, rawValue)
 
     // Range
@@ -55,33 +53,7 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
       // }
       // else {
       for (const i in Array.from({ length: value })) {
-        const index = Number(i)
-        const existingEl = cached[index]
-        // Evaluate and assign scope to a new "clone" of the scope for each branch
-        const newScope = stack({})
-        Object.assign(newScope, scope)
-        Object.assign(newScope, { [params]: index })
 
-        if (existingEl) {
-          // Update
-          // parent.repl
-
-        }
-        else {
-          // Create
-          const newEl = el.cloneNode(true) as HTMLElement
-          if (!prevEl)
-            parent?.replaceChild(newEl, el)
-          else
-            prevEl.after(newEl)
-
-          // Cache element before it's processed. Leaving the original attributes
-          cached[index] = newEl
-          // Walk and process all child nodes including self
-          walkRoot(newEl, newScope, false)
-
-          prevEl = newEl
-        }
       }
       // }
     }
@@ -97,6 +69,6 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
       throw new TypeError('Unsupported value was used in \'x-for\'. Please only use a number, array or an object')
     }
 
-    el.remove()
+    node.remove()
   })
 }
