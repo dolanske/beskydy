@@ -1,9 +1,21 @@
 # beskydy
 
- Like alps, but smaller.
+ Like alps, but smaller. Alpine / vue-petite but mine I guess.
+
+ ```html
+<div x-scope x-data="{ count: 0 }">
+  <button
+    x-data="{ increment: 2 }"
+    x-on:click="count += increment"
+    x-text="`Add ${increment}`"
+  ></button>
+  <span x-text="count"></span>
+</div>
+ ```
 
 ## TODO
 
+- [ ] rewrite lol
 - [ ] add deleteProperty to proxy handler
 - [ ] Compute `{{ }}` denominators
 - [ ] x-for

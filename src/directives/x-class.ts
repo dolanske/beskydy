@@ -1,36 +1,24 @@
-/**
- * Binds a class to the selected element based on the expression result.
- * The allowed syntax is:
- *  - x-class="isRed ? 'red' : null"
- *  - x-class="{ red: isRed, blue: !isRed }"
- *  - x-class="[isRed ? 'inlineClass' : null, { red: isRed, blue: !isRed }]"
- */
-
 import { evaluate } from '../evaluate'
-import { watchStack } from '../reactivity/stack'
-import { isObj } from '../util'
+import { isObj } from '../helpers'
+import type { Directive } from '.'
 
-export function processClass(
-  scope: object,
-  el: HTMLElement,
-  expr: string,
-) {
+export const processClass: Directive = function (ctx, node, { value }) {
   const assignObjectClasses = (parsed: Record<string, unknown>) => {
     for (const key of Object.keys(parsed)) {
       if (parsed[key])
-        el.classList.add(key)
+        node.classList.add(key)
       else
-        el.classList.remove(key)
+        node.classList.remove(key)
     }
   }
 
-  if (expr.startsWith('[')) {
+  if (value.startsWith('[')) {
     // Evaluate Should receive an array of strings or objects. Iterate on it and
     // call either of the process functions
     const prevInlineResults: Record<number, string | null> = Object.create(null)
 
-    watchStack(() => {
-      const results = evaluate(scope, expr)
+    ctx.effect(() => {
+      const results = evaluate(ctx, value)
 
       for (let i = 0; i < results.length; i++) {
         const result = results[i]
@@ -39,12 +27,12 @@ export function processClass(
           const prevResult = prevInlineResults[i]
 
           if (prevResult) {
-            el.classList.remove(prevResult)
+            node.classList.remove(prevResult)
             prevInlineResults[i] = null
           }
         }
         else if (typeof result === 'string') {
-          el.classList.add(result)
+          node.classList.add(result)
           prevInlineResults[i] = result
         }
         else if (isObj(result)) {
@@ -53,12 +41,12 @@ export function processClass(
       }
     })
   }
-  else if (expr.startsWith('{') && expr.endsWith('}')) {
+  else if (value.startsWith('{') && value.endsWith('}')) {
     // Processes object expression. If the value is truthy, the key will be
     // assigned as a classname
     // Eg: { className: expression, display: isVisible }
-    watchStack(() => {
-      const parsed: Record<string, unknown> = evaluate(scope, expr, el)
+    ctx.effect(() => {
+      const parsed: Record<string, unknown> = evaluate(ctx, value, node)
       assignObjectClasses(parsed)
     })
   }
@@ -66,12 +54,12 @@ export function processClass(
     // Processes inline ternary operator expression
     // Eg: "value ? 'class' : null"
     let previous: string
-    watchStack(() => {
+    ctx.effect(() => {
       if (previous)
-        el.classList.remove(previous)
+        node.classList.remove(previous)
 
-      previous = evaluate(scope, expr, el)
-      el.classList.add(previous)
+      previous = evaluate(ctx, value, node)
+      node.classList.add(previous)
     })
   }
 }

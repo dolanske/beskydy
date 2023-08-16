@@ -1,16 +1,12 @@
 import { evaluate } from '../evaluate'
-import { watchStack } from '../reactivity/stack'
+import { type Directive, preProcessDirective } from '.'
 
-/**
- * Sets the HTML of content of the selected element each time expression
- * is evaluated.
- */
-export function processHTML(
-  scope: object,
-  el: Element,
-  expr: string,
-) {
-  watchStack(() => {
-    el.innerHTML = evaluate(scope, expr, el)
+export const processHTML: Directive = function (ctx, node, { value, name }) {
+  preProcessDirective(ctx, node, name, value)
+
+  const expr = value
+
+  ctx.effect(() => {
+    node.innerHTML = evaluate(ctx, expr, node)
   })
 }

@@ -1,19 +1,7 @@
-import type { Scope } from '../app'
+import { type Directive, preProcessDirective } from '.'
 
-/**
- * TODO
- *
- * Saves element into a $refs object which is globally available
- * anywhere and in any scope.
- */
-export function processRef(
-  scope: Scope,
-  el: HTMLElement,
-  expr: string,
-) {
-  // Object.assign(scope.$refs, {
-  //   [expr]: el,
-  // })
+export const processRef: Directive = function (ctx, node, { value, name }) {
+  preProcessDirective(ctx, node, name, value)
 
-  //
+  ctx.addRef(value, node)
 }

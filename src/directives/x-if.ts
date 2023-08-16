@@ -1,10 +1,10 @@
 import { evaluate } from '../evaluate'
-import { watchStack } from '../reactivity/stack'
-import { getAttr } from '../util/domUtils'
+import { getAttr } from '../helpers'
+import { type Directive, preProcessDirective } from '.'
 
 interface Block {
   expr: string | null
-  el: HTMLElement
+  node: HTMLElement
 }
 
 /**
@@ -16,32 +16,34 @@ interface Block {
  *  x-else-if   // Requires expression and adjacent x-if or x-if-else
  *  x-else      // Requires adjacent x-if or x-else
  */
-export function processIf(
-  scope: object,
-  el: HTMLElement,
-  expr: string,
-) {
+
+export const processIf: Directive = function (ctx, node, { name, value }) {
+  preProcessDirective(ctx, node, name, value)
+
   // Holds the reference to the element and its parent node
-  // const savedEl = el
-  const parent = el.parentElement!
+  // const savedEl = node
+  const parent = node.parentElement!
 
   // This serves as an "anchor" to mount the element back in if the provided expression returns true
   const anchor = new Comment('x-if')
-  parent.insertBefore(anchor, el)
+  parent.insertBefore(anchor, node)
 
   // Store each element as a block with its expression
-  const blocks: Block[] = [{ el, expr }]
+  const blocks: Block[] = [{
+    node: node as HTMLElement,
+    expr: value,
+  }]
 
   // Look for v-else-if and v-else elements and their expression
   let elseEl: Element | null
   let elseExpr: string | null
-  while ((elseEl = el.nextElementSibling) !== null) {
+  while ((elseEl = node.nextElementSibling) !== null) {
     if (
       (elseExpr = getAttr(elseEl, 'x-else')) !== null
       || (elseExpr = getAttr(elseEl, 'x-else-if'))
     ) {
       blocks.push({
-        el: elseEl as HTMLElement,
+        node: elseEl as HTMLElement,
         expr: elseExpr,
       })
       // Remove them because they can be re-added during evaluation process
@@ -55,30 +57,30 @@ export function processIf(
     }
   }
 
-  parent.removeChild(el)
+  parent.removeChild(node)
 
   let currentIndex: number
   let currentResult: Block | null
 
   function clear() {
     if (currentResult) {
-      parent.removeChild(currentResult.el)
+      parent.removeChild(currentResult.node)
       currentResult = null
     }
   }
 
-  watchStack(() => {
+  ctx.effect(() => {
     // Iterate over each block and evaluate block expressions
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
-      if (!block.expr || evaluate(scope, block.expr, el)) {
+      if (!block.expr || evaluate(ctx, block.expr, node)) {
         // Passed
         if (currentIndex !== index) {
           if (currentResult)
             clear()
 
-          parent.insertBefore(block.el, anchor)
+          parent.insertBefore(block.node, anchor)
           currentResult = block
           currentIndex = index
         }

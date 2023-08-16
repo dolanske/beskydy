@@ -1,15 +1,12 @@
-import type { Scope } from '../app'
 import { evaluate } from '../evaluate'
-import { watchStack } from '../reactivity/stack'
+import { type Directive, preProcessDirective } from '.'
 
-export function processText(
-  scope: Scope,
-  el: HTMLElement,
-  expr: string,
-) {
-  const rawExpr = expr
-  watchStack(() => {
-    const text = evaluate(scope, rawExpr)
-    el.innerText = text
+export const processText: Directive = function (ctx, node, { name, value }) {
+  preProcessDirective(ctx, node, name, value)
+
+  const expr = value
+
+  ctx.effect(() => {
+    node.textContent = evaluate(ctx, expr, node)
   })
 }
