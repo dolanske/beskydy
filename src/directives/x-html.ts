@@ -1,7 +1,9 @@
 import { evaluate } from '../evaluate'
-import type { Directive } from '.'
+import { type Directive, preProcessDirective } from '.'
 
-export const processHTML: Directive = function (ctx, node, value) {
+export const processHTML: Directive = function (ctx, node, { value, name }) {
+  preProcessDirective(ctx, node, name, value)
+
   const expr = value
 
   ctx.effect(() => {

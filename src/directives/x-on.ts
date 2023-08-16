@@ -1,4 +1,6 @@
 import { execute } from '../evaluate'
+import type { Directive } from '.'
+import { preProcessDirective } from '.'
 
 interface ModifierListenerState {
   calledTimes: number
@@ -31,19 +33,16 @@ export const builtInModifiers: Record<string, Modifier> = {
  * element. The provided expression is evaluated whenever the event is
  * fired.
  */
-export function processOn(
-  scope: object,
-  el: HTMLElement,
-  eventName: string,
-  eventExpr: string,
-) {
-  el.removeAttribute(eventName)
+export const processOn: Directive = function (ctx, node, { name, value }) {
+  preProcessDirective(ctx, node, name, value)
+
   // Get the event name and its modifiers. The two supported syntaxes
   // for binding event listeners are using either `@event` or
   // `x-on:event`. With optional modifiers appended by using
   // `@event.modifier.modifier` etc
-  const eventKeyRaw = (eventName.startsWith('x-on') ? eventName.split(':')[1] : eventName.substring(1)).split('.')
+  const eventKeyRaw = (name.startsWith('x-on') ? name.split(':')[1] : name.substring(1)).split('.')
   const eventKey = eventKeyRaw[0]
+
   // Collect optional modifiers from the event name
   // (event.modifier.modifier) and filter out ones which aren't
   // supported (aka user errors)
@@ -51,21 +50,21 @@ export function processOn(
     return Object.keys(builtInModifiers).includes(modifier)
   }) as (keyof typeof builtInModifiers)[]
 
-  if (eventExpr.startsWith('()'))
-    eventExpr = `(${eventExpr})()`
+  if (value.startsWith('()'))
+    value = `(${value})()`
 
   // State variables, which some of the modifiers use
   const state: ModifierListenerState = {
     calledTimes: 0,
   }
 
-  el.addEventListener(eventKey, (event) => {
+  node.addEventListener(eventKey, (event) => {
     // In case there are modifiers and some of them did NOT pass, do not
     // allow the callback to execute
     if (!modifiers.every(modifier => builtInModifiers[modifier](event, state)))
       return
 
-    execute(scope, eventExpr, el, event)
+    execute(ctx, value, node, event)
     state.calledTimes++
   })
 }

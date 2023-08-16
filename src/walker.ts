@@ -1,8 +1,16 @@
-import { evaluate } from '../v1/evaluate'
+import { evaluate } from './evaluate'
 import { getAttr, isObj } from './helpers'
 import type { ContextAny } from './context'
 import { processRef } from './directives/x-ref'
 import { processText } from './directives/x-text'
+import { processStyle } from './directives/x-style'
+import { processShow } from './directives/x-show'
+import { processHTML } from './directives/x-html'
+import { processBind } from './directives/x-bind'
+import { processClass } from './directives/x-class'
+import { processOn } from './directives/x-on'
+import { processIf } from './directives/x-if'
+import { processModel } from './directives/x-model'
 
 export function walkRoot(ctx: ContextAny, isRootContext: boolean) {
   const walker = document.createTreeWalker(ctx.$root)
@@ -36,17 +44,43 @@ export function walkRoot(ctx: ContextAny, isRootContext: boolean) {
 
 // Can be re-run on sub-sequent dom changes
 export function processNonRootAttrs(ctx: ContextAny, node: HTMLElement) {
-  let attrVal: string | null
+  for (const attr of Array.from(node.attributes)) {
+    // 1. if
+    if (attr.name === 'x-if')
+      processIf(ctx, node, attr)
 
-  // 1
-  if ((attrVal = getAttr(node, 'x-ref')))
-    processRef(ctx, node, attrVal)
+    // 2. for
 
-  // 2
+    // 3. ref
+    if (attr.name === 'x-ref')
+      processRef(ctx, node, attr)
 
-  // Other
-  if ((attrVal = getAttr(node, 'x-text')))
-    processText(ctx, node, attrVal)
+    if (attr.name.startsWith('x-model'))
+      processModel(ctx, node, attr)
+
+    // 4. bind
+    if (attr.name.startsWith('x-bind') || attr.name.startsWith(':'))
+      processBind(ctx, node, attr)
+
+    // Other
+    if (attr.name.startsWith('@') || attr.name.startsWith('x-on'))
+      processOn(ctx, node, attr)
+
+    if (attr.name === 'x-text')
+      processText(ctx, node, attr)
+
+    if (attr.name === 'x-class')
+      processClass(ctx, node, attr)
+
+    if (attr.name === 'x-html')
+      processHTML(ctx, node, attr)
+
+    if (attr.name === 'x-style')
+      processStyle(ctx, node, attr)
+
+    if (attr.name === 'x-show')
+      processShow(ctx, node, attr)
+  }
 }
 
 // Ran only when x-scope is being initialized

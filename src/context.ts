@@ -21,7 +21,7 @@ export class Context<R extends Element, T extends object> {
   // Reactive dataset available to the entire scope
   $data: T
   // Store all scope expressions for an element
-  $expr: WeakMap<Element, { attr: string; expt: string }>
+  $expr: WeakMap<Element, Map<string, string>>
   // All the scope refs, which are accessible even if accessor is a child of the ref
   $refs: Record<string, Element>
   $init: boolean

@@ -3,21 +3,19 @@ import type { ContextAny } from '../context'
 export type Directive = (
   ctx: ContextAny,
   node: Element,
-  attrValue: string,
+  attr: Attr,
 ) => void
 
-// export const directiveRegex = /^(?:v-|:|@)/
-// export const directiveModifierRegex = /\.([\w-]+)/g
+export const preProcessDirective = function (ctx: ContextAny, node: Element, name: string, value: string) {
+  preProcessDirective(ctx, node, name, value)
 
-export type DirectiveWithModifiers = (
-  ctx: ContextAny,
-  node: Element,
-  attrValue: string,
-  attrKey: string
-) => void
+  const exists = ctx.$expr.get(node)
 
-// export const directives = {
-//   'x-ref': processRef,
-// } as const
-
-// export const directiveKeys = Object.keys(directives)
+  if (exists) {
+    exists.set(name, value)
+    ctx.$expr.set(node, exists)
+  }
+  else {
+    ctx.$expr.set(node, new Map([[name, value]]))
+  }
+}

@@ -1,13 +1,8 @@
-import { type Scope, walkRoot } from '../app'
 import { evaluate } from '../evaluate'
-import { stack, watchStack } from '../reactivity/stack'
-import { isArr, isObj } from '../util'
+import { stack } from '../reactivity/stack'
+import type { Directive } from '.'
 
-export function prociessFor(
-  scope: Scope,
-  el: Element,
-  expr: string,
-) {
+export const prociessFor: Directive = function (ctx, node, { value, name }) {
   /**
    * Much more limited that vue's synax.
    * Only supports 3 different types. Array, object and range (number)
@@ -22,8 +17,8 @@ export function prociessFor(
    */
 
   // First, we split strings
-  const [params, _, rawValue] = expr.split(/(?!\(.*)\s(?![^(]*?\))/g)
-  const parent = el.parentElement
+  const [params, _, rawValue] = value.split(/(?!\(.*)\s(?![^(]*?\))/g)
+  const parent = node.parentElement
 
   /**
    * Evaluation process
@@ -37,9 +32,9 @@ export function prociessFor(
 
   // Generate once
 
-  watchStack(() => {
+  ctx.effect(() => {
     let prevEl: HTMLElement | null = null
-    const value = evaluate(scope, rawValue)
+    const value = evaluate(ctx, rawValue)
 
     // Range
     if (typeof value === 'number') {

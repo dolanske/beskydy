@@ -1,46 +1,40 @@
 import { evaluate } from '../evaluate'
-import { watchStack } from '../reactivity/stack'
-import { isNil } from '../util'
-import type { Scope } from '../app'
+import { isNil } from '../helpers'
+import { type Directive, preProcessDirective } from '.'
 
-export function processBind(
-  scope: Scope,
-  el: HTMLElement,
-  attrKey: string,
-  attrVal: string,
-) {
-  el.removeAttribute(attrKey)
-
-  /**
+/**
    * Dynamically bind attribute or attributes if the expression passes
    *
    * Allowed syntax
    *
    * This syntax will bind a value-less attribute (boolean attribute) if the expression matches
+   * - :attributeName="expression"
    * - x-bind:attributeName="expression"
    * - x-bind="{ attributeValue: expression }"
    */
+export const processBind: Directive = function (ctx, node, { name, value }) {
+  preProcessDirective(ctx, node, name, value)
 
-  const [_, attrName] = attrKey.split(':')
+  const [_, propertyName] = name.split(':')
 
   const setOrDelAttr = (key: string, value: any) => {
     if (isNil(value))
-      el.removeAttribute(key)
+      node.removeAttribute(key)
     else
-      el.setAttribute(key, value)
+      node.setAttribute(key, value)
   }
 
-  if (attrName) {
-    // x-bind:attrName="" syntax
-    watchStack(() => {
-      const result = evaluate(scope, attrVal, el)
-      setOrDelAttr(attrName, result)
+  if (propertyName) {
+    // x-bind:propertyName="" syntax
+    ctx.effect(() => {
+      const result = evaluate(ctx, value, node)
+      setOrDelAttr(name, result)
     })
   }
   else {
     // x-bind="{}" syntax
-    watchStack(() => {
-      const results = evaluate(scope, attrVal, el) ?? {}
+    ctx.effect(() => {
+      const results = evaluate(ctx, value, node) ?? {}
 
       for (const key of Object.keys(results)) {
         const result = results[key]
