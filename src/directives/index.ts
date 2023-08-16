@@ -7,8 +7,6 @@ export type Directive = (
 ) => void
 
 export const preProcessDirective = function (ctx: ContextAny, node: Element, name: string, value: string) {
-  preProcessDirective(ctx, node, name, value)
-
   const exists = ctx.$expr.get(node)
 
   if (exists) {

@@ -11,6 +11,7 @@ import { processClass } from './directives/x-class'
 import { processOn } from './directives/x-on'
 import { processIf } from './directives/x-if'
 import { processModel } from './directives/x-model'
+import { processFor } from './directives/x-for'
 
 export function walkRoot(ctx: ContextAny, isRootContext: boolean) {
   const walker = document.createTreeWalker(ctx.$root)
@@ -50,6 +51,8 @@ export function processNonRootAttrs(ctx: ContextAny, node: HTMLElement) {
       processIf(ctx, node, attr)
 
     // 2. for
+    if (attr.name === 'x-for')
+      processFor(ctx, node, attr)
 
     // 3. ref
     if (attr.name === 'x-ref')

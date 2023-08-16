@@ -20,23 +20,17 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{msg: 'hello'}">
-        <div x-ref="source" style="display:none">Hello World</div>
-        <span  x-text="$refs.source.textContent"></span>
-      </div>
-
-      <!-- <div x-scope="{ title: 'People' }">
+      <div x-scope="{ title: 'People' }">
         <input type="text" x-model="title">
         <ul>
           <li x-for="item in 10">
             <span x-text="`${item + 1} ${title}`"></span>
           </li>
         </ul>
-      </div> -->
+      </div>
     </div>
-    <!-- <script type="module" src="./src/v2/main.ts"></script> -->
     <script type="module">
-      import { createApp } from './src/v2/scope.ts'
+      import { createApp } from './src/scope.ts'
 
       createApp()
     </script>

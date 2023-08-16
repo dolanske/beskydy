@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
-import { nit, watchNit } from '../../v1/reactivity/nit'
-import { watchStack } from '../../v1/reactivity/stack'
+import { nit, watchNit } from '../reactivity/nit'
+import { watchStack } from '../reactivity/stack'
 
 describe.skip('Nit', () => {
   test('Defaults and initialization', () => {

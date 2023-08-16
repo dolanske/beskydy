@@ -17,7 +17,6 @@ export function createScope(scopeRoot: Element) {
 
   return {
     ctx,
-    scopeRoot,
     // dispose: () => {
     //   // TODO
     //   // Remove element from DOM etc

@@ -44,6 +44,8 @@ export class Context<R extends Element, T extends object> {
   }
 
   extend(ctx: ContextAny) {
+    Object.assign(this.$refs, ctx.$refs)
+
     if (ctx.$data)
       Object.assign(this.$data, ctx.$data)
   }

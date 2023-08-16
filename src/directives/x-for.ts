@@ -1,8 +1,14 @@
 import { evaluate } from '../evaluate'
 import { isArr, isObj } from '../helpers'
+import type { ContextAny } from '../context'
+import { Context } from '../context'
+import { walkRoot } from '../walker'
 import type { Directive } from '.'
+import { preProcessDirective } from '.'
 
-export const prociessFor: Directive = function (ctx, node, { value, name }) {
+export const processFor: Directive = function (ctx, node, { value, name }) {
+  preProcessDirective(ctx, node, name, value)
+
   /**
    * Much more limited that vue's synax.
    * Only supports 3 different types. Array, object and range (number)
@@ -28,10 +34,10 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
    *  - If expression changes, we remoe all nodes and go back to step #1
    *
    */
-  // const cached: Record<number, Element | undefined> = {}
+  const cached: Record<number, ContextAny | undefined> = {}
 
   ctx.effect(() => {
-    const prevEl: HTMLElement | null = null
+    let prevEl: HTMLElement | null = null
     const value = evaluate(ctx, rawValue)
 
     // Range
@@ -53,7 +59,23 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
       // }
       // else {
       for (const i in Array.from({ length: value })) {
+        const index = Number(i)
+        const newEl = <HTMLElement>node.cloneNode(true)
 
+        const newCtx = new Context(newEl)
+        newCtx.extend(ctx)
+        newCtx.$expr.set(newEl, new Map([[name, rawValue]]))
+
+        if (!prevEl)
+          parent?.replaceChild(newEl, node)
+        else
+          prevEl.after(newEl)
+
+        cached[index] = newCtx
+
+        walkRoot(newCtx, true)
+
+        prevEl = newEl
       }
       // }
     }
