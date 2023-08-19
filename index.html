@@ -20,14 +20,22 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ listItems: 3 }">
-        <input type="text" x-model.number="listItems">
+      <div x-scope="{ count: 0, increment: 5 }">
+        <button
+          x-on:click="count += increment"
+          x-text="`Add ${increment}`"
+        ></button>
+        <span>The count is { count }</span>
+      </div>
+
+      <!-- <div x-scope="{ title: 'People' }">
+        <input type="text" x-model="title">
         <ul>
           <li x-for="item in listItems">
             <span x-text="item + 1"></span>
           </li>
         </ul>
-      </div>
+      </div> --> 
     </div>
     <script type="module">
       import { createApp } from './src/scope.ts'

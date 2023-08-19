@@ -48,8 +48,6 @@ function getOrCreateDep(target: RawObject, key: any) {
 
 const proxyValidator: ProxyHandler<object> = {
   get(target: RawObject, key: PropertyKey, receiver: any): any {
-    // console.log(key, receiver)
-
     if (typeof target[key] === 'object')
       return new Proxy(target[key], proxyValidator)
 

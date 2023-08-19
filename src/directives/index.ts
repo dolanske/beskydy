@@ -8,13 +8,5 @@ export type Directive = (
 
 export const preProcessDirective = function (ctx: ContextAny, node: Element, name: string, value: string) {
   node.removeAttribute(name)
-  const exists = ctx.$expr.get(node)
-
-  if (exists) {
-    exists.set(name, value)
-    ctx.$expr.set(node, exists)
-  }
-  else {
-    ctx.$expr.set(node, new Map([[name, value]]))
-  }
+  ctx.addExpr(node, name, value)
 }
