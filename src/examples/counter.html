@@ -1,8 +1,4 @@
-<div x-scope x-data="{ count: 0 }">
-  <button
-    x-data="{ increment: 2 }"
-    x-on:click="count += increment"
-    x-text="`Add ${increment}`"
-  ></button>
-  <span x-text="count"></span>
+<div x-scope="{ count: 0 }">
+  <button x-data="{ increment: 2 }" x-on:click="count += increment">Add { increment }</button>
+  <span>The count is { count }</span>
 </div>

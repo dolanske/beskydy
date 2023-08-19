@@ -59,10 +59,15 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
       }
 
       try {
+        if (!attr.value)
+          return
+
         const data = evaluate({}, attr.value)
 
         if (!isObj(data))
-          console.warn('[x-scope/x-data] Data must be an object')
+          return
+
+        console.log(data)
 
         for (const key of Object.keys(data)) {
           Object.defineProperty(ctx.$data, key, {

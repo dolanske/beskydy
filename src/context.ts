@@ -1,5 +1,6 @@
 import type { UnwrapNestedRefs } from '@vue/reactivity'
 import { effect as rawEffect, reactive } from '@vue/reactivity'
+import { globalState } from './scope'
 
 // let queued = false
 // const queue: Function[] = []
@@ -37,19 +38,15 @@ export class Context<R extends Element, T extends object> {
   // All the scope refs, which are accessible even if accessor is a child of the ref
   $refs: Record<string, Element>
   $init: boolean
-
-  // __effects: Set<EffectFn> = new Set()
+  $global: UnwrapNestedRefs<any>
 
   constructor(root: R, initialDataset?: T) {
     this.$root = root
-    this.$data = reactive<T>(Object.assign({}, initialDataset))
+    this.$data = reactive<T & typeof globalState>(Object.assign({}, globalState, initialDataset))
     this.$refs = {}
     this.$expr = new WeakMap()
     this.$init = false
   }
-
-  //
-  // Public API
 
   // Watch effects
   effect = rawEffect

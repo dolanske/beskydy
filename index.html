@@ -15,24 +15,34 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ count: 0 }">
-        <button x-on:click="count += 5">Increment</button>
-        <span>The count is { count * 2 }</span>
+      <div x-scope> 
+        <!-- <button x-on:click="getName()">Fetch</button> -->
+        <hr>
+        <!-- <span x-if="loading">LOADING DATA</span> -->
       </div>
 
       <!-- <div x-scope="{ title: 'People' }">
         <input type="text" x-model="title">
+
         <ul>
           <li x-for="item in listItems">
             <span x-text="item + 1"></span>
           </li>
         </ul>
-      </div> --> 
+      </div>  -->
     </div>
     <script type="module">
       import { createApp } from './src/scope.ts'
 
-      createApp()
+      createApp({
+        loading: false,
+        user: '',
+        async getName() {
+          this.loading = true
+          this.user = await fetch('https://swapi.dev/api/people/1')
+          this.loading = false
+        },
+      })
     </script>
   </body>
 </html>

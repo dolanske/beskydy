@@ -88,7 +88,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
           else
             prevEl.after(newEl)
 
-          walk(newCtx, true)
+          walk(newCtx)
 
           cached[index] = newCtx
           prevEl = newEl
