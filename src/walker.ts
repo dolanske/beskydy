@@ -1,4 +1,3 @@
-import { effect } from '@vue/reactivity'
 import { evaluate } from './evaluate'
 import { getAttr, isObj } from './helpers'
 import type { ContextAny } from './context'
@@ -14,11 +13,11 @@ import { processIf } from './directives/x-if'
 import { processModel } from './directives/x-model'
 import { processFor } from './directives/x-for'
 
-export function walkRoot(ctx: ContextAny, isRootContext: boolean) {
+export function walk(ctx: ContextAny) {
   const walker = document.createTreeWalker(ctx.$root)
   let node: Node | null = walker.root
 
-  while (node !== null) {
+  while (node) {
     if (node.nodeType === 1) {
       // Element
       const _node = node as HTMLElement
@@ -42,7 +41,7 @@ export function walkRoot(ctx: ContextAny, isRootContext: boolean) {
        * 3. Replace entire content between delimiters with the result of the expression
        */
 
-      transformTextNode(ctx, node)
+      processTextNode(ctx, node)
     }
 
     node = walker.nextNode()
@@ -120,25 +119,37 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
   }
 }
 
-export function transformTextNode(ctx: ContextAny, node: Node) {
+export function processTextNode(ctx: ContextAny, node: Node) {
+  // This should never be hit as only text nodes are processed, but
+  // typescript is a known crybaby
   if (!node.textContent)
     return
 
+  // Save the original expression
+  const originalTextContent = node.textContent
+  // Extract expressions from text node wrapped within the delimiters
+  // For instance { expression }
   const delimitersInclusive = /(?=\{)(.*?)(?<=\})/g
-  const groups = node.textContent?.match(delimitersInclusive)
+  // Match all occurences of { } within a text node
+  const exprGroup = originalTextContent.match(delimitersInclusive)
 
-  if (!groups || groups.length === 0)
+  if (!exprGroup || exprGroup.length === 0)
     return
 
-  effect(() => {
-    for (const expr of groups) {
-      const extractedExpr = expr.replace('{', '').replace('}', '')
+  ctx.effect(() => {
+    let finalTextContent = originalTextContent
 
+    for (const expr of exprGroup) {
+      // Get the expression without the delimiters
+      const extractedExpr = expr.replace('{', '').replace('}', '')
       if (!extractedExpr)
         continue
 
-      const result = evaluate(ctx.$data, extractedExpr)
-      node.textContent = String(node.textContent?.replace(expr, result))
+      // Evaluate and replace part of the original text content
+      const result = evaluate(ctx.$data, extractedExpr, node)
+      finalTextContent = finalTextContent.replace(expr, result)
     }
+
+    node.textContent = finalTextContent
   })
 }

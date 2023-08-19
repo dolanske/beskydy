@@ -1,4 +1,5 @@
 import { getAttr } from '../helpers'
+import { evaluate } from '../evaluate'
 import { type Directive, preProcessDirective } from '.'
 
 interface Block {

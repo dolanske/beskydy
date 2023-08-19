@@ -1,5 +1,5 @@
-import type { ReactiveEffectRunner, UnwrapNestedRefs } from '@vue/reactivity'
-import { effect, reactive } from '@vue/reactivity'
+import type { UnwrapNestedRefs } from '@vue/reactivity'
+import { effect as rawEffect, reactive } from '@vue/reactivity'
 
 // let queued = false
 // const queue: Function[] = []
@@ -23,8 +23,6 @@ import { effect, reactive } from '@vue/reactivity'
 //   queued = false
 // }
 
-type EffectFn = () => void
-
 /**
  * Piece of DOM which holds its own state.
  */
@@ -40,7 +38,7 @@ export class Context<R extends Element, T extends object> {
   $refs: Record<string, Element>
   $init: boolean
 
-  __effects: Set<EffectFn> = new Set()
+  // __effects: Set<EffectFn> = new Set()
 
   constructor(root: R, initialDataset?: T) {
     this.$root = root
@@ -48,28 +46,20 @@ export class Context<R extends Element, T extends object> {
     this.$refs = {}
     this.$expr = new WeakMap()
     this.$init = false
-
-    effect(() => {
-      console.log(this.$data)
-    })
   }
 
   //
   // Public API
-  //
-  effect(fn: EffectFn) {
-    const _fn: ReactiveEffectRunner = effect(fn, {
-      // scheduler: () => queueJob(_fn)
-    })
-    this.__effects.add(_fn)
 
-    return () => this.__effects.delete(_fn)
-  }
+  // Watch effects
+  effect = rawEffect
 
+  // Store refs for access within scope
   addRef(key: string, ref: Element) {
     Object.assign(this.$refs, { [key]: ref })
   }
 
+  // Save expression within a scope
   addExpr(node: Element, name: string, value: string) {
     const exists = this.$expr.get(node)
 
@@ -82,6 +72,8 @@ export class Context<R extends Element, T extends object> {
     }
   }
 
+  // When creating sub contexts, this allows for a parent context to
+  // share its reactive properties with the child context
   extend(ctx: ContextAny) {
     Object.assign(this.$refs, ctx.$refs)
 

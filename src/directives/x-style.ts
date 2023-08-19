@@ -1,4 +1,5 @@
 import { isObj } from '../helpers'
+import { evaluate } from '../evaluate'
 import { type Directive, preProcessDirective } from '.'
 
 export const processStyle: Directive = function (ctx, node, { value, name }) {

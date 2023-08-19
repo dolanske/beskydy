@@ -1,3 +1,4 @@
+import { evaluate } from '../evaluate'
 import { type Directive, preProcessDirective } from '.'
 
 /**

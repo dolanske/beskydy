@@ -1,7 +1,7 @@
 import { isArr, isObj } from '../helpers'
 import type { ContextAny } from '../context'
 import { Context } from '../context'
-import { walkRoot } from '../walker'
+import { walk } from '../walker'
 import { evaluate } from '../evaluate'
 import type { Directive } from '.'
 import { preProcessDirective } from '.'
@@ -55,7 +55,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
       //     console.log(newScope)
 
       //     // Walk and process all child nodes including self
-      //     walkRoot(newEl, newScope, false)
+      //     walk(newEl, newScope, false)
       //   })
       // }
       // else {
@@ -88,7 +88,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
           else
             prevEl.after(newEl)
 
-          walkRoot(newCtx, true)
+          walk(newCtx, true)
 
           cached[index] = newCtx
           prevEl = newEl
