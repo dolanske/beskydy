@@ -1,5 +1,5 @@
-import { evaluate } from '../evaluate'
 import { getAttr } from '../helpers'
+import { evaluate } from '../evaluate'
 import { type Directive, preProcessDirective } from '.'
 
 interface Block {
@@ -74,7 +74,7 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
-      if (!block.expr || evaluate(ctx, block.expr, node)) {
+      if (!block.expr || evaluate(ctx.$data, block.expr, node)) {
         // Passed
         if (currentIndex !== index) {
           if (currentResult)

@@ -10,35 +10,39 @@
       type="image/x-icon"
     />
     <style>
-      html,
-      body,
-      * {
-        color: white;
-        background-color: black;
-      }
+      html, body, * { color: white; background-color: black; }
     </style>
   </head>
   <body>
     <div id="app">
-      <div x-scope="{msg: 'hello'}">
-        <div x-ref="source" style="display:none">Hello World</div>
-        <span  x-text="$refs.source.textContent"></span>
+      <div x-scope> 
+        <!-- <button x-on:click="getName()">Fetch</button> -->
+        <hr>
+        <!-- <span x-if="loading">LOADING DATA</span> -->
       </div>
 
       <!-- <div x-scope="{ title: 'People' }">
         <input type="text" x-model="title">
+
         <ul>
-          <li x-for="item in 10">
-            <span x-text="`${item + 1} ${title}`"></span>
+          <li x-for="item in listItems">
+            <span x-text="item + 1"></span>
           </li>
         </ul>
-      </div> -->
+      </div>  -->
     </div>
-    <!-- <script type="module" src="./src/v2/main.ts"></script> -->
     <script type="module">
-      import { createApp } from './src/v2/scope.ts'
+      import { createApp } from './src/scope.ts'
 
-      createApp()
+      createApp({
+        loading: false,
+        user: '',
+        async getName() {
+          this.loading = true
+          this.user = await fetch('https://swapi.dev/api/people/1')
+          this.loading = false
+        },
+      })
     </script>
   </body>
 </html>

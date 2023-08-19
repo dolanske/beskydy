@@ -1,3 +1,3 @@
-import { createApp } from './scope'
-
-createApp()
+export function hello() {
+  return true
+}

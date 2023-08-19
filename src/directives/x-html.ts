@@ -7,6 +7,6 @@ export const processHTML: Directive = function (ctx, node, { value, name }) {
   const expr = value
 
   ctx.effect(() => {
-    node.innerHTML = evaluate(ctx, expr, node)
+    node.innerHTML = evaluate(ctx.$data, expr, node)
   })
 }

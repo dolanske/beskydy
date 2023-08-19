@@ -13,7 +13,7 @@ export function useClickExample(doc: Document) {
   return [scope, btn, text] as const
 }
 
-export function useExampleWithRef(doc: Document) {
+export function useRefExample(doc: Document) {
   const scope = doc.createElement('div')
   scope.setAttribute('x-scope', '{}')
 
@@ -27,4 +27,17 @@ export function useExampleWithRef(doc: Document) {
 
   scope.append(refEl, text)
   return [scope, refEl, text] as const
+}
+
+export function useForExample(doc: Document) {
+  const scope = doc.createElement('ul')
+  scope.setAttribute('x-scope', '{ count: 5 }')
+
+  const item = doc.createElement('li')
+  item.setAttribute('x-for', 'item in count')
+  item.setAttribute('x-text', 'item')
+
+  scope.append(item)
+
+  return [scope, item] as const
 }

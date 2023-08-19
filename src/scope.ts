@@ -1,7 +1,11 @@
+import { reactive } from '@vue/reactivity'
 import { Context } from './context'
-import { walkRoot } from './walker'
+import { walk } from './walker'
 
-export function createApp() {
+export const globalState = reactive({})
+
+export function createApp<T extends object>(initialDataset: T) {
+  Object.assign(globalState, initialDataset)
   const scopeRoots = Array.from(document.querySelectorAll('[x-scope]'))
 
   for (const scopeRoot of scopeRoots)
@@ -11,16 +15,9 @@ export function createApp() {
 export function createScope(scopeRoot: Element) {
   const ctx = new Context(scopeRoot)
   scopeRoot.setAttribute('style', 'display:none;')
-  walkRoot(ctx, true)
+  walk(ctx)
   ctx.$init = true
   scopeRoot.removeAttribute('style')
 
-  return {
-    ctx,
-    scopeRoot,
-    // dispose: () => {
-    //   // TODO
-    //   // Remove element from DOM etc
-    // },
-  }
+  return { ctx }
 }

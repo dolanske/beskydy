@@ -1,8 +1,14 @@
+import { isArr, isObj } from '../helpers'
+import type { ContextAny } from '../context'
+import { Context } from '../context'
+import { walk } from '../walker'
 import { evaluate } from '../evaluate'
-import { stack } from '../reactivity/stack'
 import type { Directive } from '.'
+import { preProcessDirective } from '.'
 
-export const prociessFor: Directive = function (ctx, node, { value, name }) {
+export const processFor: Directive = function (ctx, node, { value, name }) {
+  preProcessDirective(ctx, node, name, value)
+
   /**
    * Much more limited that vue's synax.
    * Only supports 3 different types. Array, object and range (number)
@@ -28,13 +34,12 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
    *  - If expression changes, we remoe all nodes and go back to step #1
    *
    */
-  const cached: Record<number, Element | undefined> = {}
-
-  // Generate once
+  const cached: Record<number, ContextAny | undefined> = {}
+  const cahedKeys = Object.keys(cached)
 
   ctx.effect(() => {
     let prevEl: HTMLElement | null = null
-    const value = evaluate(ctx, rawValue)
+    const value = evaluate(ctx.$data, rawValue)
 
     // Range
     if (typeof value === 'number') {
@@ -50,40 +55,45 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
       //     console.log(newScope)
 
       //     // Walk and process all child nodes including self
-      //     walkRoot(newEl, newScope, false)
+      //     walk(newEl, newScope, false)
       //   })
       // }
       // else {
-      for (const i in Array.from({ length: value })) {
-        const index = Number(i)
-        const existingEl = cached[index]
-        // Evaluate and assign scope to a new "clone" of the scope for each branch
-        const newScope = stack({})
-        Object.assign(newScope, scope)
-        Object.assign(newScope, { [params]: index })
 
-        if (existingEl) {
-          // Update
-          // parent.repl
+      if (cahedKeys.length === value) {
 
+      }
+      else {
+        // Before clearing, should remoev ALL children if they exist
+        if (cahedKeys.length > 0) {
+          Object.values(cached).forEach((cachedCtx) => {
+            //
+            // Flush / close context
+            // TODO
+            cachedCtx?.$root.remove()
+          })
         }
-        else {
-          // Create
-          const newEl = el.cloneNode(true) as HTMLElement
+
+        for (const i in Array.from({ length: value })) {
+          const index = Number(i)
+          const newEl = <HTMLElement>node.cloneNode(true)
+          const newCtx = new Context(newEl)
+          newCtx.extend(ctx)
+
+          Object.assign(newCtx.$data, { [params]: index })
+          newCtx.$expr.set(newEl, new Map([[name, rawValue]]))
+
           if (!prevEl)
-            parent?.replaceChild(newEl, el)
+            parent?.replaceChild(newEl, node)
           else
             prevEl.after(newEl)
 
-          // Cache element before it's processed. Leaving the original attributes
-          cached[index] = newEl
-          // Walk and process all child nodes including self
-          walkRoot(newEl, newScope, false)
+          walk(newCtx)
 
+          cached[index] = newCtx
           prevEl = newEl
         }
       }
-      // }
     }
     // Item in array
     else if (isArr(value)) {
@@ -97,6 +107,6 @@ export const prociessFor: Directive = function (ctx, node, { value, name }) {
       throw new TypeError('Unsupported value was used in \'x-for\'. Please only use a number, array or an object')
     }
 
-    el.remove()
+    node.remove()
   })
 }

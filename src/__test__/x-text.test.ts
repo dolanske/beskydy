@@ -1,13 +1,13 @@
 import { expect, test } from 'vitest'
 import { createScope } from '../scope'
-import { useExampleWithRef } from './util/dom'
+import { useRefExample } from './util/dom'
 
 /**
  * @vitest-environment jsdom
  */
 
 test('x-text directive', async () => {
-  const [scope, , text] = useExampleWithRef(document)
+  const [scope, , text] = useRefExample(document)
   createScope(scope)
   expect(text.textContent).toBe('Hello World')
 })
