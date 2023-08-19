@@ -1,4 +1,3 @@
-import { evaluate } from '../evaluate'
 import { type Directive, preProcessDirective } from '.'
 
 /**
@@ -14,7 +13,7 @@ export const processShow: Directive = function (ctx, node, { value, name }) {
     return
 
   ctx.effect(() => {
-    const result = evaluate(ctx, expr, node)
+    const result = evaluate(ctx.$data, expr, node)
     if (result)
       (node as HTMLElement).style.removeProperty('display')
     else

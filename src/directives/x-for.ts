@@ -1,8 +1,8 @@
-import { evaluate } from '../evaluate'
 import { isArr, isObj } from '../helpers'
 import type { ContextAny } from '../context'
 import { Context } from '../context'
 import { walkRoot } from '../walker'
+import { evaluate } from '../evaluate'
 import type { Directive } from '.'
 import { preProcessDirective } from '.'
 
@@ -35,10 +35,11 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
    *
    */
   const cached: Record<number, ContextAny | undefined> = {}
+  const cahedKeys = Object.keys(cached)
 
   ctx.effect(() => {
     let prevEl: HTMLElement | null = null
-    const value = evaluate(ctx, rawValue)
+    const value = evaluate(ctx.$data, rawValue)
 
     // Range
     if (typeof value === 'number') {
@@ -58,26 +59,41 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
       //   })
       // }
       // else {
-      for (const i in Array.from({ length: value })) {
-        const index = Number(i)
-        const newEl = <HTMLElement>node.cloneNode(true)
 
-        const newCtx = new Context(newEl)
-        newCtx.extend(ctx)
-        newCtx.$expr.set(newEl, new Map([[name, rawValue]]))
+      if (cahedKeys.length === value) {
 
-        if (!prevEl)
-          parent?.replaceChild(newEl, node)
-        else
-          prevEl.after(newEl)
-
-        cached[index] = newCtx
-
-        walkRoot(newCtx, true)
-
-        prevEl = newEl
       }
-      // }
+      else {
+        // Before clearing, should remoev ALL children if they exist
+        if (cahedKeys.length > 0) {
+          Object.values(cached).forEach((cachedCtx) => {
+            //
+            // Flush / close context
+            // TODO
+            cachedCtx?.$root.remove()
+          })
+        }
+
+        for (const i in Array.from({ length: value })) {
+          const index = Number(i)
+          const newEl = <HTMLElement>node.cloneNode(true)
+          const newCtx = new Context(newEl)
+          newCtx.extend(ctx)
+
+          Object.assign(newCtx.$data, { [params]: index })
+          newCtx.$expr.set(newEl, new Map([[name, rawValue]]))
+
+          if (!prevEl)
+            parent?.replaceChild(newEl, node)
+          else
+            prevEl.after(newEl)
+
+          walkRoot(newCtx, true)
+
+          cached[index] = newCtx
+          prevEl = newEl
+        }
+      }
     }
     // Item in array
     else if (isArr(value)) {

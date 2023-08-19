@@ -1,4 +1,3 @@
-import { evaluate } from '../evaluate'
 import { isObj } from '../helpers'
 import type { Directive } from '.'
 
@@ -18,7 +17,7 @@ export const processClass: Directive = function (ctx, node, { value }) {
     const prevInlineResults: Record<number, string | null> = Object.create(null)
 
     ctx.effect(() => {
-      const results = evaluate(ctx, value)
+      const results = evaluate(ctx.$data, value)
 
       for (let i = 0; i < results.length; i++) {
         const result = results[i]
@@ -46,7 +45,7 @@ export const processClass: Directive = function (ctx, node, { value }) {
     // assigned as a classname
     // Eg: { className: expression, display: isVisible }
     ctx.effect(() => {
-      const parsed: Record<string, unknown> = evaluate(ctx, value, node)
+      const parsed: Record<string, unknown> = evaluate(ctx.$data, value, node)
       assignObjectClasses(parsed)
     })
   }
@@ -58,7 +57,7 @@ export const processClass: Directive = function (ctx, node, { value }) {
       if (previous)
         node.classList.remove(previous)
 
-      previous = evaluate(ctx, value, node)
+      previous = evaluate(ctx.$data, value, node)
       node.classList.add(previous)
     })
   }

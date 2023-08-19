@@ -20,11 +20,11 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ title: 'People' }">
-        <input type="text" x-model="title">
+      <div x-scope="{ listItems: 3 }">
+        <input type="text" x-model.number="listItems">
         <ul>
-          <li x-for="item in 10">
-            <span x-text="`${item + 1} ${title}`"></span>
+          <li x-for="item in listItems">
+            <span x-text="item + 1"></span>
           </li>
         </ul>
       </div>
