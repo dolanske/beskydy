@@ -1,6 +1,6 @@
 # beskydy
 
- Like alps, but smaller. Alpine / vue-petite but mine I guess.
+ Like alps, but smaller. Alpine / vue-petite inspired but mostly implemented by me. This is a learning project, but feedback or issues are more than welcome. Try it out :D
 
  ```html
 <div x-scope="{ count: 0 }">
@@ -12,9 +12,3 @@
   <span x-text="count"></span>
 </div>
  ```
-
-## TODO
-
-- [ ] x-for
-- [ ] x-cloak
-  - hide element (x-show) until the whole scope is processed
