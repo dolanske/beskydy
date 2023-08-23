@@ -24,28 +24,26 @@ import { globalState } from './scope'
 //   queued = false
 // }
 
+export type ContextAny = Context<Element, object>
+
 /**
  * Piece of DOM which holds its own state.
  */
 
 export class Context<R extends Element, T extends object> {
   // Store the context root element
-  $root: Element
+  root: Element
   // Reactive dataset available to the entire scope
-  $data: UnwrapNestedRefs<T>
-  // Store all scope expressions for an element
-  $expr: WeakMap<Element, Map<string, string>>
+  data: UnwrapNestedRefs<T>
   // All the scope refs, which are accessible even if accessor is a child of the ref
-  $refs: Record<string, Element>
-  $init: boolean
-  $global: UnwrapNestedRefs<any>
+  refs: Record<string, Element>
+  init: boolean
 
   constructor(root: R, initialDataset?: T) {
-    this.$root = root
-    this.$data = reactive<T & typeof globalState>(Object.assign({}, globalState, initialDataset))
-    this.$refs = {}
-    this.$expr = new WeakMap()
-    this.$init = false
+    this.root = root
+    this.data = reactive<T & typeof globalState>(Object.assign({}, globalState, initialDataset))
+    this.refs = {}
+    this.init = false
   }
 
   // Watch effects
@@ -53,30 +51,15 @@ export class Context<R extends Element, T extends object> {
 
   // Store refs for access within scope
   addRef(key: string, ref: Element) {
-    Object.assign(this.$refs, { [key]: ref })
-  }
-
-  // Save expression within a scope
-  addExpr(node: Element, name: string, value: string) {
-    const exists = this.$expr.get(node)
-
-    if (exists) {
-      exists.set(name, value)
-      this.$expr.set(node, exists)
-    }
-    else {
-      this.$expr.set(node, new Map([[name, value]]))
-    }
+    Object.assign(this.refs, { [key]: ref })
   }
 
   // When creating sub contexts, this allows for a parent context to
   // share its reactive properties with the child context
   extend(ctx: ContextAny) {
-    Object.assign(this.$refs, ctx.$refs)
+    Object.assign(this.refs, ctx.refs)
 
-    if (ctx.$data)
-      Object.assign(this.$data, ctx.$data)
+    if (ctx.data)
+      Object.assign(this.data, ctx.data)
   }
 }
-
-export type ContextAny = Context<Element, object>

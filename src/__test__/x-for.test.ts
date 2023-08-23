@@ -10,5 +10,5 @@ test('x-for', () => {
   const [scope] = useForExample(document)
   const { ctx } = createScope(scope)
 
-  expect(ctx.$root.children.length).toBe(5)
+  expect(ctx.root.children.length).toBe(5)
 })

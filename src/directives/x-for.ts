@@ -1,13 +1,12 @@
-import { isArr, isObj } from '../helpers'
+import { isArr, isObj, removeChildren } from '../helpers'
 import type { ContextAny } from '../context'
 import { Context } from '../context'
 import { walk } from '../walker'
 import { evaluate } from '../evaluate'
 import type { Directive } from '.'
-import { preProcessDirective } from '.'
 
 export const processFor: Directive = function (ctx, node, { value, name }) {
-  preProcessDirective(ctx, node, name, value)
+  node.removeAttribute(name)
 
   /**
    * Much more limited that vue's synax.
@@ -27,6 +26,8 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
   const parent = node.parentElement
 
   /**
+   * REVIEW: maybe in the future
+   *
    * Evaluation process
    *
    * 1. Generate nodes once and save them to an array
@@ -34,79 +35,81 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
    *  - If expression changes, we remoe all nodes and go back to step #1
    *
    */
-  const cached: Record<number, ContextAny | undefined> = {}
-  const cahedKeys = Object.keys(cached)
+  const originalNode = node.cloneNode(true)
+  node.remove()
+
+  // Methods using this scope's variables
+  // Create new node and context by cloning the original node.
+  const createForItemCtx = () => {
+    const newEl = <HTMLElement>originalNode.cloneNode(true)
+    const newCtx = new Context(newEl)
+    newCtx.extend(ctx)
+    return { newEl, newCtx }
+  }
+
+  // Appends the new element to the parent and walks through attribute setup
+  // itself and its children.
+  const appendAndWalkItem = (newEl: HTMLElement, newCtx: ContextAny) => {
+    parent?.appendChild(newEl)
+    walk(newCtx)
+  }
 
   ctx.effect(() => {
-    let prevEl: HTMLElement | null = null
-    const value = evaluate(ctx.$data, rawValue)
+    const evalExpr = evaluate(ctx.data, rawValue)
 
     // Range
-    if (typeof value === 'number') {
-      // if (cachedKeys.length === value) {
-      //   cachedKeys.forEach((key, index) => {
-      //     // const newEl = el.cloneNode(true) as HTMLElement
-      //     const newEl = cached[Number(key)]
-      //     const newScope = stack({})
+    if (typeof evalExpr === 'number') {
+      // Before clearing, should remoev ALL children if they exist
+      removeChildren(parent!)
 
-      //     Object.assign(newScope, scope)
-      //     Object.assign(newScope, { [params]: index })
-
-      //     console.log(newScope)
-
-      //     // Walk and process all child nodes including self
-      //     walk(newEl, newScope, false)
-      //   })
-      // }
-      // else {
-
-      if (cahedKeys.length === value) {
-
-      }
-      else {
-        // Before clearing, should remoev ALL children if they exist
-        if (cahedKeys.length > 0) {
-          Object.values(cached).forEach((cachedCtx) => {
-            //
-            // Flush / close context
-            // TODO
-            cachedCtx?.$root.remove()
-          })
-        }
-
-        for (const i in Array.from({ length: value })) {
-          const index = Number(i)
-          const newEl = <HTMLElement>node.cloneNode(true)
-          const newCtx = new Context(newEl)
-          newCtx.extend(ctx)
-
-          Object.assign(newCtx.$data, { [params]: index })
-          newCtx.$expr.set(newEl, new Map([[name, rawValue]]))
-
-          if (!prevEl)
-            parent?.replaceChild(newEl, node)
-          else
-            prevEl.after(newEl)
-
-          walk(newCtx)
-
-          cached[index] = newCtx
-          prevEl = newEl
-        }
+      for (const i in Array.from({ length: evalExpr })) {
+        const { newEl, newCtx } = createForItemCtx()
+        Object.assign(newCtx.data, { [params]: Number(i) })
+        appendAndWalkItem(newEl, newCtx)
       }
     }
     // Item in array
-    else if (isArr(value)) {
-      //
+    else if (isArr(evalExpr)) {
+      // Extract values from '(value, index?)' string
+      const [valueName, indexName] = params.replace('(', '').replace(')', '').split(',')
+      const trimmedValueName = valueName.trim()
+      const trimmedIndexName = indexName?.trim()
+
+      evalExpr.forEach((item, index) => {
+        const { newEl, newCtx } = createForItemCtx()
+
+        Object.assign(newCtx.data, { [trimmedValueName]: item })
+
+        if (trimmedIndexName)
+          Object.assign(newCtx.data, { [trimmedIndexName]: Number(index) })
+
+        appendAndWalkItem(newEl, newCtx)
+      })
     }
     // Iterating in objecy
-    else if (isObj(value)) {
-      //
+    else if (isObj(evalExpr)) {
+      // Extract values from '(value, key?, index?)' string
+      const [valueName, keyName, indexName] = params.replace('(', '').replace(')', '').split(',')
+      const trimmedValueName = valueName.trim()
+      const trimmedKeyName = keyName?.trim()
+      const trimmedIndexName = indexName?.trim()
+
+      Object.entries(evalExpr).forEach(([key, value], index) => {
+        const { newEl, newCtx } = createForItemCtx()
+
+        Object.assign(newCtx.data, { [trimmedValueName]: value })
+
+        if (trimmedKeyName)
+          Object.assign(newCtx.data, { [trimmedKeyName]: key })
+
+        if (trimmedIndexName)
+          Object.assign(newCtx.data, { [trimmedIndexName]: Number(index) })
+
+        appendAndWalkItem(newEl, newCtx)
+      })
     }
     else {
       throw new TypeError('Unsupported value was used in \'x-for\'. Please only use a number, array or an object')
     }
-
-    node.remove()
   })
 }

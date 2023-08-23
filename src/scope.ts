@@ -16,7 +16,7 @@ export function createScope(scopeRoot: Element) {
   const ctx = new Context(scopeRoot)
   scopeRoot.setAttribute('style', 'display:none;')
   walk(ctx)
-  ctx.$init = true
+  ctx.init = true
   scopeRoot.removeAttribute('style')
 
   return { ctx }

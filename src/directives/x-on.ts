@@ -1,6 +1,5 @@
 import { execute } from '../evaluate'
 import type { Directive } from '.'
-import { preProcessDirective } from '.'
 
 interface ModifierListenerState {
   calledTimes: number
@@ -34,7 +33,7 @@ export const builtInModifiers: Record<string, Modifier> = {
  * fired.
  */
 export const processOn: Directive = function (ctx, node, { name, value }) {
-  preProcessDirective(ctx, node, name, value)
+  node.removeAttribute(name)
 
   // Get the event name and its modifiers. The two supported syntaxes
   // for binding event listeners are using either `@event` or
@@ -64,7 +63,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
     if (!modifiers.every(modifier => builtInModifiers[modifier](event, state)))
       return
 
-    execute(ctx.$data, value, node, event)
+    execute(ctx, value, node, event)
     state.calledTimes++
   })
 }

@@ -1,7 +1,6 @@
-import { type Directive, preProcessDirective } from '.'
+import { type Directive } from '.'
 
 export const processRef: Directive = function (ctx, node, { value, name }) {
-  preProcessDirective(ctx, node, name, value)
-
+  node.removeAttribute(name)
   ctx.addRef(value, node)
 }

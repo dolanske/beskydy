@@ -11,7 +11,7 @@ describe('Test Development Suite for the ctx implementation', () => {
     // cobn
     const ctx = new Context(rootEl, { count: 5 })
 
-    expect(ctx.$root).toStrictEqual(rootEl)
-    expect(ctx.$data.count).toBe(5)
+    expect(ctx.root).toStrictEqual(rootEl)
+    expect(ctx.data.count).toBe(5)
   })
 })

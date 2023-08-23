@@ -19,3 +19,8 @@ export function isObj(value: unknown) {
 export const isArr = Array.isArray
 
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
+export function removeChildren(node: Element) {
+  while (node.lastElementChild)
+    node.removeChild(node.lastElementChild)
+}

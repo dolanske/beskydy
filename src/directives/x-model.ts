@@ -1,10 +1,15 @@
 import { isArr, isNil } from '../helpers'
 import { evaluate } from '../evaluate'
-import { type Directive, preProcessDirective } from '.'
+import { type Directive } from '.'
 
 const ModelModifiers = {
   trim: (value: string) => value.trim(),
-  number: (value: string) => Number(value),
+  number: (value: string, prevValue: string) => {
+    if (Number.isNaN(Number(value)))
+      return Number(prevValue)
+
+    return Number(value)
+  },
   // debounced: (value, ms) => {}
 } as const
 
@@ -12,22 +17,19 @@ export type ModelElement = HTMLInputElement | HTMLSelectElement | HTMLDetailsEle
 type Modifier = keyof typeof ModelModifiers
 
 export const processModel: Directive = function (ctx, el, { name, value }) {
-  preProcessDirective(ctx, el, name, value)
-
   let node = el as ModelElement
-
   const [_, modifier] = name.split('.') as [unknown, Modifier]
   const defaultValue = node.attributes.getNamedItem('value')?.value
 
-  const modify = (value: string) => {
+  const modify = (newValue: string, oldValue: string) => {
     if (!modifier)
       return value
-    return ModelModifiers[modifier](value)
+    return ModelModifiers[modifier](newValue, oldValue)
   }
 
   const assignSimpleDefaultValue = () => {
     let finalValue
-    const modelValue = evaluate(ctx.$data, value)
+    const modelValue = evaluate(ctx.data, value)
 
     if (!modelValue) {
       if (defaultValue)
@@ -37,7 +39,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       finalValue = modelValue
     }
 
-    Object.assign(ctx.$data, { [name]: finalValue })
+    Object.assign(ctx.data, { [name]: finalValue })
     node = node as HTMLInputElement
     node.value = finalValue
   }
@@ -50,7 +52,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       switch (node.attributes.getNamedItem('type')?.value) {
         // Listen for 'change' event
         case 'checkbox': {
-          const modelValue = Reflect.get(ctx.$data, value) as Array<any> | string | undefined | null
+          const modelValue = Reflect.get(ctx.data, value) as Array<any> | string | undefined | null
 
           /**
            * With checkbox, there are multiple cases
@@ -70,7 +72,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
             }
             // Primitive
             else {
-              Reflect.set(ctx.$data, value, isNil(value) ? !checked : value)
+              Reflect.set(ctx.data, value, isNil(value) ? !checked : value)
             }
           }
 
@@ -88,7 +90,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
           ctx.effect(() => {
             node = node as HTMLInputElement
             // Update in case some properties are removed or set elsewhere
-            const results = evaluate(ctx.$data, value)
+            const results = evaluate(ctx.data, value)
 
             if (results.includes(node.value) || node.value === results)
               node.checked = true
@@ -103,19 +105,19 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
           // Default value
           if (node.hasAttribute('checked')) {
             node.removeAttribute('checked')
-            Object.assign(ctx.$data, { [value]: node.value })
+            Object.assign(ctx.data, { [value]: node.value })
           }
 
           node.addEventListener('change', (evt) => {
             const { checked, value } = (evt.target as HTMLInputElement)
             if (checked)
-              Object.assign(ctx.$data, { [value]: value })
+              Object.assign(ctx.data, { [value]: value })
           })
 
           // If evaluated value changes, make sure to update the HTML as well
           ctx.effect(() => {
             node = node as HTMLInputElement
-            const newValue = evaluate(ctx.$data, value)
+            const newValue = evaluate(ctx.data, value)
             node.checked = node.value === newValue
           })
           break
@@ -126,12 +128,19 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
           assignSimpleDefaultValue()
 
           node.addEventListener('input', (evt) => {
-            const rawValue = (evt.target as HTMLInputElement).value
-            const modifiedValue = modify(rawValue)
-            Object.assign(ctx.$data, { [value]: modifiedValue })
+            const target = evt.target as HTMLInputElement
+            const rawValue = target.value
+            const modifiedValue = modify(rawValue, Reflect.get(ctx.data, value))
+
+            // If modified value is different than raw value, we need to
+            // re-assign this modification back to the original target.
+            if (rawValue !== modifiedValue)
+              target.value = String(modifiedValue)
+
+            Object.assign(ctx.data, { [value]: modifiedValue })
           })
 
-          ctx.effect(() => (node as HTMLInputElement).value = evaluate(ctx.$data, value))
+          ctx.effect(() => (node as HTMLInputElement).value = evaluate(ctx.data, value))
         }
       }
       break
@@ -143,26 +152,26 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
 
       node.addEventListener('change', (evt) => {
         const value = (evt.target as HTMLSelectElement).value
-        Object.assign(ctx.$data, { [value]: value })
+        Object.assign(ctx.data, { [value]: value })
       })
 
-      ctx.effect(() => (node as HTMLSelectElement).value = evaluate(ctx.$data, value))
+      ctx.effect(() => (node as HTMLSelectElement).value = evaluate(ctx.data, value))
       break
     }
 
     case 'DETAILS': {
       node = node as HTMLDetailsElement
       const defaultOpen = node.attributes.getNamedItem('open')
-      const currentValue = evaluate(ctx.$data, value)
+      const currentValue = evaluate(ctx.data, value)
 
       node.open = !isNil(currentValue) ? currentValue : (defaultOpen ?? false)
 
       node.addEventListener('toggle', (evt) => {
         const isOpen = (evt.target as HTMLDetailsElement).open
-        Object.assign(ctx.$data, { [value]: isOpen })
+        Object.assign(ctx.data, { [value]: isOpen })
       })
 
-      ctx.effect(() => (node as HTMLDetailsElement).open = evaluate(ctx.$data, value))
+      ctx.effect(() => (node as HTMLDetailsElement).open = evaluate(ctx.data, value))
       break
     }
 

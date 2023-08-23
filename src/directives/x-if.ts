@@ -1,6 +1,6 @@
 import { getAttr } from '../helpers'
 import { evaluate } from '../evaluate'
-import { type Directive, preProcessDirective } from '.'
+import { type Directive } from '.'
 
 interface Block {
   expr: string | null
@@ -18,7 +18,7 @@ interface Block {
  */
 
 export const processIf: Directive = function (ctx, node, { name, value }) {
-  preProcessDirective(ctx, node, name, value)
+  node.removeAttribute(name)
 
   // Holds the reference to the element and its parent node
   // const savedEl = node
@@ -74,7 +74,7 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
-      if (!block.expr || evaluate(ctx.$data, block.expr, node)) {
+      if (!block.expr || evaluate(ctx.data, block.expr, node)) {
         // Passed
         if (currentIndex !== index) {
           if (currentResult)

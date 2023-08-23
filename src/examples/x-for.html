@@ -1,0 +1,8 @@
+<div x-scope="{ listItems: 5 }">
+  <input type="text" x-model.number="listItems">
+  <ul>
+    <li x-for="item in listItems">
+      <span>{{ (item + 1) === 1 ? `${(item + 1)} person` : `${(item + 1)} people` }}</span>
+    </li>
+  </ul>
+</div> 

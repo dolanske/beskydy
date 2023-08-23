@@ -1,12 +1,12 @@
 import { evaluate } from '../evaluate'
-import { type Directive, preProcessDirective } from '.'
+import { type Directive } from '.'
 
 /**
  * Takes in and evaluates an expression. Based on the result the element
  * is either shown or hidden in the DOM.
  */
 export const processShow: Directive = function (ctx, node, { value, name }) {
-  preProcessDirective(ctx, node, name, value)
+  node.removeAttribute(name)
 
   const expr = value
 
@@ -14,7 +14,7 @@ export const processShow: Directive = function (ctx, node, { value, name }) {
     return
 
   ctx.effect(() => {
-    const result = evaluate(ctx.$data, expr, node)
+    const result = evaluate(ctx.data, expr, node)
     if (result)
       (node as HTMLElement).style.removeProperty('display')
     else

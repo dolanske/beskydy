@@ -14,7 +14,7 @@ import { processModel } from './directives/x-model'
 import { processFor } from './directives/x-for'
 
 export function walk(ctx: ContextAny) {
-  const walker = document.createTreeWalker(ctx.$root)
+  const walker = document.createTreeWalker(ctx.root)
   let node: Node | null = walker.root
 
   while (node) {
@@ -51,9 +51,16 @@ export function walk(ctx: ContextAny) {
 // Can be re-run on sub-sequent dom changes
 export function processAttrs(ctx: ContextAny, node: HTMLElement) {
   for (const attr of Array.from(node.attributes)) {
+    // REVIEW
+    // Unsure if the order of attribute processing is correct, but so far it
+    // hasn't posed any issues. Just adding this here so later we do a real
+    // review
+
     // 0. Scope initialization
     if (attr.name === 'x-data' || attr.name === 'x-scope') {
-      if (attr.name === 'x-scope' && ctx.$root !== node) {
+      node.removeAttribute(attr.name)
+
+      if (attr.name === 'x-scope' && ctx.root !== node) {
         console.warn('Can not initialize a new scope within an existing scope')
         return
       }
@@ -67,10 +74,8 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
         if (!isObj(data))
           return
 
-        console.log(data)
-
         for (const key of Object.keys(data)) {
-          Object.defineProperty(ctx.$data, key, {
+          Object.defineProperty(ctx.data, key, {
             value: data[key],
             writable: true,
             enumerable: true,
@@ -127,14 +132,14 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
 export function processTextNode(ctx: ContextAny, node: Node) {
   // This should never be hit as only text nodes are processed, but
   // typescript is a known crybaby
-  if (!node.textContent)
+  if (!node.textContent || node.textContent === '')
     return
 
   // Save the original expression
   const originalTextContent = node.textContent
   // Extract expressions from text node wrapped within the delimiters
   // For instance { expression }
-  const delimitersInclusive = /(?=\{)(.*?)(?<=\})/g
+  const delimitersInclusive = /(?=\{\{)(.*?)(?<=\}\})/g
   // Match all occurences of { } within a text node
   const exprGroup = originalTextContent.match(delimitersInclusive)
 
@@ -146,12 +151,12 @@ export function processTextNode(ctx: ContextAny, node: Node) {
 
     for (const expr of exprGroup) {
       // Get the expression without the delimiters
-      const extractedExpr = expr.replace('{', '').replace('}', '')
+      const extractedExpr = expr.replace('{{', '').replace('}}', '')
       if (!extractedExpr)
         continue
 
       // Evaluate and replace part of the original text content
-      const result = evaluate(ctx.$data, extractedExpr, node)
+      const result = evaluate(ctx.data, extractedExpr, node)
       finalTextContent = finalTextContent.replace(expr, result)
     }
 

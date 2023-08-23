@@ -1,14 +1,14 @@
 import { isObj } from '../helpers'
 import { evaluate } from '../evaluate'
-import { type Directive, preProcessDirective } from '.'
+import { type Directive } from '.'
 
 export const processStyle: Directive = function (ctx, node, { value, name }) {
-  preProcessDirective(ctx, node, name, value)
+  node.removeAttribute(name)
 
   const expr = value
 
   ctx.effect(() => {
-    const result = evaluate(ctx.$data, expr, node)
+    const result = evaluate(ctx.data, expr, node)
 
     if (!isObj(result))
       return

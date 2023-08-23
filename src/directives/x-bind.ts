@@ -1,6 +1,6 @@
 import { isNil } from '../helpers'
 import { evaluate } from '../evaluate'
-import { type Directive, preProcessDirective } from '.'
+import { type Directive } from '.'
 
 /**
    * Dynamically bind attribute or attributes if the expression passes
@@ -13,7 +13,7 @@ import { type Directive, preProcessDirective } from '.'
    * - x-bind="{ attributeValue: expression }"
    */
 export const processBind: Directive = function (ctx, node, { name, value }) {
-  preProcessDirective(ctx, node, name, value)
+  node.removeAttribute(name)
 
   const [_, propertyName] = name.split(':')
 
@@ -27,14 +27,14 @@ export const processBind: Directive = function (ctx, node, { name, value }) {
   if (propertyName) {
     // x-bind:propertyName="" syntax
     ctx.effect(() => {
-      const result = evaluate(ctx.$data, value, node)
+      const result = evaluate(ctx.data, value, node)
       setOrDelAttr(name, result)
     })
   }
   else {
     // x-bind="{}" syntax
     ctx.effect(() => {
-      const results = evaluate(ctx.$data, value, node) ?? {}
+      const results = evaluate(ctx.data, value, node) ?? {}
 
       for (const key of Object.keys(results)) {
         const result = results[key]

@@ -23,7 +23,7 @@ export function useRefExample(doc: Document) {
 
   const text = doc.createElement('span')
 
-  text.setAttribute('x-text', '$refs.msg.textContent')
+  text.setAttribute('x-text', 'refs.msg.textContent')
 
   scope.append(refEl, text)
   return [scope, refEl, text] as const
