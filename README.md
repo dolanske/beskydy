@@ -41,8 +41,6 @@ Initializes a reactive scope.
 
 ```
 
----
-
 ### `x-data`
 
 Append data into scope's dataset. Any data within this attribute will be available to its parent elements, but this practise is discouraged, as on first draw, this data will be undefined.
@@ -72,7 +70,7 @@ Saves the element to the `$refs` object which is available in the scope. Any cha
 
 ```
 
-#### `x-on`
+### `x-on`
 
 Binds an event listener with optional modifiers.
 
@@ -85,7 +83,7 @@ The syntax id `x-on:eventName.modifier.modifier="expression"
 </div>
 ```
 
-##### Available modifiers
+#### Available modifiers
 
 - **once**: Runs the expression only once
 - **self**: Runs the expression only if `event.target` equals to `event.currentTarget`
@@ -93,7 +91,7 @@ The syntax id `x-on:eventName.modifier.modifier="expression"
 - **prevent**: Runs `event.preventDefault()` before executing the expression
 - **stop**: Runs `event.stopPropagation()` before executing the expression
 
-##### Future plans
+#### Future plans
 
 At some point, I'd like to add an option to provide parameters to the modifiers. For instance it would be quite useful, if we could debounce event listeners, or limit the number of times an expression is called:
 
@@ -103,7 +101,7 @@ At some point, I'd like to add an option to provide parameters to the modifiers.
 <div x-on:mouseover.debounce[50, false]="doSomething()" />
 ```
 
-#### `x-model`
+### `x-model`
 
 Provides two way data binding to a input/textarea/select/details. It listens to an input event as well as binding the reactive data to the element's value/state.
 
@@ -119,18 +117,18 @@ The following example works exactly the same as the one above
 <input x-on:input="text = $el.target.value" x-bind:value="text" />
 ```
 
-#### `x-bind`
+### `x-bind`
 
-#### `x-class`
+### `x-class`
 
-#### `x-style`
+### `x-style`
 
-#### `x-if`
+### `x-if`
 
-#### `x-show`
+### `x-show`
 
-#### `x-for`
+### `x-for`
 
-#### `x-text`
+### `x-text`
 
-#### `x-html`
+### `x-html`
