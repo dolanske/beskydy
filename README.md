@@ -30,7 +30,7 @@ Each expression is a piece of code that gets evaluated. Because it's all in a st
 
 - `$el`: Expose the current element we're writing expression for
 - `$event`: Expose the event, if used within event listeners
-- `$refs: Expose the scope's element refs
+- `$refs`: Expose the scope's element refs
 
 ## Attributes
 
