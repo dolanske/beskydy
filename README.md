@@ -21,7 +21,16 @@ Include a script in the footer in which we can initialize all the scopes.
  ```ts
 import { createApp } from 'beskydy'
 
-createApp({ /* globalProperties */ })
+ // You can also define global properties, which will be available in every scope
+createApp({
+   characters: [],
+   isLoading: false,
+   async fetchCharacters() {
+     this.isLoading = true
+     this.characters = await fetch('https://swapi.dev/api/people/')
+     this.isLoading = false
+   }
+})
  ```
 
 ## Expressions
@@ -116,7 +125,7 @@ Iterator exposes the property, property key and the index.
 
 ### `x-ref`
 
-Saves the element to the `$refs` object which is available in the scope. Any changes made to the ref element are made reactive.
+Saves the element to the `$refs` object which is available in the scope. Any changes made to the ref element will trigger reactive updates.
 
 ```html
 <div x-scope="{ text: 'Hello' }">
@@ -197,7 +206,7 @@ Binds an attribute or an attribute object to an element.
 
 ### `x-class`
 
-Binds a class or classes to an element.
+Binds a class or class list to an element.
 
 ```html
 <div x-scope="{ visible: true, isActive: false }">
@@ -223,7 +232,7 @@ Binds reactive style object to an element. The properties can be written both in
 
 ### `x-text`
 
-Change the element's `textContent` based on the provided expressions results.
+Update the element's `textContent`
 
 ```html
 <div x-scope="{ count: 5 }">
