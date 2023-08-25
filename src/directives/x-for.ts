@@ -7,6 +7,9 @@ import type { Directive } from '.'
 
 export const processFor: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute(name)
+  // Remove if from the iterated elements.
+  // Use condition on the child elements instead.
+  node.removeAttribute('x-if')
 
   /**
    * Much more limited that vue's synax.

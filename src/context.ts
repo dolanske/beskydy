@@ -30,19 +30,22 @@ export type ContextAny = Context<Element, object>
  * Piece of DOM which holds its own state.
  */
 
+export type ContextData =
+  // Global state available to every scope
+  typeof globalState
+  // All the scope refs, which are accessible even if accessor is a child of the ref
+  & { $refs: Record<string, Element> }
+
 export class Context<R extends Element, T extends object> {
   // Store the context root element
   root: Element
   // Reactive dataset available to the entire scope
-  data: UnwrapNestedRefs<T>
-  // All the scope refs, which are accessible even if accessor is a child of the ref
-  refs: Record<string, Element>
+  data: UnwrapNestedRefs<T & ContextData>
   init: boolean
 
   constructor(root: R, initialDataset?: T) {
     this.root = root
-    this.data = reactive<T & typeof globalState>(Object.assign({}, globalState, initialDataset))
-    this.refs = {}
+    this.data = reactive<T & ContextData>(Object.assign({ $refs: {} }, globalState, initialDataset))
     this.init = false
   }
 
@@ -51,15 +54,12 @@ export class Context<R extends Element, T extends object> {
 
   // Store refs for access within scope
   addRef(key: string, ref: Element) {
-    Object.assign(this.refs, { [key]: ref })
+    Object.assign(this.data.$refs, { [key]: ref })
   }
 
   // When creating sub contexts, this allows for a parent context to
   // share its reactive properties with the child context
   extend(ctx: ContextAny) {
-    Object.assign(this.refs, ctx.refs)
-
-    if (ctx.data)
-      Object.assign(this.data, ctx.data)
+    Object.assign(this.data, ctx.data)
   }
 }

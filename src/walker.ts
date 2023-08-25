@@ -89,13 +89,14 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
       }
     }
 
-    // 1. if
-    if (attr.name === 'x-if')
-      processIf(ctx, node, attr)
-
-    // 2. for
+    // 1. for
+    // In case if and for are on the same element, the if is removed.
     if (attr.name === 'x-for')
       processFor(ctx, node, attr)
+
+    // 2. if
+    else if (attr.name === 'x-if')
+      processIf(ctx, node, attr)
 
     // 3. ref
     if (attr.name === 'x-ref')
