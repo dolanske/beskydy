@@ -158,6 +158,7 @@ export function processTextNode(ctx: ContextAny, node: Node) {
 
       // Evaluate and replace part of the original text content
       const result = evaluate(ctx.data, extractedExpr, node)
+
       finalTextContent = finalTextContent.replace(expr, result)
     }
 

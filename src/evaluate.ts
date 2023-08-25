@@ -7,11 +7,15 @@
 const evalCache: Record<string, Function> = Object.create(null)
 
 export function evaluate(scope: any, exp: string, el?: Node) {
-  // console.log(scope, exp, el)
   return execute(scope, `return(${exp})`, el)
 }
 
 export function execute(scope: any, exp: string, el?: Node, event?: Event) {
+  // By calling stringify, the function hits every single property within an
+  // object. No matter how deep it is. This way we can ensure deep reactivity
+
+  JSON.stringify(scope)
+
   const fn = evalCache[exp] || (evalCache[exp] = toFunction(exp))
   try {
     return fn(scope, el, event)

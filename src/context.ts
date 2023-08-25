@@ -50,6 +50,7 @@ export class Context<R extends Element, T extends object> {
   }
 
   // Watch effects
+  // effect = rawEffect
   effect = rawEffect
 
   // Store refs for access within scope

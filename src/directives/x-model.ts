@@ -134,8 +134,6 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
 
             // If modified value is different than raw value, we need to
             // re-assign this modification back to the original target.
-            console.log(rawValue, modifiedValue)
-
             if (rawValue !== modifiedValue)
               target.value = String(modifiedValue)
 
