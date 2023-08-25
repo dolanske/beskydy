@@ -234,7 +234,7 @@ Binds reactive style object to an element. The properties can be written both in
 
 ```html
 <div x-scope="{ offset: 10 }">
-  <div class="ellipse" :style={ top: offset + '%' }>
+  <div class="ellipse" :style="{ top: offset + '%' }">
 </div>
 ```
 
