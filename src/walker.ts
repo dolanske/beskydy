@@ -12,6 +12,7 @@ import { processOn } from './directives/x-on'
 import { processIf } from './directives/x-if'
 import { processModel } from './directives/x-model'
 import { processFor } from './directives/x-for'
+import { customDirectives } from './directives'
 
 export function walk(ctx: ContextAny) {
   const walker = document.createTreeWalker(ctx.root)
@@ -127,6 +128,14 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
 
     if (attr.name === 'x-show')
       processShow(ctx, node, attr)
+
+    // Iterate over custom directives and apply them
+    if (Object.keys(customDirectives).length > 0) {
+      Object.entries(customDirectives).forEach(([name, customDirective]) => {
+        if (attr.name.startsWith(name))
+          customDirective(ctx, node, attr)
+      })
+    }
   }
 }
 

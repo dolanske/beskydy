@@ -5,3 +5,5 @@ export type Directive = (
   node: Element,
   attr: Attr,
 ) => void
+
+export const customDirectives: Record<string, Directive> = {}
