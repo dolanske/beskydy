@@ -22,7 +22,7 @@ Include a script in the footer in which we can initialize all the scopes.
 import { createApp } from 'beskydy'
 
  // You can also define global properties, which will be available in every scope
-createApp({
+const app = createApp({
    characters: [],
    isLoading: false,
    async fetchCharacters() {
@@ -31,6 +31,14 @@ createApp({
      this.isLoading = false
    }
 })
+
+// Add custom directives
+app.directive('x-funny', (ctx, node, attr) => {
+   node.textContent = 'That\'s really funny'
+})
+
+// Initialize the app
+app.init()
  ```
 
 ## Expressions

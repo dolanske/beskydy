@@ -1,15 +1,30 @@
 import { reactive } from '@vue/reactivity'
 import { Context } from './context'
+import type { Directive } from './directives'
+import { customDirectives } from './directives'
 import { walk } from './walker'
 
 export const globalState = reactive({})
 
-export function createApp<T extends object>(initialDataset: T) {
-  Object.assign(globalState, initialDataset)
-  const scopeRoots = Array.from(document.querySelectorAll('[x-scope]'))
+class App<T extends object> {
+  constructor(initialDataset: T) {
+    Object.assign(globalState, initialDataset)
+  }
 
-  for (const scopeRoot of scopeRoots)
-    createScope(scopeRoot)
+  directive(name: string, fn: Directive) {
+    customDirectives[name] = fn
+    return this
+  }
+
+  init() {
+    const scopeRoots = Array.from(document.querySelectorAll('[x-scope]'))
+    for (const scopeRoot of scopeRoots)
+      createScope(scopeRoot)
+  }
+}
+
+export function createApp<T extends object>(init: T) {
+  return new App(init)
 }
 
 export function createScope(scopeRoot: Element) {

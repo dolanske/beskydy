@@ -21,12 +21,15 @@
         <span x-ref="item">{{ text }}</span>
         <br>
         <span>{{ $refs.item.textContent }}</span>
+        <span x-cum>Hello world</span>
       </div> 
     </div>
     <script type="module">
       import { createApp } from './src/scope.ts'
 
-      createApp()
+      const app = createApp()
+      app.directive('x-lol', (_, node) => node.textContent = 'lol')
+      app.init()
     </script>
   </body>
 </html>
