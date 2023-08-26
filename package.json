@@ -1,7 +1,32 @@
 {
-  "name": "beskydy",
+  "name": "@dolanske/beskydy",
   "version": "0.0.0",
   "private": true,
+  "description": "Like alps, but smaller. Inspired by alpine.js and petite-vue with my own simplified implementation.",
+  "author": "dolanske",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dolanske/beskydy.git"
+  },
+  "keywords": [
+    "javascript",
+    "typescript",
+    "vue-petite",
+    "alpine-js",
+    "DOM"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -9,16 +34,17 @@
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
+  "dependencies": {
+    "@vue/reactivity": "^3.3.4",
+    "jsdom": "^22.1.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
     "@vitest/coverage-v8": "^0.34.1",
     "eslint": "^8.45.0",
     "typescript": "^5.1.6",
     "vite": "^4.4.6",
+    "vite-plugin-dts": "^3.5.2",
     "vitest": "^0.34.1"
-  },
-  "dependencies": {
-    "@vue/reactivity": "^3.3.4",
-    "jsdom": "^22.1.0"
   }
 }
