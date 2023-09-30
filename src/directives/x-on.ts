@@ -1,17 +1,22 @@
-import { execute } from '../evaluate'
-import type { Directive } from '.'
+import { evaluate, execute } from '../evaluate'
+import type { Directive, Modifier, ModifierFn, ModifierListenerState, Primitive } from '.'
 
-interface ModifierListenerState {
-  calledTimes: number
-}
-
-type Modifier = (e: Event, state: ModifierListenerState) => boolean
-
-export const builtInModifiers: Record<string, Modifier> = {
-  // TODO
-  // Add option to provide parameters to modifiers
-  // .only(amountofTimes) =>
-  // .debounce(debounceBy) =>
+export const eventModifiers: Record<string, ModifierFn> = {
+  // REVIEW
+  // Figure out if leading / trailing options are needed
+  throttle: (_, { lastCall }, amount = 300) => {
+    if (typeof amount !== 'number')
+      return false
+    if (Date.now() - lastCall >= amount)
+      return true
+    return false
+  },
+  if: (_, __, rawEval) => !!rawEval,
+  only: (_, { calledTimes }, callLimit = 1) => {
+    if (typeof callLimit !== 'number')
+      return false
+    return calledTimes < callLimit
+  },
   once: (_, { calledTimes }) => calledTimes < 1,
   self: e => e.target === e.currentTarget,
   left: e => 'button' in e && (e as MouseEvent).button === 0,
@@ -49,9 +54,24 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
   // Collect optional modifiers from the event name
   // (event.modifier.modifier) and filter out ones which aren't
   // supported (aka user errors)
-  const modifiers = eventKeyRaw.slice(1).filter((modifier) => {
-    return Object.keys(builtInModifiers).includes(modifier)
-  }) as (keyof typeof builtInModifiers)[]
+  const modifiers: Modifier[] = eventKeyRaw
+    .slice(1)
+    .map((modifier) => {
+      // Split modifier into a key and possible parameter
+      const [key, rawParams] = modifier.split('[')
+      let param: Primitive
+
+      if (rawParams) {
+        const parsedModifier = rawParams.replace(']', '')
+        // The parameter can be a reactive variable. So we should evaluate it against the current contextr
+        param = evaluate(ctx.data, parsedModifier)
+      }
+
+      return { key, param }
+    })
+    .filter((modifier) => {
+      return Object.keys(eventModifiers).includes(modifier.key)
+    })
 
   if (value.startsWith('()'))
     value = `(${value})()`
@@ -59,15 +79,17 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
   // State variables, which some of the modifiers use
   const state: ModifierListenerState = {
     calledTimes: 0,
+    lastCall: 0,
   }
 
   node.addEventListener(eventKey, (event) => {
     // In case there are modifiers and some of them did NOT pass, do not
     // allow the callback to execute
-    if (!modifiers.every(modifier => builtInModifiers[modifier](event, state)))
+    if (!modifiers.every(modifier => eventModifiers[modifier.key](event, state, modifier.param)))
       return
 
     execute(ctx.data, value, node, event)
     state.calledTimes++
+    state.lastCall = Date.now()
   })
 }

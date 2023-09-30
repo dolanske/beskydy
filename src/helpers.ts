@@ -1,3 +1,5 @@
+import type { Primitive } from '@vue/reactivity'
+
 export function isSibling(el: HTMLElement, el2: HTMLElement) {
   return el !== el2 && el.parentNode === el2.parentNode
 }
@@ -23,4 +25,9 @@ export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, 
 export function removeChildren(node: Element) {
   while (node.lastElementChild)
     node.removeChild(node.lastElementChild)
+}
+
+export function isType(val: any, requiredType: Primitive) {
+  // eslint-disable-next-line valid-typeof
+  return typeof val === requiredType
 }
