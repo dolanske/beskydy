@@ -25,6 +25,10 @@ export const builtInModifiers: Record<string, Modifier> = {
     e.stopPropagation()
     return true
   },
+  stopImmediate: (e) => {
+    e.stopImmediatePropagation()
+    return true
+  },
 }
 
 /**
@@ -63,7 +67,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
     if (!modifiers.every(modifier => builtInModifiers[modifier](event, state)))
       return
 
-    execute(ctx, value, node, event)
+    execute(ctx.data, value, node, event)
     state.calledTimes++
   })
 }

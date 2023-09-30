@@ -13,7 +13,7 @@ export function evaluate(scope: any, exp: string, el?: Node) {
 export function execute(scope: any, exp: string, el?: Node, event?: Event) {
   // By calling stringify, the function hits every single property within an
   // object. No matter how deep it is. This way we can ensure deep reactivity
-
+  // Thanks to Alpine.js core for the tip
   JSON.stringify(scope)
 
   const fn = evalCache[exp] || (evalCache[exp] = toFunction(exp))

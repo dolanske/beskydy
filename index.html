@@ -15,20 +15,19 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ text: 'Hello' }">
-        <input x-model="text" />
-        <br>
-        <span x-ref="item">{{ text }}</span>
-        <br>
-        <span>{{ $refs.item.textContent }}</span>
-        <span x-cum>Hello world</span>
+      <div x-scope="{ count: 10 }">
+        <button x-on:click="test()">Click me please</button>
       </div> 
     </div>
     <script type="module">
       import { createApp } from './src/scope.ts'
 
-      const app = createApp()
-      app.directive('x-lol', (_, node) => node.textContent = 'lol')
+      const app = createApp({
+        test() {
+          console.log('hello')
+        },
+      })
+
       app.init()
     </script>
   </body>
