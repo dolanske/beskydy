@@ -163,23 +163,30 @@ Binds an event listener with optional modifiers.
 </div>
 ```
 
-#### Available modifiers
+#### Modifiers
 
-- **once**: Runs the expression only once
+- **once**: Runs only once
 - **self**: Runs the expression only if `event.target` equals to `event.currentTarget`
 - **left**, **middle**, **right**: Filter mouse clicks
-- **prevent**: Runs `event.preventDefault()` before executing the expression
-- **stop**: Runs `event.stopPropagation()` before executing the expression
+- **prevent**: Runs `event.preventDefault()`
+- **stop**: Runs `event.stopPropagation()`
+- **stopImmediate**: Runs `event.stopImmediatePropagation()`
 
-#### Future plans
+#### Modifiers with parameters
 
-At some point, I'd like to add an option to provide parameters to the modifiers. For instance it would be quite useful, if we could debounce event listeners, or limit the number of times an expression is called:
+You can provide a single parameter to the modifier using this syntax. You can also pass in a defined in the `x-scope` and `x-data`. Note: it does not accept expressions, only variables/primitive values.
 
 ```html
-<div x-on:click.only[10]="doSomething()" />
-<!-- Debounce to 50ms and use the trailing expression call (default is leading) -->
-<div x-on:mouseover.debounce[50, false]="doSomething()" />
+<button x-on:click.only[5]="doNothingAfterFiveClicks()" />
+
+<div x-scope="{ limit: 5 }">
+  <button x-on:click.only[limit]="doNothingAfterFiveClicks()" />
+</div>
 ```
+
+- **only** (default=1): Run until the provided amount is reached
+- **if**: Runs if the provided value is truthy
+- **throttle**: (default=300) Limits the amount of calls within the specified timeframe in milliseconds
 
 ### `x-model`
 
@@ -193,6 +200,7 @@ Provides two way data binding to a input/textarea/select/details. It listens to 
 ```
 
 The following example works exactly the same as the one above
+
 ```html
 <input x-on:input="text = $el.target.value" x-bind:value="text" />
 ```

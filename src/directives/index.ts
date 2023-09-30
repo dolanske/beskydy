@@ -7,3 +7,17 @@ export type Directive = (
 ) => void
 
 export const customDirectives: Record<string, Directive> = {}
+
+export interface ModifierListenerState {
+  calledTimes: number
+  lastCall: number
+}
+
+export type Primitive = string | number | null | undefined | boolean | bigint
+
+export interface Modifier {
+  key: string
+  param: Primitive
+}
+
+export type ModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean
