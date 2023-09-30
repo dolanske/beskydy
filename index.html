@@ -16,7 +16,7 @@
   <body>
     <div id="app">
       <div x-scope>
-        <button x-on:click.debounce[1000]="test()">Click me please</button>
+        <button x-on:click.throttle[1000]="test()">Click me please</button>
       </div> 
     </div>
     <script type="module">

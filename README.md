@@ -200,6 +200,7 @@ Provides two way data binding to a input/textarea/select/details. It listens to 
 ```
 
 The following example works exactly the same as the one above
+
 ```html
 <input x-on:input="text = $el.target.value" x-bind:value="text" />
 ```

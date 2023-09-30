@@ -2,8 +2,6 @@ import { evaluate, execute } from '../evaluate'
 import type { Directive, Modifier, ModifierFn, ModifierListenerState, Primitive } from '.'
 
 export const eventModifiers: Record<string, ModifierFn> = {
-  // REVIEW
-  // Figure out if leading / trailing options are needed
   throttle: (_, { lastCall }, amount = 300) => {
     if (typeof amount !== 'number')
       return false
