@@ -41,3 +41,15 @@ export function useForExample(doc: Document) {
 
   return [scope, item] as const
 }
+
+export function useModelExample(doc: Document) {
+  const scope = doc.createElement('div')
+  scope.setAttribute('x-scope', '{ val: "hello" }')
+
+  const input = doc.createElement('input')
+  input.setAttribute('x-model', 'val')
+
+  scope.append(input)
+
+  return [scope, input] as const
+}

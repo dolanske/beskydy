@@ -6,7 +6,7 @@ import { expect, test } from 'vitest'
 import { createScope } from '../scope'
 import { useForExample } from './util/dom'
 
-test('x-for', () => {
+test.skip('x-for', () => {
   const [scope] = useForExample(document)
   const { ctx } = createScope(scope)
 

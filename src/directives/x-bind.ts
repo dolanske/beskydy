@@ -3,15 +3,15 @@ import { evaluate } from '../evaluate'
 import { type Directive } from '.'
 
 /**
-   * Dynamically bind attribute or attributes if the expression passes
-   *
-   * Allowed syntax
-   *
-   * This syntax will bind a value-less attribute (boolean attribute) if the expression matches
-   * - :attributeName="expression"
-   * - x-bind:attributeName="expression"
-   * - x-bind="{ attributeValue: expression }"
-   */
+ * Dynamically bind attribute or attributes if the expression passes
+ *
+ * Allowed syntax
+ *
+ * This syntax will bind a value-less attribute (boolean attribute) if the expression matches
+ * - :attributeName="expression"
+ * - x-bind:attributeName="expression"
+ * - x-bind="{ attributeValue: expression }"
+ */
 export const processBind: Directive = function (ctx, node, { name, value }) {
   node.removeAttribute(name)
 

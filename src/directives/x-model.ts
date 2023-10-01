@@ -1,8 +1,10 @@
-import { isArr, isNil } from '../helpers'
+import { isArr, isNil, parseParam } from '../helpers'
 import { evaluate } from '../evaluate'
-import { type Directive } from '.'
+import type { Directive, Primitive } from '.'
 
-const ModelModifiers = {
+export type ModelModifier = (value: string, oldValue: string, param?: unknown) => unknown
+
+export const modelModifiers: Record<string, ModelModifier> = {
   trim: (value: string) => value.trim(),
   number: (value: string, prevValue: string) => {
     if (Number.isNaN(Number(value)))
@@ -10,11 +12,10 @@ const ModelModifiers = {
 
     return Number(value)
   },
-  // debounced: (value, ms) => {}
 } as const
 
 export type ModelElement = HTMLInputElement | HTMLSelectElement | HTMLDetailsElement | HTMLTextAreaElement
-type Modifier = keyof typeof ModelModifiers
+type Modifier = keyof typeof modelModifiers
 
 export const processModel: Directive = function (ctx, el, { name, value }) {
   let node = el as ModelElement
@@ -24,7 +25,21 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
   const modify = (newValue: string, oldValue: string) => {
     if (!modifier)
       return newValue
-    return ModelModifiers[modifier](newValue, oldValue)
+
+    // Model param
+    const [key, rawParams] = modifier.split('[')
+    let param: Primitive
+
+    if (rawParams) {
+      const parsedModifier = rawParams.replace(']', '')
+      // The parameter can be a reactive variable.
+      // So we should evaluate it against the current context, but only if its available
+      param = parseParam(parsedModifier, ctx)
+    }
+
+    console.log(key, modelModifiers)
+
+    return modelModifiers[key](newValue, oldValue, param)
   }
 
   const assignSimpleDefaultValue = () => {
@@ -126,6 +141,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
         // All other inputs
         default: {
           assignSimpleDefaultValue()
+          node.removeAttribute('x-model')
 
           node.addEventListener('input', (evt) => {
             const target = evt.target as HTMLInputElement

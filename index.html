@@ -15,20 +15,12 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope>
-        <button x-on:click.throttle[1000]="test()">Click me please</button>
+      <div x-scope="{ value: '', len: 5, }">
+        <input type="text" placeholder="Length" x-model.number="len">
+        <input type="text" x-model.maxlength[len]="value">
+        {{ value }}
       </div> 
     </div>
-    <script type="module">
-      import { createApp } from './src/scope.ts'
-
-      const app = createApp({
-        test() {
-          console.log('hello')
-        },
-      })
-
-      app.init()
-    </script>
+    <script type="module" src="./src/index.ts"></script>
   </body>
 </html>
