@@ -42,12 +42,13 @@ app.defineDirective('x-funny', (ctx, node, attr) => {
 // Can be used as x-on:input.save[key]
 // **NOTE**: If the provided parameter matches a variable name defined in the current or global scope
 // it will use its current value. This way you can create dynamic modifier parameters
-app.defineEventModifier('save', (event, customState, key) => {
-  localStorage.setItem(key, String(event.data))
+app.defineEventModifier('save', (event, customState, param) => {
+  localStorage.setItem(param, String(event.data))
 })
 
 // Add custom `x-model` modifier
-app.defineModelModifier('toLowerCase', (value) => {
+// Same as with event modifiers, modifier parameters are also supported
+app.defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
   return String(value).toLowerCase()
 })
 

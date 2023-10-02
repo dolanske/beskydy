@@ -1,4 +1,4 @@
-import { evaluate, execute } from '../evaluate'
+import { execute } from '../evaluate'
 import { parseParam } from '../helpers'
 import type { Directive, Modifier, ModifierFn, ModifierListenerState, Primitive } from '.'
 

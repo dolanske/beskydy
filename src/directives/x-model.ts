@@ -37,8 +37,6 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       param = parseParam(parsedModifier, ctx)
     }
 
-    console.log(key, modelModifiers)
-
     return modelModifiers[key](newValue, oldValue, param)
   }
 

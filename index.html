@@ -11,14 +11,30 @@
     />
     <style>
       html, body, * { color: white; background-color: black; }
+
+      .wrapper {
+        width: 256px;
+        height: 256px;
+        background-color: red;
+      }
+
+      .inner {
+        width: 64px;
+        height: 64px;
+        background-color: blue;
+      }
     </style>
   </head>
   <body>
     <div id="app">
       <div x-scope="{ value: '', len: 5, }">
-        <input type="text" placeholder="Length" x-model.number="len">
+        <!-- <input type="text" placeholder="Length" x-model.number="len">
         <input type="text" x-model.maxlength[len]="value">
-        {{ value }}
+        {{ value }} -->
+
+        <div class="wrapper">
+          <div class="inner" x-click-outside="notify"></div>
+        </div>
       </div> 
     </div>
     <script type="module" src="./src/index.ts"></script>
