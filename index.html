@@ -15,25 +15,25 @@
       .wrapper {
         width: 256px;
         height: 256px;
-        background-color: red;
+      }
+      
+      .blue {
+        background-color: blue;
       }
 
-      .inner {
-        width: 64px;
-        height: 64px;
-        background-color: blue;
+      .red {
+        background-color: red;
       }
     </style>
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ value: '', len: 5, }">
-        <!-- <input type="text" placeholder="Length" x-model.number="len">
-        <input type="text" x-model.maxlength[len]="value">
-        {{ value }} -->
-
-        <div class="wrapper">
-          <div class="inner" x-click-outside="notify"></div>
+      <div x-scope="{text: 'Hello World'}">
+        <input type="text" x-model="text">
+        <div class="wrapper blue">
+          <span x-portal="#target" x-text="text"></span>
+        </div>
+        <div class="wrapper red" id="target">
         </div>
       </div> 
     </div>
