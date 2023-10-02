@@ -4,6 +4,8 @@ import type { Directive, ModifierFn } from './directives'
 import { customDirectives } from './directives'
 import { walk } from './walker'
 import { eventModifiers } from './directives/x-on'
+import type { ModelModifier } from './directives/x-model'
+import { modelModifiers } from './directives/x-model'
 
 export const globalState = reactive({})
 
@@ -18,22 +20,36 @@ class App<T extends object> {
    * @param name Directive name, preferably should start with `x-`
    * @param fn Directive implementation
    */
-  directive(name: string, fn: Directive) {
+  defineDirective(name: string, fn: Directive) {
+    if (name in customDirectives)
+      throw new Error(`Directive ${name} is already defined`)
     customDirectives[name] = fn
     return this
   }
 
   /**
-   * Add a custom x-on event modifier
+   * Add a custom `x-on` event modifier
    *
    * @param name Modifier name
    * @param fn Modifier implementation
    */
-  modifier(name: string, fn: ModifierFn) {
+  defineEventModifier(name: string, fn: ModifierFn) {
     if (name in eventModifiers)
-      throw new Error(`Modifier named ${name} is already defined`)
-
+      throw new Error(`Event modifier ${name} is already defined`)
     eventModifiers[name] = fn
+    return this
+  }
+
+  /**
+   * Add a custom `x-model` modifier
+   *
+   * @param name Modifier name
+   * @param fn Modifier implementation
+   */
+  defineModelModifier(name: string, fn: ModelModifier) {
+    if (name in modelModifiers)
+      throw new Error(`Model modifier ${name} is already defined`)
+    modelModifiers[name] = fn
     return this
   }
 
@@ -47,8 +63,8 @@ class App<T extends object> {
   }
 }
 
-export function createApp<T extends object>(init: T) {
-  return new App(init)
+export function createApp<T extends object>(init?: T) {
+  return new App(init ?? {})
 }
 
 export function createScope(scopeRoot: Element) {

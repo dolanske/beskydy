@@ -18,28 +18,43 @@ Create a reactive partition by adding `x-scope` attribute on an element. This wi
  ```
 
 Include a script in the footer in which we can initialize all the scopes.
- ```ts
+
+```ts
 import { createApp } from 'beskydy'
 
- // You can also define global properties, which will be available in every scope
+// You can also define global properties, which will be available in every scope
 const app = createApp({
-   characters: [],
-   isLoading: false,
-   async fetchCharacters() {
-     this.isLoading = true
-     this.characters = await fetch('https://swapi.dev/api/people/')
-     this.isLoading = false
-   }
+  characters: [],
+  isLoading: false,
+  async fetchCharacters() {
+    this.isLoading = true
+    this.characters = await fetch('https://swapi.dev/api/people/')
+    this.isLoading = false
+  }
 })
 
 // Add custom directives
-app.directive('x-funny', (ctx, node, attr) => {
-   node.textContent = 'That\'s really funny'
+app.defineDirective('x-funny', (ctx, node, attr) => {
+  node.textContent = 'That\'s really funny'
+})
+
+// Add custom event modifier
+// Can be used as x-on:input.save[key]
+// **NOTE**: If the provided parameter matches a variable name defined in the current or global scope
+// it will use its current value. This way you can create dynamic modifier parameters
+app.defineEventModifier('save', (event, customState, param) => {
+  localStorage.setItem(param, String(event.data))
+})
+
+// Add custom `x-model` modifier
+// Same as with event modifiers, modifier parameters are also supported
+app.defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
+  return String(value).toLowerCase()
 })
 
 // Initialize the app
 app.init()
- ```
+```
 
 ## Expressions
 

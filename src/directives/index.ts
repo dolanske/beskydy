@@ -13,7 +13,7 @@ export interface ModifierListenerState {
   lastCall: number
 }
 
-export type Primitive = string | number | null | undefined | boolean | bigint
+export type Primitive = string | number | null | undefined | boolean
 
 export interface Modifier {
   key: string

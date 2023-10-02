@@ -3,7 +3,30 @@ import type { UnwrapNestedRefs } from '@vue/reactivity';
 
 declare class App<T extends object> {
     constructor(initialDataset: T);
-    directive(name: string, fn: Directive): this;
+    /**
+     * Add a custom directive (element attribute)
+     *
+     * @param name Directive name, preferably should start with `x-`
+     * @param fn Directive implementation
+     */
+    defineDirective(name: string, fn: Directive): this;
+    /**
+     * Add a custom `x-on` event modifier
+     *
+     * @param name Modifier name
+     * @param fn Modifier implementation
+     */
+    defineEventModifier(name: string, fn: ModifierFn): this;
+    /**
+     * Add a custom `x-model` modifier
+     *
+     * @param name Modifier name
+     * @param fn Modifier implementation
+     */
+    defineModelModifier(name: string, fn: ModelModifier): this;
+    /**
+     * Initialize Beskydy. It starts by collecting all the scopes and initializing them
+     */
     init(): void;
 }
 
@@ -26,7 +49,7 @@ declare type ContextData = typeof globalState & {
     $refs: Record<string, Element>;
 };
 
-export declare function createApp<T extends object>(init: T): App<T>;
+export declare function createApp<T extends object>(init?: T): App<{}>;
 
 export declare function createScope(scopeRoot: Element): {
     ctx: Context<Element, object>;
@@ -35,5 +58,16 @@ export declare function createScope(scopeRoot: Element): {
 declare type Directive = (ctx: ContextAny, node: Element, attr: Attr) => void;
 
 declare const globalState: {};
+
+declare type ModelModifier = (value: string, oldValue: string, param?: unknown) => unknown;
+
+declare type ModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean;
+
+declare interface ModifierListenerState {
+    calledTimes: number;
+    lastCall: number;
+}
+
+declare type Primitive = string | number | null | undefined | boolean;
 
 export { }

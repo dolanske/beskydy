@@ -1,4 +1,6 @@
-import type { Primitive } from '@vue/reactivity'
+import type { Primitive } from './directives/index'
+import type { ContextAny } from './context'
+import { evaluate } from './evaluate'
 
 export function isSibling(el: HTMLElement, el2: HTMLElement) {
   return el !== el2 && el.parentNode === el2.parentNode
@@ -30,4 +32,23 @@ export function removeChildren(node: Element) {
 export function isType(val: any, requiredType: Primitive) {
   // eslint-disable-next-line valid-typeof
   return typeof val === requiredType
+}
+
+export function parseParam(value: string, ctx: ContextAny): Primitive {
+  if (value in ctx.data) {
+    return evaluate(ctx.data, value)
+  }
+  else {
+    if (value === 'undefined')
+      return undefined
+    else if (value === 'null')
+      return null
+    else if (value === 'true' || value === 'false')
+      return Boolean(value)
+    // eslint-disable-next-line unicorn/prefer-number-properties
+    else if (!isNaN(value as any))
+      return Number(value)
+    else
+      return value
+  }
 }
