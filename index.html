@@ -31,7 +31,9 @@
       <div x-scope="{text: 'Hello World'}">
         <input type="text" x-model="text">
         <div class="wrapper blue">
-          <span x-portal="#target" x-text="text"></span>
+          <div>
+            <span x-portal="#target">{{text}}</span>
+          </div>
         </div>
         <div class="wrapper red" id="target">
         </div>

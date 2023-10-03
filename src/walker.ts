@@ -14,7 +14,7 @@ import { processModel } from './directives/x-model'
 import { processFor } from './directives/x-for'
 import { customDirectives } from './directives'
 import { processPortal } from './directives/x-portal'
-import { processTextNode } from './directives/textNode'
+import { processTextNode } from './directives/text-node'
 
 export function walk(ctx: ContextAny) {
   const walker = document.createTreeWalker(ctx.root)
@@ -33,9 +33,16 @@ export function walk(ctx: ContextAny) {
         continue
       }
 
+      // SECTION x-portal
+      // A section of DOM disconnected from the context
+      // tree but still within the reactive scope. We essentially need
+      // to create another walker within this walker to temporarily
+      // traverse the detached dom tree
       let value
-      if (value = getAttr(_node, 'x-portal'))
-        node = processPortal(ctx, _node, { value } as Attr)
+      if (value = getAttr(_node, 'x-portal')) {
+        processPortal(ctx, _node, { value } as Attr)
+        value = undefined // close
+      }
 
       processAttrs(ctx, _node)
     }
