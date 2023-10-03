@@ -1,11 +1,10 @@
-import { createApp } from './scope'
+import { Beskydy } from './scope'
 
 export {
   createScope,
-  createApp,
+  Beskydy,
 } from './scope'
 
 // Testing code
-
-const app = createApp()
-app.init()
+const app = Beskydy()
+app.start()

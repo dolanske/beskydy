@@ -56,14 +56,14 @@ class App<T extends object> {
   /**
    * Initialize Beskydy. It starts by collecting all the scopes and initializing them
    */
-  init() {
+  start() {
     const scopeRoots = Array.from(document.querySelectorAll('[x-scope]'))
     for (const scopeRoot of scopeRoots)
       createScope(scopeRoot)
   }
 }
 
-export function createApp<T extends object>(init?: T) {
+export function Beskydy<T extends object>(init?: T) {
   return new App(init ?? {})
 }
 

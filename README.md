@@ -20,10 +20,10 @@ Create a reactive partition by adding `x-scope` attribute on an element. This wi
 Include a script in the footer in which we can initialize all the scopes.
 
 ```ts
-import { createApp } from 'beskydy'
+import { Beskydy } from 'beskydy'
 
 // You can also define global properties, which will be available in every scope
-const app = createApp({
+const app = Beskydy({
   characters: [],
   isLoading: false,
   async fetchCharacters() {
@@ -52,8 +52,8 @@ app.defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
   return String(value).toLowerCase()
 })
 
-// Initialize the app
-app.init()
+// Begin collection of individual scopes and start the app
+app.start()
 ```
 
 ## Expressions
@@ -145,6 +145,27 @@ Iterator exposes the property, property key and the index.
   </tr>
 </table>
 ```
+
+### `x-portal`
+
+Allows you to move piece of a scope anywhere in the DOM, while retaining its reactive context.
+
+```html
+<!-- Original scope -->
+<div x-scope="{ text: 'Hello World' }">
+  <input type="text" x-model="text">
+  <div class="wrapper blue">
+    <div>
+      <span x-portal="#target" x-data="{ append: ' hehe' }">{{ text + append }}</span>
+    </div>
+  </div>
+</div> 
+
+<!-- Anywhere else in the DOM -->
+<div class="wrapper red" id="target" />
+```
+
+The `<span>` will act like it's always been part of the `#target` element, but it'll have access to all the properties defined within the original scope.
 
 ### `x-ref`
 

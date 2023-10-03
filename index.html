@@ -28,16 +28,16 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{text: 'Hello World'}">
+      <div x-scope="{ text: 'Hello World' }">
         <input type="text" x-model="text">
         <div class="wrapper blue">
           <div>
-            <span x-portal="#target">{{text}}</span>
+            <span x-portal="#target" x-data="{ append: ' hehe' }">{{ text + append }}</span>
           </div>
         </div>
-        <div class="wrapper red" id="target">
-        </div>
       </div> 
+    </div>
+    <div class="wrapper red" id="target">
     </div>
     <script type="module" src="./src/index.ts"></script>
   </body>

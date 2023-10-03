@@ -23,7 +23,6 @@ export const processPortal: Directive = function (ctx, original, { value }) {
 
   while (node) {
     if (node.nodeType === 1) {
-      // Element
       const _node = node as HTMLElement
 
       if (getAttr(_node, 'x-skip') !== null) {
