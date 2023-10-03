@@ -15,6 +15,7 @@ import { processFor } from './directives/x-for'
 import { customDirectives } from './directives'
 import { processPortal } from './directives/x-portal'
 import { processTextNode } from './directives/text-node'
+import { processData } from './directives/x-data'
 
 export function walk(ctx: ContextAny) {
   const walker = document.createTreeWalker(ctx.root)
@@ -72,35 +73,13 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
 
     // 0. Scope initialization
     if (attr.name === 'x-data' || attr.name === 'x-scope') {
-      node.removeAttribute(attr.name)
-
-      if (attr.name === 'x-scope' && ctx.root !== node) {
-        console.warn('Can not initialize a new scope within an existing scope')
-        return
-      }
-
-      try {
-        if (!attr.value)
-          return
-
-        const data = evaluate({}, attr.value)
-
-        if (!isObj(data))
-          return
-
-        for (const key of Object.keys(data)) {
-          Object.defineProperty(ctx.data, key, {
-            value: data[key],
-            writable: true,
-            enumerable: true,
-            configurable: true,
-          })
-        }
-      }
-      catch (e) {
-        console.warn('[x-scope/x-data] Error when processing attribute')
-        console.log(e)
-      }
+      /**
+       * If directive processing returns true, it is a signal an error
+       * has occured and the walker should skip initialization on this
+       * element.
+       */
+      if (processData(ctx, node, attr))
+        throw new Error('[x-scope/x-data] Error when processing attribute. \n Most likely an issue with the the data object.')
     }
 
     // 1. for
