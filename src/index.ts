@@ -1,10 +1,14 @@
-import { Beskydy } from './scope'
-
 export {
   createScope,
   Beskydy,
 } from './scope'
 
-// Testing code
-const app = Beskydy()
-app.start()
+export type {
+  Directive,
+  Primitive,
+  EventModifierFn,
+} from './directives'
+
+export type {
+  ModelModifierFn,
+} from './directives/x-model'

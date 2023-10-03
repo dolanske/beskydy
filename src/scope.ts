@@ -1,10 +1,10 @@
 import { reactive } from '@vue/reactivity'
 import { Context } from './context'
-import type { Directive, ModifierFn } from './directives'
+import type { Directive, EventModifierFn } from './directives'
 import { customDirectives } from './directives'
 import { walk } from './walker'
 import { eventModifiers } from './directives/x-on'
-import type { ModelModifier } from './directives/x-model'
+import type { ModelModifierFn } from './directives/x-model'
 import { modelModifiers } from './directives/x-model'
 
 export const globalState = reactive({})
@@ -33,7 +33,7 @@ class App<T extends object> {
    * @param name Modifier name
    * @param fn Modifier implementation
    */
-  defineEventModifier(name: string, fn: ModifierFn) {
+  defineEventModifier(name: string, fn: EventModifierFn) {
     if (name in eventModifiers)
       throw new Error(`Event modifier ${name} is already defined`)
     eventModifiers[name] = fn
@@ -46,7 +46,7 @@ class App<T extends object> {
    * @param name Modifier name
    * @param fn Modifier implementation
    */
-  defineModelModifier(name: string, fn: ModelModifier) {
+  defineModelModifier(name: string, fn: ModelModifierFn) {
     if (name in modelModifiers)
       throw new Error(`Model modifier ${name} is already defined`)
     modelModifiers[name] = fn

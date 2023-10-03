@@ -2,9 +2,9 @@ import { isArr, isNil, parseParam } from '../helpers'
 import { evaluate } from '../evaluate'
 import type { Directive, Primitive } from '.'
 
-export type ModelModifier = (value: string, oldValue: string, param?: unknown) => unknown
+export type ModelModifierFn = (value: string, oldValue: string, param?: unknown) => unknown
 
-export const modelModifiers: Record<string, ModelModifier> = {
+export const modelModifiers: Record<string, ModelModifierFn> = {
   trim: (value: string) => value.trim(),
   number: (value: string, prevValue: string) => {
     if (Number.isNaN(Number(value)))
