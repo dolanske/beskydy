@@ -16,19 +16,21 @@ declare class App<T extends object> {
      * @param name Modifier name
      * @param fn Modifier implementation
      */
-    defineEventModifier(name: string, fn: ModifierFn): this;
+    defineEventModifier(name: string, fn: EventModifierFn): this;
     /**
      * Add a custom `x-model` modifier
      *
      * @param name Modifier name
      * @param fn Modifier implementation
      */
-    defineModelModifier(name: string, fn: ModelModifier): this;
+    defineModelModifier(name: string, fn: ModelModifierFn): this;
     /**
      * Initialize Beskydy. It starts by collecting all the scopes and initializing them
      */
-    init(): void;
+    start(): void;
 }
+
+export declare function Beskydy<T extends object>(init?: T): App<{}>;
 
 declare class Context<R extends Element, T extends object> {
     root: Element;
@@ -49,25 +51,23 @@ declare type ContextData = typeof globalState & {
     $refs: Record<string, Element>;
 };
 
-export declare function createApp<T extends object>(init?: T): App<{}>;
-
 export declare function createScope(scopeRoot: Element): {
     ctx: Context<Element, object>;
 };
 
-declare type Directive = (ctx: ContextAny, node: Element, attr: Attr) => void;
+export declare type Directive<T = void> = (ctx: ContextAny, node: Element, attr: Attr) => T;
+
+export declare type EventModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean;
 
 declare const globalState: {};
 
-declare type ModelModifier = (value: string, oldValue: string, param?: unknown) => unknown;
-
-declare type ModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean;
+export declare type ModelModifierFn = (value: string, oldValue: string, param?: unknown) => unknown;
 
 declare interface ModifierListenerState {
     calledTimes: number;
     lastCall: number;
 }
 
-declare type Primitive = string | number | null | undefined | boolean;
+export declare type Primitive = string | number | null | undefined | boolean;
 
 export { }
