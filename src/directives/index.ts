@@ -1,10 +1,10 @@
 import type { ContextAny } from '../context'
 
-export type Directive = (
+export type Directive<T = void> = (
   ctx: ContextAny,
   node: Element,
   attr: Attr,
-) => void
+) => T
 
 export const customDirectives: Record<string, Directive> = {}
 
@@ -20,4 +20,4 @@ export interface Modifier {
   param: Primitive
 }
 
-export type ModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean
+export type EventModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean

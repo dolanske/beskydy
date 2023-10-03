@@ -1,8 +1,8 @@
 import { execute } from '../evaluate'
 import { parseParam } from '../helpers'
-import type { Directive, Modifier, ModifierFn, ModifierListenerState, Primitive } from '.'
+import type { Directive, EventModifierFn, Modifier, ModifierListenerState, Primitive } from '.'
 
-export const eventModifiers: Record<string, ModifierFn> = {
+export const eventModifiers: Record<string, EventModifierFn> = {
   throttle: (_, { lastCall }, amount = 300) => {
     if (typeof amount !== 'number')
       return false
