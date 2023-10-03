@@ -1,6 +1,6 @@
 import { getAttr } from '../helpers'
 import { processAttrs } from '../walker'
-import { processTextNode } from './text-node'
+import { processTextNode } from '../text-node'
 import type { Directive } from '.'
 
 export const processPortal: Directive = function (ctx, original, { value }) {

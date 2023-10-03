@@ -1,5 +1,4 @@
-import { evaluate } from './evaluate'
-import { getAttr, isObj } from './helpers'
+import { getAttr } from './helpers'
 import type { ContextAny } from './context'
 import { processRef } from './directives/x-ref'
 import { processText } from './directives/x-text'
@@ -14,7 +13,7 @@ import { processModel } from './directives/x-model'
 import { processFor } from './directives/x-for'
 import { customDirectives } from './directives'
 import { processPortal } from './directives/x-portal'
-import { processTextNode } from './directives/text-node'
+import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
 
 export function walk(ctx: ContextAny) {

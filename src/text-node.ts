@@ -1,5 +1,5 @@
-import type { ContextAny } from '../context'
-import { evaluate } from '../evaluate'
+import type { ContextAny } from './context'
+import { evaluate } from './evaluate'
 
 export function processTextNode(ctx: ContextAny, node: Node) {
   // This should never be hit as only text nodes are processed, but
