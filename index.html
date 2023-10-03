@@ -30,14 +30,18 @@
     <div id="app">
       <div x-scope="{ text: 'Hello World' }">
         <input type="text" x-model="text">
+        <!-- Blue -->
         <div class="wrapper blue">
           <div>
-            <span x-portal="#target" x-data="{ append: ' hehe' }">{{ text + append }}</span>
+            <span x-portal:append="#target" x-data="{ append: ' hehe' }">{{ text + append }}</span>
           </div>
         </div>
+
+        <!-- Red -->
+        <div class="wrapper red" id="target">
+          <span>I am an el</span>
+        </div>
       </div> 
-    </div>
-    <div class="wrapper red" id="target">
     </div>
     <script type="module" src="./src/index.ts"></script>
   </body>

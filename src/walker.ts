@@ -38,11 +38,9 @@ export function walk(ctx: ContextAny) {
       // tree but still within the reactive scope. We essentially need
       // to create another walker within this walker to temporarily
       // traverse the detached dom tree
-      let value
-      if (value = getAttr(_node, 'x-portal')) {
-        processPortal(ctx, _node, { value } as Attr)
-        value = undefined // close
-      }
+      let portalAttr
+      if (portalAttr = Array.from(_node.attributes).find(a => a.name.startsWith('x-portal')))
+        processPortal(ctx, _node, portalAttr)
 
       processAttrs(ctx, _node)
     }

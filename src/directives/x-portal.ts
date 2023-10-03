@@ -3,17 +3,26 @@ import { processAttrs } from '../walker'
 import { processTextNode } from '../text-node'
 import type { Directive } from '.'
 
-export const processPortal: Directive = function (ctx, original, { value }) {
+export const processPortal: Directive = function (ctx, original, { name, value }) {
   // Clone node, teleport clone to the new place, replace current node
   const clone = original.cloneNode(true) as HTMLElement
   const target = document.querySelector(value)
+  const [, elPlacement] = name.split(':')
 
-  if (!target)
+  if (!target) {
     console.error('No valid target provided for `x-portal`')
+    return
+  }
 
   // Remove original node and append clone to the target
   original.remove()
-  target?.append(clone)
+
+  if (elPlacement === 'prepend')
+    target.prepend(clone)
+  else if (elPlacement === 'replace')
+    target.replaceChildren(clone)
+  else
+    target.append(clone)
 
   // Walk the new branch. This code is a compressed clone of the
   // `walk()` function with some differences which aren't necessarily
