@@ -30,17 +30,27 @@ export const processSwitch: Directive = function (ctx, node, { value }) {
     })
     // Remove all nodes from the DOM, they will be reattached based on
     // the expression
-    .map((e) => {
+    .map((block) => {
       // Insert comment before each node (there can be gaps between cases)
       const anchor = new Comment('x-switch')
-      node.insertBefore(e.node, anchor)
+      node.insertBefore(anchor, block.node)
+      // e.node.insertAdjacentElement('afterend', anchor)
       anchors.push(anchor)
       // Remove self
-      e.node.remove()
-      return e
+      block.node.removeAttribute('x-case')
+      block.node.removeAttribute('x-default')
+      block.node.remove()
+      return block
     })
 
   let currentResult: Block | null
+
+  function clear() {
+    if (currentResult) {
+      currentResult.node.remove()
+      currentResult = null
+    }
+  }
 
   ctx.effect(() => {
     const result = evaluate(ctx.data, value)
@@ -50,7 +60,7 @@ export const processSwitch: Directive = function (ctx, node, { value }) {
       const block = blocks[i]
 
       // If default is NOT last, we save it in case the following expression are not the result
-      if (i < blocks.length && block.isDefault)
+      if (i < blocks.length - 1 && block.isDefault)
         res = [block, i]
 
       if (block.expr) {
@@ -69,15 +79,14 @@ export const processSwitch: Directive = function (ctx, node, { value }) {
     }
 
     if (res) {
-      if (currentResult) {
-        currentResult.node.remove()
-        currentResult = null
-      }
-
+      clear()
       const [block, index] = res
       const anchor = anchors[index]
-      node.insertBefore(anchor, block.node)
+      node.insertBefore(block.node, anchor)
       currentResult = block
+      return
     }
+
+    clear()
   })
 }

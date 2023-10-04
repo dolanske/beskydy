@@ -140,7 +140,6 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
         default: {
           assignSimpleDefaultValue()
           node.removeAttribute('x-model')
-
           node.addEventListener('input', (evt) => {
             const target = evt.target as HTMLInputElement
             const rawValue = target.value
@@ -165,7 +164,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       assignSimpleDefaultValue()
 
       node.addEventListener('change', (evt) => {
-        const val = (evt.target as HTMLSelectElement).value
+        const val = parseParam((evt.target as HTMLSelectElement).value, ctx)
         Object.assign(ctx.data, { [value]: val })
       })
 
