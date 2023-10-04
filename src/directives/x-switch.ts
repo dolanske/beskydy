@@ -39,7 +39,7 @@ export const processSwitch: Directive = function (ctx, node, { value }) {
       node.insertBefore(anchor, block.node)
       // e.node.insertAdjacentElement('afterend', anchor)
       anchors.push(anchor)
-      // Remove self
+      // Remove beskydy attributes and self
       block.node.removeAttribute('x-case')
       block.node.removeAttribute('x-default')
       block.node.remove()
