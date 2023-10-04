@@ -92,7 +92,7 @@ Append data into scope's dataset. Any data within this attribute will be availab
 
 ### `x-if`, `x-else-if`, `x-else`
 
-Conditionally render elements based on the expression results
+Conditionally render elements based on the expression results.
 
 ```html
 <div x-scope="{ count: 0 }">
@@ -104,14 +104,14 @@ Conditionally render elements based on the expression results
 
 ### `x-switch`
 
-Cleaner way to write many of conditional statements for a single reactive value
+Cleaner way to write many of conditional statements for a single reactive value.
 
 ```html
 <div x-scope="{ htmlNodeType: 1 }">
   <div x-switch="htmlNodeType">
     <span x-case="1">Element Node</span>
     <span x-case="2">Attribute Node</span>
-    <span x-casA="3">Text node</span>
+    <span x-case="3">Text node</span>
     <span x-case="11">Document Fragment</span>
     <span x-default>Other nodes</span>
   </div>
@@ -151,7 +151,7 @@ Iterator exposes the property and the index.
 </ul>
 ```
 
-#### Objecty
+#### Object
 
 Iterator exposes the property, property key and the index.
 
@@ -253,7 +253,7 @@ Provides two way data binding to a input/textarea/select/details. It listens to 
 </div>
 ```
 
-The following example works exactly the same as the one above
+The following example works exactly the same as the one above.
 
 ```html
 <input x-on:input="text = $el.target.value" x-bind:value="text" />
