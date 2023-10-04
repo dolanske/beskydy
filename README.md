@@ -40,8 +40,9 @@ app.defineDirective('x-funny', (ctx, node, attr) => {
 
 // Add custom event modifier
 // Can be used as x-on:input.save[key]
-// **NOTE**: If the provided parameter matches a variable name defined in the current or global scope
-// it will use its current value. This way you can create dynamic modifier parameters
+// **NOTE**: If the provided parameter matches a variable
+// name defined in the current or global scope it will use its current value.
+// This way you can create dynamic modifier parameters
 app.defineEventModifier('save', (event, customState, param) => {
   localStorage.setItem(param, String(event.data))
 })
@@ -99,6 +100,23 @@ Conditionally render elements based on the expression results
   <span x-else-if="count >= 3 && count <= 6">Between and including 3 and 6</span>
   <span x-else>More than 6</span>
 </div>
+```
+
+### `x-switch`
+
+Cleaner way to write many of conditional statements for a single reactive value
+
+```html
+<div x-scope="{ htmlNodeType: 1 }">
+  <div x-switch="htmlNodeType">
+    <span x-case="1">Element Node</span>
+    <span x-case="2">Attribute Node</span>
+    <span x-casA="3">Text node</span>
+    <span x-case="11">Document Fragment</span>
+    <span x-default>Other nodes</span>
+  </div>
+</div>
+
 ```
 
 ### `x-show`
