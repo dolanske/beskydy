@@ -16,6 +16,8 @@ import { processPortal } from './directives/x-portal'
 import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
 
+// import { processSwitch } from './directives/x-switch'
+
 export function walk(ctx: ContextAny) {
   const walker = document.createTreeWalker(ctx.root)
   let node: Node | null = walker.root
@@ -79,23 +81,22 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
         throw new Error('[x-scope/x-data] Error when processing attribute. \n Most likely an issue with the the data object.')
     }
 
-    // 1. for
     // In case if and for are on the same element, the if is removed.
     if (attr.name === 'x-for')
       processFor(ctx, node, attr)
 
-    // 2. if
     else if (attr.name === 'x-if')
       processIf(ctx, node, attr)
 
-    // 3. ref
+    // if (attr.name === 'x-switch')
+    //   processSwitch(ctx, node, attr)
+
     if (attr.name === 'x-ref')
       processRef(ctx, node, attr)
 
     if (attr.name.startsWith('x-model'))
       processModel(ctx, node, attr)
 
-    // 4. bind
     if (attr.name.startsWith('x-bind') || attr.name.startsWith(':'))
       processBind(ctx, node, attr)
 

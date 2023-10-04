@@ -28,19 +28,23 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ text: 'Hello World' }">
-        <input type="text" x-model="text">
-        <!-- Blue -->
-        <div class="wrapper blue">
-          <div>
-            <span x-portal:append="#target" x-data="{ append: ' hehe' }">{{ text + append }}</span>
-          </div>
-        </div>
+      <div x-scope="{ value: 1 }">
+        <select x-model="value">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
 
-        <!-- Red -->
-        <div class="wrapper red" id="target">
-          <span>I am an el</span>
-        </div>
+        {{value}}
+
+        <!-- <hr>
+        <div x-switch="value">
+          <span x-case="1">First</span>
+          <span x-case="2">Second</span>
+          <span x-case="3">Third</span>
+          <span x-default>Some Other</span>
+        </div> -->
       </div> 
     </div>
     <script type="module" src="./src/index.ts"></script>

@@ -165,8 +165,8 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       assignSimpleDefaultValue()
 
       node.addEventListener('change', (evt) => {
-        const value = (evt.target as HTMLSelectElement).value
-        Object.assign(ctx.data, { [value]: value })
+        const val = (evt.target as HTMLSelectElement).value
+        Object.assign(ctx.data, { [value]: val })
       })
 
       ctx.effect(() => (node as HTMLSelectElement).value = evaluate(ctx.data, value))
