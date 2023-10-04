@@ -1,5 +1,6 @@
 import { evaluate } from '../evaluate'
 import { parseParam } from '../helpers'
+import { walk } from '../walker'
 import type { Directive } from '.'
 
 interface Block {
@@ -86,6 +87,7 @@ export const processSwitch: Directive = function (ctx, node, { value }) {
       const [block, index] = res
       const anchor = anchors[index]
       node.insertBefore(block.node, anchor)
+      walk(ctx, block.node)
       currentResult = block
       return
     }

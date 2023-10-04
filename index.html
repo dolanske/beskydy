@@ -39,26 +39,14 @@
 
         <hr>
 
-        <div x-if="value === 1">
-          <span>
-            {{ value }}
-          </span>
-        </div>
-        <!-- <div x-else-if="value !== 1"> -->
-        <div x-else>
-          <span>
-            {{ Number(value) + 10 }}
-          </span>
-        </div>
-
-        <!-- <div x-switch="value">
+        <div x-switch="value">
           <span x-case="1">First</span>
           <span x-case="2">Second</span>
           <span x-case="3">Third</span>
           <div x-default>
             <p>{{ text }}</p>
           </div>
-        </div> -->
+        </div>
       </div> 
     </div>
     <script type="module" src="./src/index.ts"></script>
