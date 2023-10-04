@@ -12,6 +12,9 @@ interface Block {
 export const processSwitch: Directive = function (ctx, node, { value }) {
   node.removeAttribute('x-switch')
 
+  // Since each case/default can be separated by normal non-switch
+  // nodes, we need to replace each with a commenet anchor so we can
+  // re-add it to the DOM in the right place
   const anchors: Comment[] = []
 
   // Get all child elements which are part of the switch statement
