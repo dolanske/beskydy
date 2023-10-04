@@ -1,4 +1,4 @@
-import { isArr, isNil, parseParam } from '../helpers'
+import { isArr, isNil, parseValue } from '../helpers'
 import { evaluate } from '../evaluate'
 import type { Directive, Primitive } from '.'
 
@@ -34,7 +34,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       const parsedModifier = rawParams.replace(']', '')
       // The parameter can be a reactive variable.
       // So we should evaluate it against the current context, but only if its available
-      param = parseParam(parsedModifier, ctx)
+      param = parseValue(parsedModifier, ctx)
     }
 
     return modelModifiers[key](newValue, oldValue, param)
@@ -164,7 +164,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       assignSimpleDefaultValue()
 
       node.addEventListener('change', (evt) => {
-        const val = parseParam((evt.target as HTMLSelectElement).value, ctx)
+        const val = parseValue((evt.target as HTMLSelectElement).value, ctx)
         Object.assign(ctx.data, { [value]: val })
       })
 

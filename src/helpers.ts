@@ -36,7 +36,7 @@ export function isType(val: any, requiredType: Primitive) {
   return typeof val === requiredType
 }
 
-export function parseParam(value: string, ctx: ContextAny): Primitive {
+export function parseValue(value: string, ctx: ContextAny): Primitive {
   if (value in ctx.data) {
     return evaluate(ctx.data, value)
   }

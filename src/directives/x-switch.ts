@@ -1,5 +1,5 @@
 import { evaluate } from '../evaluate'
-import { parseParam } from '../helpers'
+import { parseValue } from '../helpers'
 import { walk } from '../walker'
 import type { Directive } from '.'
 
@@ -68,7 +68,7 @@ export const processSwitch: Directive = function (ctx, node, { value }) {
         res = [block, i]
 
       if (block.expr) {
-        const blockResult = parseParam(block.expr, ctx)
+        const blockResult = parseValue(block.expr, ctx)
 
         if (blockResult === result) {
           res = [block, i]

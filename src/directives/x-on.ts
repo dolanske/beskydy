@@ -1,5 +1,5 @@
 import { execute } from '../evaluate'
-import { parseParam } from '../helpers'
+import { parseValue } from '../helpers'
 import type { Directive, EventModifierFn, Modifier, ModifierListenerState, Primitive } from '.'
 
 export const eventModifiers: Record<string, EventModifierFn> = {
@@ -64,7 +64,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
         const parsedModifier = rawParams.replace(']', '')
         // The parameter can be a reactive variable.
         // So we should evaluate it against the current context, but only if its available
-        param = parseParam(parsedModifier, ctx)
+        param = parseValue(parsedModifier, ctx)
       }
 
       return { key, param }
