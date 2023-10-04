@@ -17,8 +17,8 @@ import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
 import { processSwitch } from './directives/x-switch'
 
-export function walk(ctx: ContextAny) {
-  const walker = document.createTreeWalker(ctx.root)
+export function walk(ctx: ContextAny, forcedRoot?: Element) {
+  const walker = document.createTreeWalker(forcedRoot ?? ctx.root)
   let node: Node | null = walker.root
 
   while (node) {
