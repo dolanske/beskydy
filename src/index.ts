@@ -1,4 +1,4 @@
-// import { Beskydy } from './scope'
+import { Beskydy } from './scope'
 
 export {
   createScope,
@@ -15,7 +15,5 @@ export type {
   ModelModifierFn,
 } from './directives/x-model'
 
-// const app = Beskydy({
-
-// })
-// app.start()
+const app = Beskydy()
+app.start()

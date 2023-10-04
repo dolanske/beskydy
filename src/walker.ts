@@ -15,8 +15,7 @@ import { customDirectives } from './directives'
 import { processPortal } from './directives/x-portal'
 import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
-
-// import { processSwitch } from './directives/x-switch'
+import { processSwitch } from './directives/x-switch'
 
 export function walk(ctx: ContextAny) {
   const walker = document.createTreeWalker(ctx.root)
@@ -88,8 +87,8 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
     else if (attr.name === 'x-if')
       processIf(ctx, node, attr)
 
-    // if (attr.name === 'x-switch')
-    //   processSwitch(ctx, node, attr)
+    if (attr.name === 'x-switch')
+      processSwitch(ctx, node, attr)
 
     if (attr.name === 'x-ref')
       processRef(ctx, node, attr)
