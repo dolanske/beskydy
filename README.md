@@ -4,7 +4,7 @@
 
 ## Usage
 
-Create a reactive partition by adding `x-scope` attribute on an element. This will create a reactive scope for said element and all its descendants.
+Create a reactive partition by adding `x-scope` directive on an element. This will create a reactive scope for said element and all its descendants.
 
  ```html
 <div x-scope="{ count: 0 }">
@@ -76,9 +76,9 @@ Each expression is a piece of code that gets evaluated. Because it's all in a st
 - `$event`: Expose the event, if used within event listeners
 - `$refs`: Expose the scope's element refs
 
-## Attributes
+## Directives
 
-There are 16 attributes in total. Each simplifying the way we can interact or update the DOM.
+There are 16 directives in total. Each simplifying the way we can interact or update the DOM.
 
 [x-scope](#x-scope) • [x-data](#x-data) • [x-if](#x-if-x-else-if-x-else) • [x-switch](#x-switch) • [x-show](#x-show) • [x-for](#x-for) • [x-portal](#x-portal) • [x-spy](#x-spy) • [x-ref](#x-ref) • [x-on](#x-on) • [x-model](#x-model) • [x-bind](#x-bind) • [x-class](#x-class) • [x-style](#x-style) • [x-text](#x-text) • [x-html](#x-html)
 
@@ -95,7 +95,7 @@ Initializes a reactive scope.
 
 ### `x-data`
 
-Append data into scope's dataset. Any data within this attribute will be available to its parent elements, but this practise is discouraged, as on first draw, this data will be undefined.
+Append data into scope's dataset. Any data within this directive will be available to its parent elements, but this practise is discouraged, as on first draw, this data will be undefined.
 
 ```html
 <div x-scope="{ initialData: 0, count: 10 }">
