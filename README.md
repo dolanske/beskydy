@@ -78,6 +78,10 @@ Each expression is a piece of code that gets evaluated. Because it's all in a st
 
 ## Attributes
 
+There are 16 attributes in total. Each simplifying the way we can interact or update the DOM.
+
+[x-scope](#x-scope) • [x-data](#x-data) • [x-if](#x-if-x-else-if-x-else) • [x-switch](#x-switch) • [x-show](#x-show) • [x-for](#x-for) • [x-portal](#x-portal) • [x-spy](#x-spy) • [x-ref](#x-ref) • [x-on](#x-on) • [x-model](#x-model) • [x-bind](#x-bind) • [x-class](#x-class) • [x-style](#x-style) • [x-text](#x-text) • [x-html](#x-html)
+
 ### `x-scope`
 
 Initializes a reactive scope.
