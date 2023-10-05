@@ -84,7 +84,7 @@ There are 16 directives in total. Each simplifying the way we can interact or up
 
 ### `x-scope`
 
-Initializes a reactive scope.
+Initializes a reactive scope. Every directive only works if it exists within a scope.
 
 ```html
 <div x-scope="{ initialData: 0, count: 10 }">
