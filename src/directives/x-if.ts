@@ -1,5 +1,6 @@
 import { getAttr } from '../helpers'
 import { evaluate } from '../evaluate'
+import { walk } from '../walker'
 import { type Directive } from '.'
 
 interface Block {
@@ -70,6 +71,8 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
   }
 
   ctx.effect(() => {
+    console.log(blocks)
+
     // Iterate over each block and evaluate block expressions
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
@@ -81,6 +84,12 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
             clear()
 
           parent.insertBefore(block.node, anchor)
+
+          console.log(block.node)
+
+          // Walk and process again
+          walk(ctx, block.node)
+
           currentResult = block
           currentIndex = index
         }

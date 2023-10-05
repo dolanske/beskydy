@@ -28,7 +28,8 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ value: 1 }">
+      <div x-scope="{ value: 2, text: 'Hello World' }">
+        
         <select x-model="value">
           <option value="1">1</option>
           <option value="2">2</option>
@@ -36,15 +37,16 @@
           <option value="4">4</option>
         </select>
 
-        {{value}}
+        <hr>
 
-        <!-- <hr>
         <div x-switch="value">
           <span x-case="1">First</span>
           <span x-case="2">Second</span>
           <span x-case="3">Third</span>
-          <span x-default>Some Other</span>
-        </div> -->
+          <div x-default>
+            <p>{{ text }}</p>
+          </div>
+        </div>
       </div> 
     </div>
     <script type="module" src="./src/index.ts"></script>

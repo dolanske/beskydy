@@ -7,9 +7,11 @@ export function isSibling(el: HTMLElement, el2: HTMLElement) {
 }
 
 export function getAttr(el: HTMLElement | Element, key: string) {
-  const attr = el.getAttribute(key)
+  const attr = el.attributes.getNamedItem(key)
+  if (!attr)
+    return null
   el.removeAttribute(key)
-  return attr ? attr.trim() : null
+  return attr.value ?? true
 }
 
 export function isNil(value: unknown) {
@@ -34,7 +36,7 @@ export function isType(val: any, requiredType: Primitive) {
   return typeof val === requiredType
 }
 
-export function parseParam(value: string, ctx: ContextAny): Primitive {
+export function parseValue(value: string, ctx: ContextAny): Primitive {
   if (value in ctx.data) {
     return evaluate(ctx.data, value)
   }
