@@ -20,7 +20,7 @@ Create a reactive partition by adding `x-scope` attribute on an element. This wi
 Include a script in the footer in which we can initialize all the scopes.
 
 ```ts
-import { Beskydy } from 'beskydy'
+import { createApp } from 'beskydy'
 
 // You can also define global properties, which will be available in every scope
 const app = createApp({
