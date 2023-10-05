@@ -1,7 +1,7 @@
 import { effect } from '@vue/reactivity';
 import type { UnwrapNestedRefs } from '@vue/reactivity';
 
-declare class App<T extends object> {
+export declare class Beskydy<T extends object> {
     constructor(initialDataset: T);
     /**
      * Add a custom directive (element attribute)
@@ -9,28 +9,27 @@ declare class App<T extends object> {
      * @param name Directive name, preferably should start with `x-`
      * @param fn Directive implementation
      */
-    defineDirective(name: string, fn: Directive): this;
+    static defineDirective(name: string, fn: Directive): typeof Beskydy;
     /**
      * Add a custom `x-on` event modifier
      *
      * @param name Modifier name
      * @param fn Modifier implementation
      */
-    defineEventModifier(name: string, fn: EventModifierFn): this;
+    static defineEventModifier(name: string, fn: EventModifierFn): typeof Beskydy;
     /**
      * Add a custom `x-model` modifier
      *
      * @param name Modifier name
      * @param fn Modifier implementation
      */
-    defineModelModifier(name: string, fn: ModelModifierFn): this;
+    static defineModelModifier(name: string, fn: ModelModifierFn): typeof Beskydy;
     /**
      * Initialize Beskydy. It starts by collecting all the scopes and initializing them
      */
     start(): void;
+    teardown(): void;
 }
-
-export declare function Beskydy<T extends object>(init?: T): App<{}>;
 
 declare class Context<R extends Element, T extends object> {
     root: Element;
@@ -40,6 +39,7 @@ declare class Context<R extends Element, T extends object> {
     effect: typeof effect;
     addRef(key: string, ref: Element): void;
     extend(ctx: ContextAny): void;
+    teardown(): void;
 }
 
 declare type ContextAny = Context<Element, object>;
@@ -50,6 +50,8 @@ declare type ContextAny = Context<Element, object>;
 declare type ContextData = typeof globalState & {
     $refs: Record<string, Element>;
 };
+
+export declare function createApp<T extends object>(init?: T): Beskydy<{}>;
 
 export declare function createScope(scopeRoot: Element): {
     ctx: Context<Element, object>;
