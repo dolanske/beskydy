@@ -42,7 +42,7 @@ export class Context<R extends Element, T extends object> {
   // Reactive dataset available to the entire scope
   data: UnwrapNestedRefs<T & ContextData>
   init: boolean
-
+  // Hold all context runners for disposal
   effects: ReactiveEffectRunner[] = []
 
   constructor(root: R, initialDataset?: T) {
@@ -53,7 +53,10 @@ export class Context<R extends Element, T extends object> {
 
   // Watch effects
   // effect = rawEffect
-  effect = rawEffect
+  effect(fn: () => any) {
+    const handler = rawEffect(fn)
+    this.effects.push(handler)
+  }
 
   // Store refs for access within scope
   addRef(key: string, ref: Element) {
