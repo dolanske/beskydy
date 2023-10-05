@@ -264,7 +264,7 @@ Binds an event listener with optional modifiers.
 
 #### Modifiers with parameters
 
-You can provide a single parameter to the modifier using this syntax. You can also pass in a defined in the `x-scope` and `x-data`. Note: it does not accept expressions, only variables/primitive values.
+You can provide a single parameter to the modifier using this syntax. You can also pass in a property defined in the `x-scope` or `x-data` directives. Note: it does not accept expressions, only variables/primitive values.
 
 ```html
 <button x-on:click.only[5]="doNothingAfterFiveClicks()" />
