@@ -1,6 +1,7 @@
 export {
   createScope,
   Beskydy,
+  createApp,
 } from './scope'
 
 export type {

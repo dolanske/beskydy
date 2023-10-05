@@ -23,7 +23,7 @@ Include a script in the footer in which we can initialize all the scopes.
 import { Beskydy } from 'beskydy'
 
 // You can also define global properties, which will be available in every scope
-const app = Beskydy({
+const app = createApp({
   characters: [],
   isLoading: false,
   async fetchCharacters() {
@@ -33,8 +33,22 @@ const app = Beskydy({
   }
 })
 
+// Begin collection of individual scopes and start the app
+app.start()
+
+// If needed, you can destroy Beskydy instance,
+// which will remove any functionality added by the library
+// NOTE: this is experimental and not fully implemented
+app.teardown()
+```
+
+You can also globally extend functionality of Beskydy by adding custom directives, event modifiers and model modifiers.
+
+```ts
+import { Beskydy } from 'beskydy'
+
 // Add custom directives
-app.defineDirective('x-funny', (ctx, node, attr) => {
+Beskydy.defineDirective('x-funny', (ctx, node, attr) => {
   node.textContent = 'That\'s really funny'
 })
 
@@ -43,18 +57,15 @@ app.defineDirective('x-funny', (ctx, node, attr) => {
 // **NOTE**: If the provided parameter matches a variable
 // name defined in the current or global scope it will use its current value.
 // This way you can create dynamic modifier parameters
-app.defineEventModifier('save', (event, customState, param) => {
+Beskydy.defineEventModifier('save', (event, customState, param) => {
   localStorage.setItem(param, String(event.data))
 })
 
 // Add custom `x-model` modifier
 // Same as with event modifiers, modifier parameters are also supported
-app.defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
+Beskydy.defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
   return String(value).toLowerCase()
 })
-
-// Begin collection of individual scopes and start the app
-app.start()
 ```
 
 ## Expressions
@@ -185,6 +196,28 @@ Allows you to move piece of a scope anywhere in the DOM, while retaining its rea
 
 The `<span>` will act like it's always been part of the `#target` element, but it'll have access to all the properties defined within the original scope.
 
+### `x-spy`
+
+Allows you to execute a provided callback whenever the reactive scope is updated.
+
+```html
+<div x-scope="{ first: 1 }">
+  <button @click="first++" x-spy="console.log('Updated!', first)">Increment</button>
+</div> 
+```
+
+If you want to spy on a specific property, you can add its key as a parameter to `x-spy`. Just note, this way you can only watch for changes in the top-level properties in your scope.
+
+```html
+<div x-scope="{ first: 1, second: 10 }">
+  <button @click="first++">Increment First</button>
+  <button @click="second++">Increment Second</button>
+
+  <!-- The spy callback only runs if the `second` property is updated -->
+  <div x-spy:second="console.log('Updated second', second)"></div>
+</div> 
+```
+
 ### `x-ref`
 
 Saves the element to the `$refs` object which is available in the scope. Any changes made to the ref element will trigger reactive updates.
@@ -198,7 +231,6 @@ Saves the element to the `$refs` object which is available in the scope. Any cha
     <span>{{ $refs.item.textContent }}</span>
   </div> 
 </div>
-
 ```
 
 ### `x-on`

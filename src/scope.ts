@@ -1,4 +1,5 @@
 import { reactive } from '@vue/reactivity'
+import type { ContextAny } from './context'
 import { Context } from './context'
 import type { Directive, EventModifierFn } from './directives'
 import { customDirectives } from './directives'
@@ -8,8 +9,9 @@ import type { ModelModifierFn } from './directives/x-model'
 import { modelModifiers } from './directives/x-model'
 
 export const globalState = reactive({})
+const scopes: ContextAny[] = []
 
-class App<T extends object> {
+export class Beskydy<T extends object> {
   constructor(initialDataset: T) {
     Object.assign(globalState, initialDataset)
   }
@@ -20,7 +22,7 @@ class App<T extends object> {
    * @param name Directive name, preferably should start with `x-`
    * @param fn Directive implementation
    */
-  defineDirective(name: string, fn: Directive) {
+  static defineDirective(name: string, fn: Directive) {
     if (name in customDirectives)
       throw new Error(`Directive ${name} is already defined`)
     customDirectives[name] = fn
@@ -33,7 +35,7 @@ class App<T extends object> {
    * @param name Modifier name
    * @param fn Modifier implementation
    */
-  defineEventModifier(name: string, fn: EventModifierFn) {
+  static defineEventModifier(name: string, fn: EventModifierFn) {
     if (name in eventModifiers)
       throw new Error(`Event modifier ${name} is already defined`)
     eventModifiers[name] = fn
@@ -46,7 +48,7 @@ class App<T extends object> {
    * @param name Modifier name
    * @param fn Modifier implementation
    */
-  defineModelModifier(name: string, fn: ModelModifierFn) {
+  static defineModelModifier(name: string, fn: ModelModifierFn) {
     if (name in modelModifiers)
       throw new Error(`Model modifier ${name} is already defined`)
     modelModifiers[name] = fn
@@ -61,10 +63,17 @@ class App<T extends object> {
     for (const scopeRoot of scopeRoots)
       createScope(scopeRoot)
   }
+
+  // TODO
+  // Remove everything
+  teardown() {
+    for (const ctx of scopes)
+      ctx.teardown()
+  }
 }
 
-export function Beskydy<T extends object>(init?: T) {
-  return new App(init ?? {})
+export function createApp<T extends object>(init?: T) {
+  return new Beskydy(init ?? {})
 }
 
 export function createScope(scopeRoot: Element) {
@@ -73,6 +82,8 @@ export function createScope(scopeRoot: Element) {
   walk(ctx)
   ctx.init = true
   scopeRoot.removeAttribute('style')
+
+  scopes.push(ctx)
 
   return { ctx }
 }

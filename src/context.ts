@@ -63,4 +63,8 @@ export class Context<R extends Element, T extends object> {
   extend(ctx: ContextAny) {
     Object.assign(this.data, ctx.data)
   }
+
+  teardown() {
+    // Iterate over all children of a ctx and remove any beskydy functionality
+  }
 }

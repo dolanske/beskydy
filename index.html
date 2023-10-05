@@ -28,25 +28,13 @@
   </head>
   <body>
     <div id="app">
-      <div x-scope="{ value: 2, text: 'Hello World' }">
-        
-        <select x-model="value">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
+      <div x-scope="{ first: 1, second: 10 }">
+        <span x-funny=""></span>
+        <!-- <button @click="first++">Increment First</button>
+        <button @click="second++">Increment Second</button>
 
-        <hr>
-
-        <div x-switch="value">
-          <span x-case="1">First</span>
-          <span x-case="2">Second</span>
-          <span x-case="3">Third</span>
-          <div x-default>
-            <p>{{ text }}</p>
-          </div>
-        </div>
+        <div x-spy:first="console.log('Updated first', first, second)"></div>
+        <div x-spy:nested="console.log('Updated third', nested.third)"></div> -->
       </div> 
     </div>
     <script type="module" src="./src/index.ts"></script>

@@ -16,6 +16,7 @@ import { processPortal } from './directives/x-portal'
 import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
 import { processSwitch } from './directives/x-switch'
+import { processSpy } from './directives/x-spy'
 
 export function walk(ctx: ContextAny, forcedRoot?: Element) {
   const walker = document.createTreeWalker(forcedRoot ?? ctx.root)
@@ -102,6 +103,9 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
     // Other
     if (attr.name.startsWith('@') || attr.name.startsWith('x-on'))
       processOn(ctx, node, attr)
+
+    if (attr.name.startsWith('x-spy'))
+      processSpy(ctx, node, attr)
 
     if (attr.name === 'x-text')
       processText(ctx, node, attr)
