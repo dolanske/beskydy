@@ -1,4 +1,4 @@
-import type { UnwrapNestedRefs } from '@vue/reactivity'
+import type { ReactiveEffectRunner, UnwrapNestedRefs } from '@vue/reactivity'
 import { effect as rawEffect, reactive } from '@vue/reactivity'
 import { globalState } from './scope'
 
@@ -43,6 +43,8 @@ export class Context<R extends Element, T extends object> {
   data: UnwrapNestedRefs<T & ContextData>
   init: boolean
 
+  effects: ReactiveEffectRunner[] = []
+
   constructor(root: R, initialDataset?: T) {
     this.root = root
     this.data = reactive<T & ContextData>(Object.assign({ $refs: {} }, globalState, initialDataset))
@@ -66,5 +68,17 @@ export class Context<R extends Element, T extends object> {
 
   teardown() {
     // Iterate over all children of a ctx and remove any beskydy functionality
+    this.effects.forEach(e => e.effect.stop())
+
+    Reflect.set(this, 'effects', [])
+
+    // Clone whole subtree and re-attach it to the parent. This removes any event listeners
+    const clone = this.root.cloneNode(true)
+    this.root.parentElement?.replaceChild(clone, this.root)
+
+    // Overwrite context dataset with an empty object
+    Reflect.set(this, 'data', Object.create(null))
+
+    this.init = false
   }
 }
