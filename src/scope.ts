@@ -8,7 +8,13 @@ import { eventModifiers } from './directives/x-on'
 import type { ModelModifierFn } from './directives/x-model'
 import { modelModifiers } from './directives/x-model'
 
+/**
+ * Shared global state between all scopes.
+ *
+ * Extend ugins `Object.assign(globalState, { ...yourProperties })`
+ */
 export const globalState = reactive({})
+
 const scopes: ContextAny[] = []
 
 export class Beskydy<T extends object> {
