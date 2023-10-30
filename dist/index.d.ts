@@ -4,30 +4,9 @@ import type { UnwrapNestedRefs } from '@vue/reactivity';
 export declare class Beskydy<T extends object> {
     constructor(initialDataset: T);
     /**
-     * Add a custom directive (element attribute)
-     *
-     * @param name Directive name, preferably should start with `x-`
-     * @param fn Directive implementation
-     */
-    static defineDirective(name: string, fn: Directive): typeof Beskydy;
-    /**
-     * Add a custom `x-on` event modifier
-     *
-     * @param name Modifier name
-     * @param fn Modifier implementation
-     */
-    static defineEventModifier(name: string, fn: EventModifierFn): typeof Beskydy;
-    /**
-     * Add a custom `x-model` modifier
-     *
-     * @param name Modifier name
-     * @param fn Modifier implementation
-     */
-    static defineModelModifier(name: string, fn: ModelModifierFn): typeof Beskydy;
-    /**
      * Initialize Beskydy. It starts by collecting all the scopes and initializing them
      */
-    start(): void;
+    init(): void;
     /**
      * Stops Beskydy instance, removes reactivity and event listeners and leaves the DOM in the state it was when the app was torn down./
      */
@@ -61,10 +40,39 @@ export declare function createScope(scopeRoot: Element): {
     ctx: Context<Element, object>;
 };
 
+/**
+ * Add a custom directive (element attribute)
+ *
+ * @param name Directive name, preferably should start with `x-`
+ * @param fn Directive implementation
+ */
+export declare function defineDirective(name: string, fn: Directive): void;
+
+/**
+ * Add a custom `x-on` event modifier
+ *
+ * @param name Modifier name
+ * @param fn Modifier implementation
+ */
+export declare function defineEventModifier(name: string, fn: EventModifierFn): void;
+
+/**
+ * Add a custom `x-model` modifier
+ *
+ * @param name Modifier name
+ * @param fn Modifier implementation
+ */
+export declare function defineModelModifier(name: string, fn: ModelModifierFn): void;
+
 export declare type Directive<T = void> = (ctx: ContextAny, node: Element, attr: Attr) => T;
 
 export declare type EventModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean;
 
+/**
+ * Shared global state between all scopes.
+ *
+ * Extend ugins `Object.assign(globalState, { ...yourProperties })`
+ */
 export declare const globalState: {};
 
 export declare type ModelModifierFn = (value: string, oldValue: string, param?: unknown) => unknown;
@@ -75,5 +83,15 @@ declare interface ModifierListenerState {
 }
 
 export declare type Primitive = string | number | null | undefined | boolean;
+
+/**
+ * Define the way Beskydy will compile the delimiters {{ }} into a reactive part of a string.
+ * Delimiters contain text, which usually contains an expression. Think of it was as javascript being executed within a string when it is wrapped in the delimiters {{ }}
+ *
+ *
+ * @param start Starting delimiter
+ * @param end Ending delimiter
+ */
+export declare function setDelimiters(start: string, end: string): void;
 
 export { }
