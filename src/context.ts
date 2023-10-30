@@ -1,28 +1,6 @@
-import type { UnwrapNestedRefs } from '@vue/reactivity'
+import type { ReactiveEffectRunner, UnwrapNestedRefs } from '@vue/reactivity'
 import { effect as rawEffect, reactive } from '@vue/reactivity'
 import { globalState } from './scope'
-
-// let queued = false
-// const queue: Function[] = []
-// const p = Promise.resolve()
-
-// export const nextTick = (fn: () => void) => p.then(fn)
-
-// export const queueJob = (job: Function) => {
-//   if (!queue.includes(job)) queue.push(job)
-//   if (!queued) {
-//     queued = true
-//     nextTick(flushJobs)
-//   }
-// }
-
-// const flushJobs = () => {
-//   for (const job of queue) {
-//     job()
-//   }
-//   queue.length = 0
-//   queued = false
-// }
 
 export type ContextAny = Context<Element, object>
 
@@ -42,6 +20,8 @@ export class Context<R extends Element, T extends object> {
   // Reactive dataset available to the entire scope
   data: UnwrapNestedRefs<T & ContextData>
   init: boolean
+  // Hold all context runners for disposal
+  effects: ReactiveEffectRunner[] = []
 
   constructor(root: R, initialDataset?: T) {
     this.root = root
@@ -51,7 +31,10 @@ export class Context<R extends Element, T extends object> {
 
   // Watch effects
   // effect = rawEffect
-  effect = rawEffect
+  effect(fn: () => any) {
+    const handler = rawEffect(fn)
+    this.effects.push(handler)
+  }
 
   // Store refs for access within scope
   addRef(key: string, ref: Element) {
@@ -66,5 +49,16 @@ export class Context<R extends Element, T extends object> {
 
   teardown() {
     // Iterate over all children of a ctx and remove any beskydy functionality
+    this.effects.forEach(e => e.effect.stop())
+    this.effects.length = 0
+
+    // Clone whole subtree and re-attach it to the parent. This removes any event listeners
+    const clone = this.root.cloneNode(true)
+    this.root.parentElement?.replaceChild(clone, this.root)
+
+    // Overwrite context dataset with an empty object
+    Reflect.set(this, 'data', Object.create(null))
+
+    this.init = false
   }
 }

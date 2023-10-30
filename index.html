@@ -29,12 +29,13 @@
   <body>
     <div id="app">
       <div x-scope="{ first: 1, second: 10 }">
-        <span x-funny=""></span>
-        <!-- <button @click="first++">Increment First</button>
+        <button @click="first++">Increment First</button>
         <button @click="second++">Increment Second</button>
 
         <div x-spy:first="console.log('Updated first', first, second)"></div>
-        <div x-spy:nested="console.log('Updated third', nested.third)"></div> -->
+        <div x-spy:second="console.log('Updated second', second)"></div>
+
+        <span>{{ first }}</span>
       </div> 
     </div>
     <script type="module" src="./src/index.ts"></script>

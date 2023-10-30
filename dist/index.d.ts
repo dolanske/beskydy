@@ -1,4 +1,4 @@
-import { effect } from '@vue/reactivity';
+import type { ReactiveEffectRunner } from '@vue/reactivity';
 import type { UnwrapNestedRefs } from '@vue/reactivity';
 
 export declare class Beskydy<T extends object> {
@@ -28,6 +28,9 @@ export declare class Beskydy<T extends object> {
      * Initialize Beskydy. It starts by collecting all the scopes and initializing them
      */
     start(): void;
+    /**
+     * Stops Beskydy instance, removes reactivity and event listeners and leaves the DOM in the state it was when the app was torn down./
+     */
     teardown(): void;
 }
 
@@ -35,8 +38,9 @@ declare class Context<R extends Element, T extends object> {
     root: Element;
     data: UnwrapNestedRefs<T & ContextData>;
     init: boolean;
+    effects: ReactiveEffectRunner[];
     constructor(root: R, initialDataset?: T);
-    effect: typeof effect;
+    effect(fn: () => any): void;
     addRef(key: string, ref: Element): void;
     extend(ctx: ContextAny): void;
     teardown(): void;
@@ -61,7 +65,7 @@ export declare type Directive<T = void> = (ctx: ContextAny, node: Element, attr:
 
 export declare type EventModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean;
 
-declare const globalState: {};
+export declare const globalState: {};
 
 export declare type ModelModifierFn = (value: string, oldValue: string, param?: unknown) => unknown;
 

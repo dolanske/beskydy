@@ -2,6 +2,7 @@ export {
   createScope,
   Beskydy,
   createApp,
+  globalState,
 } from './scope'
 
 export type {
