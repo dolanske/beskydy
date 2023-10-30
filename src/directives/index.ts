@@ -20,4 +20,8 @@ export interface Modifier {
   param: Primitive
 }
 
-export type EventModifierFn = (e: Event, state: ModifierListenerState, parameter: Primitive) => boolean
+export type EventModifierFn = (
+  e: Event,
+  state: ModifierListenerState,
+  parameter: Primitive
+) => boolean
