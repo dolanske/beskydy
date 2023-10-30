@@ -1,5 +1,7 @@
 import type { ContextAny } from './context'
 import { evaluate } from './evaluate'
+import { parseDelimiter } from './helpers'
+import { delimiters } from './scope'
 
 export function processTextNode(ctx: ContextAny, node: Node) {
   // This should never be hit as only text nodes are processed, but
@@ -11,7 +13,8 @@ export function processTextNode(ctx: ContextAny, node: Node) {
   const originalTextContent = node.textContent
   // Extract expressions from text node wrapped within the delimiters
   // For instance { expression }
-  const delimitersInclusive = /(?=\{\{)(.*?)(?<=\}\})/g
+  const delimitersInclusive = new RegExp(`(?=${parseDelimiter(delimiters.start)})(.*?)(?<=${parseDelimiter(delimiters.end)})`, 'g')
+
   // Match all occurences of { } within a text node
   const exprGroup = originalTextContent.match(delimitersInclusive)
 
@@ -23,7 +26,7 @@ export function processTextNode(ctx: ContextAny, node: Node) {
 
     for (const expr of exprGroup) {
       // Get the expression without the delimiters
-      const extractedExpr = expr.replace('{{', '').replace('}}', '')
+      const extractedExpr = expr.replace(delimiters.start, '').replace(delimiters.end, '')
       if (!extractedExpr)
         continue
 

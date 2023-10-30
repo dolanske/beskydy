@@ -1,5 +1,5 @@
 import { getAttr } from '../helpers'
-import { processAttrs } from '../walker'
+import { NodeTypes, processAttrs } from '../walker'
 import { processTextNode } from '../text-node'
 import type { Directive } from '.'
 
@@ -31,7 +31,7 @@ export const processPortal: Directive = function (ctx, original, { name, value }
   let node: Node | null = walker.root
 
   while (node) {
-    if (node.nodeType === 1) {
+    if (node.nodeType === NodeTypes.ELEMENT) {
       const _node = node as HTMLElement
 
       if (getAttr(_node, 'x-skip') !== null) {
@@ -41,7 +41,7 @@ export const processPortal: Directive = function (ctx, original, { name, value }
 
       processAttrs(ctx, _node)
     }
-    else if (node.nodeType === 3) {
+    else if (node.nodeType === NodeTypes.TEXT) {
       processTextNode(ctx, node)
     }
 

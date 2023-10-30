@@ -54,3 +54,9 @@ export function parseValue(value: string, ctx: ContextAny): Primitive {
       return value
   }
 }
+
+export function parseDelimiter(delimiter: string) {
+  return [...delimiter].reduce((group, item) => {
+    return group += `\\${item}`
+  }, '')
+}

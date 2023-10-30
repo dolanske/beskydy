@@ -1,8 +1,14 @@
+import { createApp, setDelimiters } from './scope'
+
 export {
   createScope,
   Beskydy,
   createApp,
   globalState,
+  defineDirective,
+  defineModelModifier,
+  defineEventModifier,
+  setDelimiters,
 } from './scope'
 
 export type {
@@ -14,3 +20,6 @@ export type {
 export type {
   ModelModifierFn,
 } from './directives/x-model'
+
+setDelimiters('[[', ']]')
+createApp().init()

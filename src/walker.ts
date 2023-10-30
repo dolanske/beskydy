@@ -18,12 +18,17 @@ import { processData } from './directives/x-data'
 import { processSwitch } from './directives/x-switch'
 import { processSpy } from './directives/x-spy'
 
+export enum NodeTypes {
+  ELEMENT = 1,
+  TEXT = 3,
+}
+
 export function walk(ctx: ContextAny, forcedRoot?: Element) {
   const walker = document.createTreeWalker(forcedRoot ?? ctx.root)
   let node: Node | null = walker.root
 
   while (node) {
-    if (node.nodeType === 1) {
+    if (node.nodeType === NodeTypes.ELEMENT) {
       // Element
       const _node = node as HTMLElement
 
@@ -46,7 +51,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
 
       processAttrs(ctx, _node)
     }
-    else if (node.nodeType === 3) {
+    else if (node.nodeType === NodeTypes.TEXT) {
       /**
        * Text Node
        *

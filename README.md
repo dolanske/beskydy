@@ -34,21 +34,24 @@ const app = createApp({
 })
 
 // Begin collection of individual scopes and start the app
-app.start()
+app.init()
 
 // If needed, you can destroy Beskydy instance,
 // which will remove any functionality added by the library
-// NOTE: this is experimental and not fully implemented
 app.teardown()
 ```
 
 You can also globally extend functionality of Beskydy by adding custom directives, event modifiers and model modifiers.
 
 ```ts
-import { Beskydy } from 'beskydy'
+import { defineDirective, defineEventModifier, defineModelModifier, setDelimiters } from 'beskydy'
+
+// Change the delimiters, which Beskydy uses to collect text content expressions
+// Default: {{ & }}
+setDelimiters('[[', ']]')
 
 // Add custom directives
-Beskydy.defineDirective('x-funny', (ctx, node, attr) => {
+defineDirective('x-funny', (ctx, node, attr) => {
   node.textContent = 'That\'s really funny'
 })
 
@@ -57,13 +60,13 @@ Beskydy.defineDirective('x-funny', (ctx, node, attr) => {
 // **NOTE**: If the provided parameter matches a variable
 // name defined in the current or global scope it will use its current value.
 // This way you can create dynamic modifier parameters
-Beskydy.defineEventModifier('save', (event, customState, param) => {
+defineEventModifier('save', (event, customState, param) => {
   localStorage.setItem(param, String(event.data))
 })
 
 // Add custom `x-model` modifier
 // Same as with event modifiers, modifier parameters are also supported
-Beskydy.defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
+defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
   return String(value).toLowerCase()
 })
 ```
@@ -75,6 +78,8 @@ Each expression is a piece of code that gets evaluated. Because it's all in a st
 - `$el`: Expose the current element we're writing expression for
 - `$event`: Expose the event, if used within event listeners
 - `$refs`: Expose the scope's element refs
+
+Inline expressions can be added to a text content of any element. You need to wrap these with delimiters `{{ test }}`, and they do not expose anything, but it's the best way to add reactive pieces into text.
 
 ## Directives
 
@@ -346,7 +351,7 @@ Update the element's `textContent`
 </div>
 ```
 
-Note, you can get the same result when writing expressions within the `{{ }}` delimiters anywhere in the scope. Both of these examples have the exact same result.
+Note, you can get the same result when writing expressions within the delimiters anywhere in the scope. Both of these examples have the exact same result.
 
 ```html
 <div x-scope="{ count: 5 }">
