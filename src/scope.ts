@@ -64,11 +64,14 @@ export class Beskydy<T extends object> {
       createScope(scopeRoot)
   }
 
-  // TODO
-  // Remove everything
+  /**
+   * Stops Beskydy instance, removes reactivity and event listeners and leaves the DOM in the state it was when the app was torn down./
+   */
   teardown() {
     for (const ctx of scopes)
       ctx.teardown()
+
+    scopes.length = 0
   }
 }
 
@@ -82,8 +85,6 @@ export function createScope(scopeRoot: Element) {
   walk(ctx)
   ctx.init = true
   scopeRoot.removeAttribute('style')
-
   scopes.push(ctx)
-
   return { ctx }
 }

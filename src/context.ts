@@ -72,8 +72,7 @@ export class Context<R extends Element, T extends object> {
   teardown() {
     // Iterate over all children of a ctx and remove any beskydy functionality
     this.effects.forEach(e => e.effect.stop())
-
-    Reflect.set(this, 'effects', [])
+    this.effects.length = 0
 
     // Clone whole subtree and re-attach it to the parent. This removes any event listeners
     const clone = this.root.cloneNode(true)

@@ -1,3 +1,5 @@
+import { createApp } from './scope'
+
 export {
   createScope,
   Beskydy,
@@ -13,3 +15,10 @@ export type {
 export type {
   ModelModifierFn,
 } from './directives/x-model'
+
+const app = createApp()
+app.start()
+
+setTimeout(() => {
+  app.teardown()
+}, 1000)
