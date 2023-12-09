@@ -9,6 +9,7 @@ import { modelModifiers } from './directives/x-model'
 
 // Custom modifiers warning message, which is shared across all three of them
 const warnEnd = 'is a reserved name or its already been defined. Please use a different name.'
+type Cb = () => void
 
 export class Beskydy<T extends object> {
   modelModifiers: Record<string, ModelModifierFn>
@@ -18,8 +19,10 @@ export class Beskydy<T extends object> {
     start: string
     end: string
   }
-  scopes: ContextAny[]
+  private scopes: ContextAny[]
   rootState: UnwrapNestedRefs<T>
+  private onInitCbs: Cb[]
+  private onTeardownCbs: Cb[]
 
   constructor(initialDataset: T) {
     this.modelModifiers = Object.assign({}, modelModifiers)
@@ -31,6 +34,8 @@ export class Beskydy<T extends object> {
     }
     this.scopes = []
     this.rootState = reactive(Object.assign({}, initialDataset))
+    this.onInitCbs = []
+    this.onTeardownCbs = []
   }
 
   /**
@@ -102,13 +107,26 @@ export class Beskydy<T extends object> {
       scopeRoot.removeAttribute('style')
       this.scopes.push(ctx)
     }
+
+    for (const cb of this.onInitCbs)
+      cb()
   }
 
+  onInit(fn: Cb) {
+    this.onInitCbs.push(fn)
+  }
+
+  onTeardown(fn: Cb) {
+    this.onTeardownCbs.push(fn)
+  }
   /**
    *   Stops Beskydy instance, removes reactivity and event listeners
    *   and leaves the DOM in the state it was when the app was torn down.
    */
   teardown() {
+    for (const cb of this.onTeardownCbs)
+      cb()
+
     for (const ctx of this.scopes)
       ctx.teardown()
     this.scopes.length = 0

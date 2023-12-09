@@ -1,5 +1,5 @@
 import { getAttr } from '../helpers'
-import { NodeTypes, processAttrs } from '../walker'
+import { NodeTypes, applyDirectives } from '../walker'
 import { processTextNode } from '../text-node'
 import type { Directive } from './directives'
 
@@ -10,6 +10,7 @@ export const processPortal: Directive = function (ctx, original, { name, value }
   const [, elPlacement] = name.split(':')
 
   if (!target) {
+    // Shouldn't throw, as targets can be removed at runtime
     console.error('No valid target provided for `x-portal`')
     return
   }
@@ -39,7 +40,7 @@ export const processPortal: Directive = function (ctx, original, { name, value }
         continue
       }
 
-      processAttrs(ctx, _node)
+      applyDirectives(ctx, _node)
     }
     else if (node.nodeType === NodeTypes.TEXT) {
       processTextNode(ctx, node)

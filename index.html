@@ -29,11 +29,11 @@
         <span x-three="first">{ first }</span>
       </div>  -->
 
-      <div x-scope="{ value: 100 }">
-        <input type="number" x-model.number="value" placehlder="Width" />
-        <div class="red" x-style="{ width: value + 'px' }">
-          I am wide
-        </div>
+      <div x-scope="{ value: 100, isDisabled: false }">
+        <button @click="isDisabled = !isDisabled">Toggle Input</button>
+        <input type="number" x-model.number="value" placehlder="Width" :disabled="isDisabled" />
+        <hr>
+        <div class="red" x-style="{ width: value + 'px' }"> I am wide </div>
       </div>
 
       <!-- <div x-scope="{}">
@@ -43,6 +43,9 @@
           <li x-for="person in people">{person.name}</li>
         </ul>
       </div> -->
+
+      <!-- <div x-scope="{}"></div> -->
+      
     </div>
     <script type="module" src="./src/index.ts"></script>
   </body>

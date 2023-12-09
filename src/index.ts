@@ -1,14 +1,6 @@
 import { Beskydy } from './scope'
-
-import type {
-  Directive,
-  Primitive,
-  EventModifierFn,
-} from './directives/directives'
-
-import type {
-  ModelModifierFn,
-} from './directives/x-model'
+import type { Directive, Primitive, EventModifierFn } from './directives/directives'
+import type { ModelModifierFn, } from './directives/x-model'
 
 export {
   Beskydy,

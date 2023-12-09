@@ -5,9 +5,12 @@ import { evaluate } from './evaluate'
 
 export type ContextAny = Context<Element, Beskydy<object>, object>
 
-/**
- * Piece of DOM which holds its own state.
- */
+// Piece of DOM which holds its own state. This class can be used on its
+// own, but requires an instance of Beskydy to provide modifiers to a
+// few directives.
+
+// In case you want to create custom context, you can just do:
+// const ctx = new Context(root, new Beskydy())
 
 export class Context<R extends Element, A extends Beskydy<object>, T extends object> {
   // Store the context root element

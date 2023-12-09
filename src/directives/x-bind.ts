@@ -18,7 +18,12 @@ export const processBind: Directive = function (ctx, node, { name, value }) {
   const [_, propertyName] = name.split(':')
 
   const setOrDelAttr = (key: string, value: any) => {
-    if (isNil(value))
+    // If no value is provided or the value is a boolean, remove the
+    // attribute instead of simply setting it to the value. 
+
+    // The reason for that is disabled="false" will still disable the
+    // attribute, as boolean attributes dont care about the value
+    if (isNil(value) || value === false)
       node.removeAttribute(key)
     else
       node.setAttribute(key, value)
@@ -28,7 +33,7 @@ export const processBind: Directive = function (ctx, node, { name, value }) {
     // x-bind:propertyName="" syntax
     ctx.effect(() => {
       const result = evaluate(ctx.data, value, node)
-      setOrDelAttr(name, result)
+      setOrDelAttr(propertyName, result)
     })
   }
   else {

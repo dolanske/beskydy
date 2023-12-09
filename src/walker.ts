@@ -16,6 +16,7 @@ import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
 import { processSwitch } from './directives/x-switch'
 import { processSpy } from './directives/x-spy'
+import { processInit } from './directives/x-init'
 
 export enum NodeTypes {
   ELEMENT = 1,
@@ -23,57 +24,87 @@ export enum NodeTypes {
 }
 
 export function walk(ctx: ContextAny, forcedRoot?: Element) {
-  const walker = document.createTreeWalker(forcedRoot ?? ctx.root)
+  const rootEl = forcedRoot ?? ctx.root
+  const walker = document.createTreeWalker(rootEl)
   let node: Node | null = walker.root
 
-  while (node) {
-    if (node.nodeType === NodeTypes.ELEMENT) {
-      // Element
-      const _node = node as HTMLElement
+  // Before we process directives, we first iterate over any data
+  // defining elements This will make sure that all the data objects are
+  // available to all elements within a scope/ That means we can
+  // reference a variable before it is defined. 
 
-      // SECTION x-skip
-      // Elements with x-skip will be skipped during evaluation. The
-      // skip includes all elements children. Selects the next sibling.
-      if (getAttr(_node, 'x-skip') !== null) {
-        node = walker.nextSibling()
-        continue
+  // This approach might be against javascript conventions, but it is
+  // important to remember that the nesting of elements should not
+  // matter when usiny Beskydy. Each x-scope and all its descendants
+  // should be treated as a single "scope".
+
+  const rootDatasets = (rootEl).querySelectorAll('[x-data]')
+  const rootScopeAttr = (rootEl).getAttributeNode('x-scope')
+
+  if (rootScopeAttr) {
+    processData(ctx, rootEl, rootScopeAttr)
+  }
+
+  for (const rootDataset of rootDatasets) {
+    // We can ignore the fact that getAttributeNode can return null, as
+    // all the iterated elements have explicitly been queried by the
+    // `x-data` attribute
+    processData(ctx, rootDataset, rootDataset.getAttributeNode('x-data')!)
+  }
+
+  ////////////////////////
+
+  while (node) {
+    switch (node.nodeType) {
+      case NodeTypes.ELEMENT: {
+        // Element
+        const _node = node as HTMLElement
+
+        // SECTION x-skip
+        // Elements with x-skip will be skipped during evaluation. The
+        // skip includes all elements children. Selects the next sibling.
+        if (getAttr(_node, 'x-skip') !== null) {
+          node = walker.nextSibling()
+          continue
+        }
+
+        // SECTION x-portal
+        // A section of DOM disconnected from the context
+        // tree but still within the reactive scope. We essentially need
+        // to create another walker within this walker to temporarily
+        // traverse the detached dom tree
+        let portalAttr
+        if (portalAttr = Array.from(_node.attributes).find(a => a.name.startsWith('x-portal')))
+          processPortal(ctx, _node, portalAttr)
+
+        applyDirectives(ctx, _node)
+        break;
       }
 
-      // SECTION x-portal
-      // A section of DOM disconnected from the context
-      // tree but still within the reactive scope. We essentially need
-      // to create another walker within this walker to temporarily
-      // traverse the detached dom tree
-      let portalAttr
-      if (portalAttr = Array.from(_node.attributes).find(a => a.name.startsWith('x-portal')))
-        processPortal(ctx, _node, portalAttr)
-
-      processAttrs(ctx, _node)
+      case NodeTypes.TEXT: {
+        // SECTION Text Node
+        // 1. Save string
+        // 2. Extract expression
+        // 3. Replace entire content between delimiters with the result of the expression
+        processTextNode(ctx, node)
+        break;
+      }
     }
-    else if (node.nodeType === NodeTypes.TEXT) {
-      // SECTION Text Node
-      // 1. Save string
-      // 2. Extract expression
-      // 3. Replace entire content between delimiters with the result of the expression
-      processTextNode(ctx, node)
-    }
-
     node = walker.nextNode()
   }
 }
 
 // Can be re-run on sub-sequent dom changes
-export function processAttrs(ctx: ContextAny, node: HTMLElement) {
+export function applyDirectives(ctx: ContextAny, node: HTMLElement) {
   for (const attr of Array.from(node.attributes)) {
-    // REVIEW
-    // Unsure if the order of attribute processing is correct, but so far it
-    // hasn't posed any issues. Just adding this here so later we do a real
-    // review
+    // REVIEW 
+    // Unsure if the order of attribute processing is correct,
+    // but so far it hasn't posed any issues. Just adding this here so
+    // later we do a real review
 
-    // 0. Scope initialization
-    if (attr.name === 'x-data' || attr.name === 'x-scope') {
-      processData(ctx, node, attr)
-    }
+    // When scope has had its data registered, we can execute the mounted hook
+    if (attr.name === 'x-init')
+      processInit(ctx, node, attr)
 
     // In case if and for are on the same element, the if is removed.
     if (attr.name === 'x-for')
@@ -94,7 +125,6 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
     if (attr.name.startsWith('x-bind') || attr.name.startsWith(':'))
       processBind(ctx, node, attr)
 
-    // Other
     if (attr.name.startsWith('@') || attr.name.startsWith('x-on'))
       processOn(ctx, node, attr)
 
@@ -116,12 +146,15 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
     if (attr.name === 'x-show')
       processShow(ctx, node, attr)
 
-    // Iterate over custom directives and apply them
-    if (Object.keys(ctx.app.customDirectives).length > 0) {
-      Object.entries(ctx.app.customDirectives).forEach(([name, customDirective]) => {
-        if (attr.name.startsWith(name))
-          customDirective(ctx, node, attr)
-      })
+    // Custom directive implementation
+    const keys = Object.keys(ctx.app.customDirectives)
+
+    if (keys.length > 0) {
+      for (const key of keys) {
+        const directive = ctx.app.customDirectives[key]
+        if (attr.name.startsWith(key))
+          directive(ctx, node, attr)
+      }
     }
   }
 }
