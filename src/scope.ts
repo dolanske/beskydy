@@ -1,4 +1,4 @@
-import { reactive } from '@vue/reactivity'
+import { UnwrapNestedRefs, reactive } from '@vue/reactivity'
 import type { ContextAny } from './context'
 import { Context } from './context'
 import type { Directive, EventModifierFn } from './directives/directives'
@@ -10,7 +10,7 @@ import { modelModifiers } from './directives/x-model'
 // Custom modifiers warning message, which is shared across all three of them
 const warnEnd = 'is a reserved name or its already been defined. Please use a different name.'
 
-export class Beskydy {
+export class Beskydy<T extends object> {
   modelModifiers: Record<string, ModelModifierFn>
   eventModifiers: Record<string, EventModifierFn>
   customDirectives: Record<string, Directive>
@@ -19,9 +19,9 @@ export class Beskydy {
     end: string
   }
   scopes: ContextAny[]
-  rootState: unknown
+  rootState: UnwrapNestedRefs<T>
 
-  constructor(initialDataset: object = {}) {
+  constructor(initialDataset: T) {
     this.modelModifiers = Object.assign({}, modelModifiers)
     this.eventModifiers = Object.assign({}, eventModifiers)
     this.customDirectives = {}
@@ -30,7 +30,7 @@ export class Beskydy {
       end: '}}',
     }
     this.scopes = []
-    this.rootState = reactive(initialDataset)
+    this.rootState = reactive(Object.assign({}, initialDataset))
   }
 
   /**
@@ -88,10 +88,10 @@ export class Beskydy {
    *
    * @param selector Custom attribute selector. Defaults to 'x-scope'
    */
-  collect(selector: string = 'x-scope') {
-    const scopeRoots = Array.from(document.querySelectorAll('[x-scope]'))
+  collect(selector: string = '[x-scope]') {
+    const scopeRoots = Array.from(document.querySelectorAll(selector))
     if (scopeRoots.length === 0)
-      console.warn(`No scopes were found for the selector "${selector}. Make sure to define at least one."`)
+      console.warn(`No scopes were found for the selector "${selector}". Make sure to define at least one.`)
 
     for (const scopeRoot of scopeRoots) {
       const ctx = new Context(scopeRoot, this, {})

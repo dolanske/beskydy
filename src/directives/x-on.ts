@@ -83,13 +83,11 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
     lastCall: 0,
   }
 
-  node.addEventListener(eventKey, (event) => {
-    // In case there are modifiers and some of them did NOT pass, do not
-    // allow the callback to execute
-    if (!modifiers.every(modifier => ctx.app.eventModifiers[modifier.key](event, state, modifier.param)))
-      return
+  node.addEventListener(eventKey, (event: Event) => {
+    // Only execute callback if every modifier passes
+    if (modifiers.every(modifier => ctx.app.eventModifiers[modifier.key](event, state, modifier.param)))
+      execute(ctx.data, value, node, event)
 
-    execute(ctx.data, value, node, event)
     state.calledTimes++
     state.lastCall = Date.now()
   })

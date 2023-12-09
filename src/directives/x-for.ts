@@ -45,7 +45,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
   // Create new node and context by cloning the original node.
   const createForItemCtx = () => {
     const newEl = <HTMLElement>originalNode.cloneNode(true)
-    const newCtx = new Context(newEl)
+    const newCtx = new Context(newEl, ctx.app)
     newCtx.extend(ctx)
     return { newEl, newCtx }
   }

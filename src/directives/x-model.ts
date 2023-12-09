@@ -62,7 +62,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
     case 'TEXTAREA': {
       node = node as HTMLInputElement
 
-      switch (node.attributes.getNamedItem('type')?.value) {
+      switch (node.type) {
         // Listen for 'change' event
         case 'checkbox': {
           const modelValue = Reflect.get(ctx.data, value) as Array<any> | string | undefined | null

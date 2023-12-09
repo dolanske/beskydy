@@ -11,32 +11,38 @@
     />
     <style>
       html, body, * { color: white; background-color: black; }
-
-      .wrapper {
-        width: 256px;
-        height: 256px;
-      }
-      
-      .blue {
-        background-color: blue;
-      }
-
-      .red {
-        background-color: red;
-      }
+      .wrapper { width: 256px; height: 256px; }
+      .blue { background-color: blue; }
+      .red { background-color: red; }
     </style>
+   
   </head>
   <body>
+    <!-- App  -->
     <div id="app">
-      <div x-scope="{ first: 1, second: 10 }">
-        <button @click="first++">Increment First</button>
-        <button @click="second++">Increment Second</button>
+      <!-- <div x-scope="{ first: 1 }">
+        <button @click="first++">Increment</button>
+        <button @click="first--">Decrease</button>
 
-        <div x-spy:first="console.log('Updated first', first, second)"></div>
-        <div x-spy:second="console.log('Updated second', second)"></div>
+        <div x-spy:first="console.log('Updated first', first)"></div>
 
-        <span>[[ first ]]</span>
-      </div> 
+        <span x-three="first">{ first }</span>
+      </div>  -->
+
+      <div x-scope="{ value: 100 }">
+        <input type="number" x-model.number="value" placehlder="Width" />
+        <div class="red" x-style="{ width: value + 'px' }">
+          I am wide
+        </div>
+      </div>
+
+      <!-- <div x-scope="{}">
+        <button @click="fetchData()">toggle</button>
+        <span x-if="loading">Loading people</span>
+        <ul x-else-if="people.length > 0">
+          <li x-for="person in people">{person.name}</li>
+        </ul>
+      </div> -->
     </div>
     <script type="module" src="./src/index.ts"></script>
   </body>
