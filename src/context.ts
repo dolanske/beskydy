@@ -1,32 +1,30 @@
 import type { ReactiveEffectRunner, UnwrapNestedRefs } from '@vue/reactivity'
 import { effect as rawEffect, reactive } from '@vue/reactivity'
-import { globalState } from './scope'
+import type { Beskydy } from './scope'
 
-export type ContextAny = Context<Element, object>
+export type ContextAny = Context<Element, Beskydy, object>
 
 /**
  * Piece of DOM which holds its own state.
  */
 
-export type ContextData =
-  // Global state available to every scope
-  typeof globalState
-  // All the scope refs, which are accessible even if accessor is a child of the ref
-  & { $refs: Record<string, Element> }
-
-export class Context<R extends Element, T extends object> {
+export class Context<R extends Element, A extends Beskydy, T extends object> {
   // Store the context root element
   root: Element
   // Reactive dataset available to the entire scope
-  data: UnwrapNestedRefs<T & ContextData>
+  data: UnwrapNestedRefs<T & { $refs: Record<string, Element> }>
   init: boolean
   // Hold all context runners for disposal
   effects: ReactiveEffectRunner[] = []
 
-  constructor(root: R, initialDataset?: T) {
+  // Stores a referene to the root app instance
+  app: Beskydy
+
+  constructor(root: R, app: A, initialDataset?: T) {
     this.root = root
-    this.data = reactive<T & ContextData>(Object.assign({ $refs: {} }, globalState, initialDataset))
+    this.data = reactive(Object.assign({ $refs: {} }, app.rootState, initialDataset))
     this.init = false
+    this.app = app
   }
 
   // Watch effects

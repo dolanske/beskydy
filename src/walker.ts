@@ -11,7 +11,6 @@ import { processOn } from './directives/x-on'
 import { processIf } from './directives/x-if'
 import { processModel } from './directives/x-model'
 import { processFor } from './directives/x-for'
-import { customDirectives } from './directives'
 import { processPortal } from './directives/x-portal'
 import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
@@ -52,14 +51,10 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
       processAttrs(ctx, _node)
     }
     else if (node.nodeType === NodeTypes.TEXT) {
-      /**
-       * Text Node
-       *
-       * 1. Save string
-       * 2. Extract expression
-       * 3. Replace entire content between delimiters with the result of the expression
-       */
-
+      // SECTION Text Node
+      // 1. Save string
+      // 2. Extract expression
+      // 3. Replace entire content between delimiters with the result of the expression
       processTextNode(ctx, node)
     }
 
@@ -77,13 +72,7 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
 
     // 0. Scope initialization
     if (attr.name === 'x-data' || attr.name === 'x-scope') {
-      /**
-       * If directive processing returns true, it is a signal an error
-       * has occured and the walker should skip initialization on this
-       * element.
-       */
-      if (processData(ctx, node, attr))
-        throw new Error('[x-scope/x-data] Error when processing attribute. \n Most likely an issue with the the data object.')
+      processData(ctx, node, attr)
     }
 
     // In case if and for are on the same element, the if is removed.
@@ -128,8 +117,8 @@ export function processAttrs(ctx: ContextAny, node: HTMLElement) {
       processShow(ctx, node, attr)
 
     // Iterate over custom directives and apply them
-    if (Object.keys(customDirectives).length > 0) {
-      Object.entries(customDirectives).forEach(([name, customDirective]) => {
+    if (Object.keys(ctx.app.customDirectives).length > 0) {
+      Object.entries(ctx.app.customDirectives).forEach(([name, customDirective]) => {
         if (attr.name.startsWith(name))
           customDirective(ctx, node, attr)
       })

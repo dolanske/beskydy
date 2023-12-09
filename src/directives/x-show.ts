@@ -1,5 +1,5 @@
 import { evaluate } from '../evaluate'
-import { type Directive } from '.'
+import { type Directive } from './directives'
 
 /**
  * Takes in and evaluates an expression. Based on the result the element

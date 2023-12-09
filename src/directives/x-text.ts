@@ -1,5 +1,5 @@
 import { evaluate } from '../evaluate'
-import { type Directive } from '.'
+import { type Directive } from './directives'
 
 export const processText: Directive = function (ctx, node, { name, value }) {
   node.removeAttribute(name)

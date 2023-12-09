@@ -1,7 +1,7 @@
 import { evaluate } from '../evaluate'
 import { parseValue } from '../helpers'
 import { walk } from '../walker'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 interface Block {
   isDefault: boolean

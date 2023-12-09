@@ -1,6 +1,6 @@
 import { isArr, isNil, parseValue } from '../helpers'
 import { evaluate } from '../evaluate'
-import type { Directive, Primitive } from '.'
+import type { Directive, Primitive } from './directives'
 
 export type ModelModifierFn = (value: string, oldValue: string, param?: unknown) => unknown
 
@@ -37,7 +37,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       param = parseValue(parsedModifier, ctx)
     }
 
-    return modelModifiers[key](newValue, oldValue, param)
+    return ctx.app.modelModifiers[key](newValue, oldValue, param)
   }
 
   const assignSimpleDefaultValue = () => {

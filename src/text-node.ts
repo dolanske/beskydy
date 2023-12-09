@@ -1,13 +1,14 @@
 import type { ContextAny } from './context'
 import { evaluate } from './evaluate'
 import { parseDelimiter } from './helpers'
-import { delimiters } from './scope'
 
 export function processTextNode(ctx: ContextAny, node: Node) {
   // This should never be hit as only text nodes are processed, but
   // typescript is a known crybaby
   if (!node.textContent || node.textContent === '')
     return
+
+  const delimiters = ctx.app.delimiters
 
   // Save the original expression
   const originalTextContent = node.textContent

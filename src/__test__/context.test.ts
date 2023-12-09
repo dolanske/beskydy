@@ -1,17 +1,41 @@
 import { describe, expect, test } from 'vitest'
 import { Context } from '../context'
+import { Beskydy } from '..'
+import { walk } from '../walker'
 
-/**
- * @vitest-environment jsdom
- */
+// @vitest-environment jsdom
 
-describe('Test Development Suite for the ctx implementation', () => {
-  test('Context initialization', () => {
-    const rootEl = document.createElement('div')
-    // cobn
-    const ctx = new Context(rootEl, { count: 5 })
+function prepareCtx() {
+  const setup = `<div x-scope="{ count: 10 }"></div>`
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = setup
+  const root = wrapper.children[0]
+  const app = new Beskydy({ title: 'hello' })
+  const ctx = new Context(root, app, { other: 20 })
+  walk(ctx)
+  ctx.init = true
+  return { root, app, ctx }
+}
 
-    expect(ctx.root).toStrictEqual(rootEl)
-    expect(ctx.data.count).toBe(5)
+describe("Beskydy scope context initialization", () => {
+  const { ctx, app, root } = prepareCtx()
+
+  test("Root matching", () => {
+    expect(ctx.root).toStrictEqual(root)
+    expect(ctx.init).toBeTruthy()
+    expect(ctx.app).toStrictEqual(app)
+    expect(ctx.effects).toStrictEqual([])
+  })
+
+  test("Data object, setup", () => {
+    expect(ctx.data).toStrictEqual({
+      $refs: {},
+      // Comes from the template
+      count: 10,
+      // Comes from instance inital global state
+      title: 'hello',
+      // Comes from context default dataset
+      other: 20
+    })
   })
 })

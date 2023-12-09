@@ -1,6 +1,6 @@
 import { isNil } from '../helpers'
 import { evaluate } from '../evaluate'
-import { type Directive } from '.'
+import { type Directive } from './directives'
 
 /**
  * Dynamically bind attribute or attributes if the expression passes

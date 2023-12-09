@@ -1,6 +1,6 @@
 import { evaluate } from '../evaluate'
 import type { ContextAny } from '../context'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 /**
  * Runs provided callback each time the context dataset is updated

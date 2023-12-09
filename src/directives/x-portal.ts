@@ -1,7 +1,7 @@
 import { getAttr } from '../helpers'
 import { NodeTypes, processAttrs } from '../walker'
 import { processTextNode } from '../text-node'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 export const processPortal: Directive = function (ctx, original, { name, value }) {
   // Clone node, teleport clone to the new place, replace current node

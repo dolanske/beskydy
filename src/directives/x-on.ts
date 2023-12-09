@@ -1,7 +1,8 @@
 import { execute } from '../evaluate'
 import { parseValue } from '../helpers'
-import type { Directive, EventModifierFn, Modifier, ModifierListenerState, Primitive } from '.'
+import type { Directive, EventModifierFn, Modifier, ModifierListenerState, Primitive } from './directives'
 
+// Default event modifiers which are bound to an app instance
 export const eventModifiers: Record<string, EventModifierFn> = {
   throttle: (_, { lastCall }, amount = 300) => {
     if (typeof amount !== 'number')
@@ -70,7 +71,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
       return { key, param }
     })
     .filter((modifier) => {
-      return Object.keys(eventModifiers).includes(modifier.key)
+      return Object.keys(ctx.app.eventModifiers).includes(modifier.key)
     })
 
   if (value.startsWith('()'))
@@ -85,7 +86,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
   node.addEventListener(eventKey, (event) => {
     // In case there are modifiers and some of them did NOT pass, do not
     // allow the callback to execute
-    if (!modifiers.every(modifier => eventModifiers[modifier.key](event, state, modifier.param)))
+    if (!modifiers.every(modifier => ctx.app.eventModifiers[modifier.key](event, state, modifier.param)))
       return
 
     execute(ctx.data, value, node, event)

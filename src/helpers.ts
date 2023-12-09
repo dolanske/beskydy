@@ -1,4 +1,4 @@
-import type { Primitive } from './directives/index'
+import type { Primitive } from './directives/directives'
 import type { ContextAny } from './context'
 import { evaluate } from './evaluate'
 

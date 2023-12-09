@@ -1,6 +1,6 @@
 import { isObj } from '../helpers'
 import { evaluate } from '../evaluate'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 export const processClass: Directive = function (ctx, node, { value }) {
   const assignObjectClasses = (parsed: Record<string, unknown>) => {

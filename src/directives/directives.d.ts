@@ -6,8 +6,6 @@ export type Directive<T = void> = (
   attr: Attr,
 ) => T
 
-export const customDirectives: Record<string, Directive> = {}
-
 export interface ModifierListenerState {
   calledTimes: number
   lastCall: number

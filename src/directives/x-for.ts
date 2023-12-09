@@ -3,7 +3,7 @@ import type { ContextAny } from '../context'
 import { Context } from '../context'
 import { walk } from '../walker'
 import { evaluate } from '../evaluate'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 export const processFor: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute(name)
