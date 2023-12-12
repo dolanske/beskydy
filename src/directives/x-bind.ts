@@ -1,5 +1,4 @@
 import { isNil } from '../helpers'
-import { evaluate } from '../evaluate'
 import { type Directive } from './directives'
 
 /**
@@ -32,14 +31,14 @@ export const processBind: Directive = function (ctx, node, { name, value }) {
   if (propertyName) {
     // x-bind:propertyName="" syntax
     ctx.effect(() => {
-      const result = evaluate(ctx.data, value, node)
+      const result = ctx.eval(value, node)
       setOrDelAttr(propertyName, result)
     })
   }
   else {
     // x-bind="{}" syntax
     ctx.effect(() => {
-      const results = evaluate(ctx.data, value, node) ?? {}
+      const results = ctx.eval(value, node) ?? {}
 
       for (const key of Object.keys(results)) {
         const result = results[key]

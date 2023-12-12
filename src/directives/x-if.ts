@@ -83,8 +83,6 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
 
           parent.insertBefore(block.node, anchor)
 
-          console.log("passed")
-
           // Walk and process again
           walk(ctx, block.node)
 

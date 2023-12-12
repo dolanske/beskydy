@@ -1,5 +1,4 @@
 import { isArr, isNil, parseValue } from '../helpers'
-import { evaluate } from '../evaluate'
 import type { Directive, Primitive } from './directives'
 
 export type ModelModifierFn = (value: string, oldValue: string, param?: any) => unknown
@@ -42,7 +41,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
 
   const assignSimpleDefaultValue = () => {
     let finalValue
-    const modelValue = evaluate(ctx.data, value)
+    const modelValue = ctx.eval(value)
 
     if (!modelValue) {
       if (defaultValue)
@@ -103,7 +102,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
           ctx.effect(() => {
             node = node as HTMLInputElement
             // Update in case some properties are removed or set elsewhere
-            const results = evaluate(ctx.data, value)
+            const results = ctx.eval(value)
 
             if (results.includes(node.value) || node.value === results)
               node.checked = true
@@ -130,7 +129,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
           // If evaluated value changes, make sure to update the HTML as well
           ctx.effect(() => {
             node = node as HTMLInputElement
-            const newValue = evaluate(ctx.data, value)
+            const newValue = ctx.eval(value)
             node.checked = node.value === newValue
           })
           break
@@ -153,7 +152,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
             Object.assign(ctx.data, { [value]: modifiedValue })
           })
 
-          ctx.effect(() => (node as HTMLInputElement).value = evaluate(ctx.data, value))
+          ctx.effect(() => (node as HTMLInputElement).value = ctx.eval(value))
         }
       }
       break
@@ -168,14 +167,14 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
         Object.assign(ctx.data, { [value]: val })
       })
 
-      ctx.effect(() => (node as HTMLSelectElement).value = evaluate(ctx.data, value))
+      ctx.effect(() => (node as HTMLSelectElement).value = ctx.eval(value))
       break
     }
 
     case 'DETAILS': {
       node = node as HTMLDetailsElement
       const defaultOpen = node.attributes.getNamedItem('open')
-      const currentValue = evaluate(ctx.data, value)
+      const currentValue = ctx.eval(value)
 
       node.open = !isNil(currentValue) ? currentValue : (defaultOpen ?? false)
 
@@ -184,7 +183,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
         Object.assign(ctx.data, { [value]: isOpen })
       })
 
-      ctx.effect(() => (node as HTMLDetailsElement).open = evaluate(ctx.data, value))
+      ctx.effect(() => (node as HTMLDetailsElement).open = ctx.eval(value))
       break
     }
 

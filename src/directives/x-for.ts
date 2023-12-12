@@ -2,7 +2,6 @@ import { isArr, isObj, removeChildren } from '../helpers'
 import type { ContextAny } from '../context'
 import { Context } from '../context'
 import { walk } from '../walker'
-import { evaluate } from '../evaluate'
 import type { Directive } from './directives'
 
 export const processFor: Directive = function (ctx, node, { value, name }) {
@@ -58,10 +57,11 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
   }
 
   ctx.effect(() => {
-    const evalExpr = evaluate(ctx.data, rawValue)
+    const evalExpr = ctx.eval(rawValue)
 
     // Before clearing, should remoev ALL children if they exist
     removeChildren(parent!)
+
 
     // Range
     if (typeof evalExpr === 'number') {
