@@ -22,7 +22,8 @@ Include a script in the footer in which we can initialize all the scopes.
 ```ts
 import { Beskydy } from 'beskydy'
 
-// You can also define global properties, which will be available in every scope
+// Every scope will be able to reference the properties declared here
+// All of them are also reactive, just as if you declared them in `x-scope`
 const app = new Beskydy({
   characters: [],
   isLoading: false,
