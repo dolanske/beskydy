@@ -58,6 +58,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
     .slice(1)
     .map((modifier) => {
       // Split modifier into a key and possible parameter
+      // eventKey[param]=""
       const [key, rawParams] = modifier.split('[')
       let param: Primitive
 
@@ -74,6 +75,8 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
       return Object.keys(ctx.app.eventModifiers).includes(modifier.key)
     })
 
+  // FIXME: this won't work if its defined as (event) => 
+  // Solution: just check for '('
   if (value.startsWith('()'))
     value = `(${value})()`
 

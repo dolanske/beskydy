@@ -82,7 +82,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
       }
 
       case NodeTypes.TEXT: {
-        // SECTION Text Node
+        // SECTION Text Node 
         // 1. Save string
         // 2. Extract expression
         // 3. Replace entire content between delimiters with the result of the expression
@@ -102,7 +102,7 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement) {
     // but so far it hasn't posed any issues. Just adding this here so
     // later we do a real review
 
-    // When scope has had its data registered, we can execute the mounted hook
+    // When scope has had its data registered, we can execute the init mounted hook
     if (attr.name === 'x-init')
       processInit(ctx, node, attr)
 

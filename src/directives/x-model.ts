@@ -2,7 +2,7 @@ import { isArr, isNil, parseValue } from '../helpers'
 import { evaluate } from '../evaluate'
 import type { Directive, Primitive } from './directives'
 
-export type ModelModifierFn = (value: string, oldValue: string, param?: unknown) => unknown
+export type ModelModifierFn = (value: string, oldValue: string, param?: any) => unknown
 
 export const modelModifiers: Record<string, ModelModifierFn> = {
   trim: (value: string) => value.trim(),

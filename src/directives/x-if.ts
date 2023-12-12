@@ -75,13 +75,15 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
-      if (!block.expr || evaluate(ctx.data, block.expr, node)) {
+      if (!block.expr || ctx.eval(block.expr, node)) {
         // Passed
         if (currentIndex !== index) {
           if (currentResult)
             clear()
 
           parent.insertBefore(block.node, anchor)
+
+          console.log("passed")
 
           // Walk and process again
           walk(ctx, block.node)

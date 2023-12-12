@@ -13,8 +13,10 @@ export const processData: Directive<boolean> = function (ctx, node, { name, valu
     throw new Error('Can not initialize a new scope within an existing scope')
 
   try {
-    if (!value)
-      throwDataErr()
+    if (!value) {
+      value = '{ }'
+    }
+    // throwDataErr()
 
     const data = evaluate({}, value)
 

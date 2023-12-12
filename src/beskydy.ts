@@ -24,7 +24,7 @@ export class Beskydy<T extends object> {
   private onInitCbs: Cb[]
   private onTeardownCbs: Cb[]
 
-  constructor(initialDataset: T) {
+  constructor(initialDataset?: T) {
     this.modelModifiers = Object.assign({}, modelModifiers)
     this.eventModifiers = Object.assign({}, eventModifiers)
     this.customDirectives = {}
@@ -112,23 +112,33 @@ export class Beskydy<T extends object> {
       cb()
   }
 
+  /**
+   * Registers a function which runs when app is fully initialized
+   */
   onInit(fn: Cb) {
     this.onInitCbs.push(fn)
   }
 
+  /**
+   * Registers a callback which runs after application has been shut down
+   */
   onTeardown(fn: Cb) {
     this.onTeardownCbs.push(fn)
   }
+
   /**
    *   Stops Beskydy instance, removes reactivity and event listeners
    *   and leaves the DOM in the state it was when the app was torn down.
    */
   teardown() {
-    for (const cb of this.onTeardownCbs)
-      cb()
-
     for (const ctx of this.scopes)
       ctx.teardown()
+
     this.scopes.length = 0
+
+    // REVIEW
+    // Should the onTeardown callbacks run before teardown or right after?
+    for (const cb of this.onTeardownCbs)
+      cb()
   }
 }
