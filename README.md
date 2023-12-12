@@ -20,10 +20,10 @@ Create a reactive partition by adding `x-scope` directive on an element. This wi
 Include a script in the footer in which we can initialize all the scopes.
 
 ```ts
-import { createApp } from 'beskydy'
+import { Beskydy } from 'beskydy'
 
 // You can also define global properties, which will be available in every scope
-const app = createApp({
+const app = new Beskydy({
   characters: [],
   isLoading: false,
   async fetchCharacters() {
@@ -33,40 +33,64 @@ const app = createApp({
   }
 })
 
-// Begin collection of individual scopes and start the app
-app.init()
+// Calling this method will start the app initialization. 
+// All declared scopes will be collected and activated.
+app.collect()
 
-// If needed, you can destroy Beskydy instance,
-// which will remove any functionality added by the library
+// If needed, you can destroy Beskydy instance. 
+// This will remove event listeners, all reactive bindings 
+// and turn the DOM back into being static
 app.teardown()
 ```
 
-You can also globally extend functionality of Beskydy by adding custom directives, event modifiers and model modifiers.
+Beskydy offers a flexible and very extensible API. You can creative as many new directives as you please or extend model & event modifiers. Below are a few examples.
 
 ```ts
-import { defineDirective, defineEventModifier, defineModelModifier, setDelimiters } from 'beskydy'
+import { Beskydy } from 'beskydy'
+
+const app = new Beskydy()
 
 // Change the delimiters, which Beskydy uses to collect text content expressions
 // Default: {{ & }}
-setDelimiters('[[', ']]')
+app.setDelimiters('[', ']')
+
+// Run code once all the scopes have been initialized
+app.onInit(() => {})
+
+// Run code when the app instance is closed
+app.onTeardown(() => {})
 
 // Add custom directives
-defineDirective('x-funny', (ctx, node, attr) => {
-  node.textContent = 'That\'s really funny'
+// This directive will append HAHAHA before the provided text property
+app.defineDirective('x-funny', (ctx, node, attr) => {
+  // Usage
+  // <div x-data="{ text: 'hello' }">
+  // -> <span x-funny="text"></span>
+
+  // Whenever a reactive property is updated (text), this function is ran
+  ctx.effect(() => {
+    // Eval returns a value from a string we provide
+    // In our example, attr.value is a "text", 
+    // which means we're referencing a value defined in the data object
+    const value = ctx.eval(attr.value)
+
+    // Here's the funny, we add HAHAHA before the text value
+    // Result is <span>HAHAHA hello</span>
+    node.textContent = `HAHAHA ${String(value)}`
+
+    // If the text property is changed to 'world' (or anything else)
+    // This element will automatically update
+    // <span>HAHAHA world</span>
+  })
 })
 
-// Add custom event modifier
-// Can be used as x-on:input.save[key]
-// **NOTE**: If the provided parameter matches a variable
-// name defined in the current or global scope it will use its current value.
-// This way you can create dynamic modifier parameters
-defineEventModifier('save', (event, customState, param) => {
+// Add custom event modifier. Read more about modifiers in the `x-on` section below
+app.defineEventModifier('save', (event, customState, param) => {
   localStorage.setItem(param, String(event.data))
 })
 
-// Add custom `x-model` modifier
-// Same as with event modifiers, modifier parameters are also supported
-defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
+// Add custom `x-model` modifier. Also supports modifiers with parameters
+app.defineModelModifier('toLowerCase', (newValue, oldValue, param) => {
   return String(value).toLowerCase()
 })
 ```
@@ -83,9 +107,9 @@ Inline expressions can be added to a text content of any element. You need to wr
 
 ## Directives
 
-There are 16 directives in total. Each simplifying the way we can interact or update the DOM.
+There are 17 directives in total. Each simplifying the way we can interact or update the DOM.
 
-[x-scope](#x-scope) • [x-data](#x-data) • [x-if](#x-if-x-else-if-x-else) • [x-switch](#x-switch) • [x-show](#x-show) • [x-for](#x-for) • [x-portal](#x-portal) • [x-spy](#x-spy) • [x-ref](#x-ref) • [x-on](#x-on) • [x-model](#x-model) • [x-bind](#x-bind) • [x-class](#x-class) • [x-style](#x-style) • [x-text](#x-text) • [x-html](#x-html)
+[x-scope](#x-scope) • [x-data](#x-data) • [x-if](#x-if-x-else-if-x-else) • [x-switch](#x-switch) • [x-show](#x-show) • [x-for](#x-for) • [x-portal](#x-portal) • [x-spy](#x-spy) • [x-ref](#x-ref) • [x-on](#x-on) • [x-model](#x-model) • [x-bind](#x-bind) • [x-class](#x-class) • [x-style](#x-style) • [x-text](#x-text) • [x-html](#x-html) • [x-init](#x-init)
 
 ### `x-scope`
 
@@ -369,5 +393,16 @@ Same as with `x-text`, but sets the `element.innerHTML` instead.
 ```html
 <div x-scope="{ data: '<span>some fetched html</span>' }">
   <div class='conten-wrapper' x-html="data"></div>
+</div>
+```
+
+### `x-init`
+
+Runs the provided expression when the current scope is initialized.
+If you want to run some code when the entire app instance has been initialized, use the `app.onInit` hook instead.
+
+```html
+<div class="{ scopeLoaded: false }" x-init="scopeLoaded = true">
+  Loaded { scopeLoaded }
 </div>
 ```

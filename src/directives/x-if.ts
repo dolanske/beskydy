@@ -1,5 +1,4 @@
 import { getAttr } from '../helpers'
-import { evaluate } from '../evaluate'
 import { walk } from '../walker'
 import { type Directive } from './directives'
 
