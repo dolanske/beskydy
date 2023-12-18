@@ -16,6 +16,10 @@ export function processTextNode(ctx: ContextAny, node: Node) {
   // For instance { expression }
   const delimitersInclusive = new RegExp(`(?=${parseDelimiter(delimiters.start)})(.*?)(?<=${parseDelimiter(delimiters.end)})`, 'g')
 
+  // FIXME:
+  // using `${}` can match against delimiters containing {}
+  // Should use some kind of regex which will ignore "${" and the very next "}"
+
   // Match all occurences of { } within a text node
   const exprGroup = originalTextContent.match(delimitersInclusive)
 

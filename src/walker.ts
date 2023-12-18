@@ -36,7 +36,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
   // This approach might be against javascript conventions, but it is
   // important to remember that the nesting of elements should not
   // matter when usiny Beskydy. Each x-scope and all its descendants
-  // should be treated as a single "scope".
+  // should be treated as a single, flat "scope".
 
   const rootDatasets = (rootEl).querySelectorAll('[x-data]')
   const rootScopeAttr = (rootEl).getAttributeNode('x-scope')
@@ -55,6 +55,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
   ////////////////////////
 
   while (node) {
+    console.log("STARTED AGAIN")
     switch (node.nodeType) {
       case NodeTypes.ELEMENT: {
         // Element
@@ -77,11 +78,25 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
         if (portalAttr = Array.from(_node.attributes).find(a => a.name.startsWith('x-portal')))
           processPortal(ctx, _node, portalAttr)
 
-        applyDirectives(ctx, _node)
+        // FIXME:
+        // Siblings are for some reason not being walked after an x=if statement
+        // So whatever is after x-if is not processed (dont know if just one node or all siblings)
+        const shouldSkipNode = applyDirectives(ctx, _node)
+        if (shouldSkipNode) {
+          node = walker.nextSibling()
+          console.log("should start again")
+          continue
+        }
         break;
       }
 
       case NodeTypes.TEXT: {
+        // Skip processing, if text is empty (contains line break) or does not
+        // contain delimiter start
+        const text = String(node.textContent)
+        if (text.trim().length === 0 || !text.includes(ctx.app.delimiters.start))
+          break;
+
         // SECTION Text Node 
         // 1. Save string
         // 2. Extract expression
@@ -90,12 +105,13 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
         break;
       }
     }
+    console.log("DID NOT START AGAIN")
     node = walker.nextNode()
   }
 }
 
 // Can be re-run on sub-sequent dom changes
-export function applyDirectives(ctx: ContextAny, node: HTMLElement) {
+export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | void {
   for (const attr of Array.from(node.attributes)) {
     // REVIEW 
     // Unsure if the order of attribute processing is correct,
@@ -103,48 +119,82 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement) {
     // later we do a real review
 
     // When scope has had its data registered, we can execute the init mounted hook
-    if (attr.name === 'x-init')
+    if (attr.name === 'x-init') {
       processInit(ctx, node, attr)
+      continue
+    }
 
     // In case if and for are on the same element, the if is removed.
-    if (attr.name === 'x-for')
+    if (attr.name === 'x-for') {
       processFor(ctx, node, attr)
+      continue
+    } else if (attr.name === 'x-if') {
+      const shouldSkipNode = processIf(ctx, node, attr)
 
-    else if (attr.name === 'x-if')
-      processIf(ctx, node, attr)
+      // This looks wonky, but we only want to return a value if the
+      // sibling should be skipped. If not, we want this function to
+      // continue further.
+      if (shouldSkipNode) {
+        return true
+      }
 
-    if (attr.name === 'x-switch')
+      continue
+    }
+
+    if (attr.name === 'x-switch') {
       processSwitch(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name === 'x-ref')
+    if (attr.name === 'x-ref') {
       processRef(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name.startsWith('x-model'))
+    if (attr.name.startsWith('x-model')) {
       processModel(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name.startsWith('x-bind') || attr.name.startsWith(':'))
+    if (attr.name.startsWith('x-bind') || attr.name.startsWith(':')) {
       processBind(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name.startsWith('@') || attr.name.startsWith('x-on'))
+    if (attr.name.startsWith('@') || attr.name.startsWith('x-on')) {
       processOn(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name.startsWith('x-spy'))
+    if (attr.name.startsWith('x-spy')) {
       processSpy(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name === 'x-text')
+    if (attr.name === 'x-text') {
       processText(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name === 'x-class')
+    if (attr.name === 'x-class') {
       processClass(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name === 'x-html')
+    if (attr.name === 'x-html') {
       processHTML(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name === 'x-style')
+    if (attr.name === 'x-style') {
       processStyle(ctx, node, attr)
+      continue
+    }
 
-    if (attr.name === 'x-show')
+    if (attr.name === 'x-show') {
       processShow(ctx, node, attr)
+      continue
+    }
 
     // Custom directive implementation
     const keys = Object.keys(ctx.app.customDirectives)

@@ -1,130 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Beskdydy</title>
-    <link
-      href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
-      rel="icon"
-      type="image/x-icon"
-    />
-    <style>
-      html, body, * { color: white; background-color: black; }
-      .wrapper { width: 256px; height: 256px; }
-      .blue { background-color: blue; }
-      .red { background-color: red; }
 
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beskdydy</title>
+  <link
+    href="data:image/x-icon;base64,AAABAAEAEBAAAAAAAABoBQAAFgAAACgAAAAQAAAAIAAAAAEACAAAAAAAAAEAAAAAAAAAAAAAAAEAAAAAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+    rel="icon" type="image/x-icon" />
+  <style>
+    html,
+    body,
+    * {
+      color: white;
+      background-color: black;
+    }
 
-      ul li details summary,
-      pre {
-        background-color: transparent;
-      }
+    .wrapper {
+      width: 256px;
+      height: 256px;
+    }
 
-      ul li {
-        padding: 1em;
-      }
+    .blue {
+      background-color: blue;
+    }
 
-      ul li:has(details[open]),
-      ul li:hover {
-        cursor: pointer;
-        background-color: rgb(17, 17, 17);
-      }
+    .red {
+      background-color: red;
+    }
 
-      ul li div,
-      table,
-      ul li:hover details summary {
-        background-color: rgb(17, 17, 17);
-      }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
-      details[open] {
-        background-color: rgb(17, 17, 17) !important;
-      }
+    ul li details summary,
+    pre {
+      background-color: transparent;
+    }
 
-      table {
-        padding: 1em;
-      }
+    ul li {
+      padding: 1em;
+    }
 
-      table tr th,
-      table tr td {
-        border: 1px solid rgb(39, 39, 39);
-        padding: 8px 16px;
-      }
+    ul li:has(details[open]),
+    ul li:hover {
+      cursor: pointer;
+      background-color: rgb(17, 17, 17);
+    }
 
-      .parent {
-        padding: 3em;
-      }
-    </style>
-   
-  </head>
-  <body>
-    <!-- App  -->
-    <div id="app">
-      <div x-scope="{ }">
-        <div>
-          <h1>Select a dataset</h1>
-          <select x-model="selected">
-            <option value="people">People</option>
-            <option value="planets">Planets</option>
-            <option value="starships">Starships</option>
-          </select>
-          <button :disabled="loading" @click="fetchData()">
-            [ loading ? `Loading ${selected}...` : `Query` ]
-          </button>
-          <span>Results [data.length]</span>
-        </div>
+    ul li div,
+    table,
+    ul li:hover details summary {
+      background-color: rgb(17, 17, 17);
+    }
 
-        <hr>
+    details[open] {
+      background-color: rgb(17, 17, 17) !important;
+    }
 
-        <div>
-          <ul x-if="data.length > 0">
-            <li x-for="item in data">
-              <details x-data="{ open: false, moreData: false }" @toggle="open = $el.open">
-                <summary>
-                  [item.name] - [open ? '(READING NOW)' : '']
-                </summary>
+    table {
+      padding: 1em;
+    }
 
-                <div x-switch="selected">
-                  <table x-case="people">
-                    <tr> <th>Gender</th> <td>[item.gender]</td> </tr>
-                    <tr> <th>Height</th> <td>[item.height] cm</td> </tr>
-                    <tr> <th>Mass</th> <td>[item.mass] kg</td> </tr>
-                  </table>
+    table tr th,
+    table tr td {
+      border: 1px solid rgb(39, 39, 39);
+      padding: 8px 16px;
+    }
 
-                  <table x-case="planets">
-                    <tr> <th>Gravity</th> <td>[item.gravity] g</td> </tr>
-                    <tr> <th>Population</th> <td>[item.population]</td> </tr>
-                    <tr> <th>Terrain</th> <td>[item.terrain]</td> </tr>
-                    <tr> <th>Orbital Period</th> <td>[item.orbital_period] days</td> </tr>
-                  </table>
+    .parent {
+      padding: 3em;
+    }
+  </style>
 
-                  <table x-case="starships">
-                    <tr> <th>Model</th> <td>[item.model]</td> </tr>
-                    <tr> <th>Passengers</th> <td>[item.passengers]</td> </tr>
-                    <tr> <th>Hyperdrive Rating</th> <td>[item.hyperdrive_rating]</td> </tr>
-                    <tr> <th>Length</th> <td>[item.length] m</td> </tr>
-                  </table>
-                </div>
+</head>
 
-                <button @click="moreData = !moreData">[moreData ? 'Hide' : 'Show'] Details</button>
-                <pre x-show="moreData">[JSON.stringify(item, null, 2)]</pre>
-              </details>
-            </li>
-          </ul>
-        </div>
+<body>
+  <!-- App  -->
+  <div id="app">
+    <div x-scope="{ value: 'hello' }">
+      <div x-if="value.length > 6">
+        <span>[value]</span>
       </div>
 
-      <!-- <div x-scope="{ max: '', text: ''}" x-spy:max="console.log(max)">
+      <button @click="value += 'a'">
+        test
+      </button>
+
+      [value]
+    </div>
+
+    <!-- <div x-scope="{ max: '', text: ''}" x-spy:max="console.log(max)">
         <input type="text" x-model.number="max">
         <input type="text" x-model.maxlength[max]="text">
       </div> -->
 
-      <!-- <div x-scope="{ visible: true }">
+    <!-- <div x-scope="{ visible: true }">
         <div class="parent red">
           <button @click="visible = !visible">Toggle</button>
           <span x-portal="#target" x-show="visible">Hello!</span>
@@ -132,8 +105,8 @@
       </div>
       <p>The target is outside of the declared scope</p>
       <div class="parent blue" id="target"> </div> -->
-    </div>
-    <script type="module" src="./src/index.ts"></script>
-  </body>
-</html>
+  </div>
+  <script type="module" src="./src/index.ts"></script>
+</body>
 
+</html>

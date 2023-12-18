@@ -62,10 +62,8 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
     // Before clearing, should remoev ALL children if they exist
     removeChildren(parent!)
 
-
     // Range
     if (typeof evalExpr === 'number') {
-
       for (const i in Array.from({ length: evalExpr })) {
         const { newEl, newCtx } = createForItemCtx()
         Object.assign(newCtx.data, { [params]: Number(i) })

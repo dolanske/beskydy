@@ -17,7 +17,7 @@ interface Block {
  *  x-else      // Requires adjacent x-if or x-else
  */
 
-export const processIf: Directive = function (ctx, node, { name, value }) {
+export const processIf: Directive<boolean> = function (ctx, node, { name, value }) {
   node.removeAttribute(name)
 
   // Holds the reference to the element and its parent node
@@ -69,6 +69,13 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
     }
   }
 
+  // This is ran just once on initialization. If an x-if has just one
+  // node and it doesnt pass the initial evaluation, we should stop the
+  // walker from walking through the node tree. By returned true from
+  // this process, we'll tell the walker to skip this. It's like
+  // conditionally adding x-skip to this.
+  let shouldGoNextSibling = false
+
   ctx.effect(() => {
     // Iterate over each block and evaluate block expressions
     for (let index = 0; index < blocks.length; index++) {
@@ -87,13 +94,19 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
 
           currentResult = block
           currentIndex = index
+        } else {
+          shouldGoNextSibling = true
         }
 
         return
+      } else {
+        shouldGoNextSibling = true
       }
     }
 
     currentIndex = -1
     clear()
   })
+
+  return shouldGoNextSibling
 }
