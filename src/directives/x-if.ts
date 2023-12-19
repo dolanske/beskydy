@@ -7,6 +7,9 @@ interface Block {
   node: HTMLElement
 }
 
+// FIXME:
+// Any elements siblings behind a failing x-if do not get processed
+
 /**
  * Takes in an expression and based on its result, the elements are
  * either completely removed or (re)added to the DOM.
@@ -57,6 +60,8 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
     }
   }
 
+  // FIXME:
+  // This part breaks it
   parent.removeChild(node)
 
   let currentIndex: number
@@ -107,6 +112,8 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
     currentIndex = -1
     clear()
   })
+
+
 
   return shouldGoNextSibling
 }

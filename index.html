@@ -81,14 +81,13 @@
   <!-- App  -->
   <div id="app">
     <div x-scope="{ value: 'hello' }">
-      <div x-if="value.length > 6">
+      <div x-if="value.length > 5">
         <span>[value]</span>
       </div>
-
-      <button @click="value += 'a'">
+      <button @click="value += 'a'" x-init="console.log('w good')">
         test
       </button>
-
+      <span x-init="console.log('hhhhh')"></span>
       [value]
     </div>
 

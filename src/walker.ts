@@ -16,12 +16,7 @@ import { processTextNode } from './text-node'
 import { processData } from './directives/x-data'
 import { processSwitch } from './directives/x-switch'
 import { processSpy } from './directives/x-spy'
-import { processInit } from './directives/x-init'
-
-export enum NodeTypes {
-  ELEMENT = 1,
-  TEXT = 3,
-}
+import { processLifecycle } from './directives/x-lifecycle'
 
 export function walk(ctx: ContextAny, forcedRoot?: Element) {
   const rootEl = forcedRoot ?? ctx.root
@@ -55,9 +50,10 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
   ////////////////////////
 
   while (node) {
-    console.log("STARTED AGAIN")
     switch (node.nodeType) {
-      case NodeTypes.ELEMENT: {
+      case Node.COMMENT_NODE: break
+
+      case Node.ELEMENT_NODE: {
         // Element
         const _node = node as HTMLElement
 
@@ -78,24 +74,22 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
         if (portalAttr = Array.from(_node.attributes).find(a => a.name.startsWith('x-portal')))
           processPortal(ctx, _node, portalAttr)
 
-        // FIXME:
-        // Siblings are for some reason not being walked after an x=if statement
-        // So whatever is after x-if is not processed (dont know if just one node or all siblings)
         const shouldSkipNode = applyDirectives(ctx, _node)
         if (shouldSkipNode) {
           node = walker.nextSibling()
-          console.log("should start again")
           continue
         }
         break;
       }
 
-      case NodeTypes.TEXT: {
+      case Node.TEXT_NODE: {
         // Skip processing, if text is empty (contains line break) or does not
         // contain delimiter start
         const text = String(node.textContent)
-        if (text.trim().length === 0 || !text.includes(ctx.app.delimiters.start))
+        if (text.trim().length === 0 || !text.includes(ctx.app.delimiters.start)) {
+          console.log("Aborted text node processing")
           break;
+        }
 
         // SECTION Text Node 
         // 1. Save string
@@ -105,7 +99,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
         break;
       }
     }
-    console.log("DID NOT START AGAIN")
+
     node = walker.nextNode()
   }
 }
@@ -118,9 +112,9 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
     // but so far it hasn't posed any issues. Just adding this here so
     // later we do a real review
 
-    // When scope has had its data registered, we can execute the init mounted hook
+    // When scope has had its data registered, we can execute the init hook
     if (attr.name === 'x-init') {
-      processInit(ctx, node, attr)
+      processLifecycle(ctx, node, attr)
       continue
     }
 
@@ -205,6 +199,12 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
         if (attr.name.startsWith(key))
           directive(ctx, node, attr)
       }
+    }
+
+    // When scope has had its data registered, we can execute the init hook
+    if (attr.name === 'x-mounted') {
+      processLifecycle(ctx, node, attr)
+      continue
     }
   }
 }
