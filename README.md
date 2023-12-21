@@ -2,7 +2,7 @@
 
  Like alps, but smaller. Alpine / vue-petite inspired but mostly implemented by me. Define small interactive partitions within your HTML without needing to write javascript.
 
-## Usage
+## The Concept
 
 Create a reactive partition by adding `x-scope` directive on an element. This will create a reactive scope for said element and expose all of its properties to its descendants.
 

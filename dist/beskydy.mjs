@@ -1,54 +1,21 @@
-var q = Object.defineProperty;
-var H = (e, t, r) => t in e ? q(e, t, { enumerable: !0, configurable: !0, writable: !0, value: r }) : e[t] = r;
-var E = (e, t, r) => (H(e, typeof t != "symbol" ? t + "" : t, r), r);
-import { reactive as W, effect as U } from "@vue/reactivity";
-class $ {
-  constructor(t, r) {
-    // Store the context root element
-    E(this, "root");
-    // Reactive dataset available to the entire scope
-    E(this, "data");
-    E(this, "init");
-    // Hold all context runners for disposal
-    E(this, "effects", []);
-    this.root = t, this.data = W(Object.assign({ $refs: {} }, F, r)), this.init = !1;
-  }
-  // Watch effects
-  // effect = rawEffect
-  effect(t) {
-    const r = U(t);
-    this.effects.push(r);
-  }
-  // Store refs for access within scope
-  addRef(t, r) {
-    Object.assign(this.data.$refs, { [t]: r });
-  }
-  // When creating sub contexts, this allows for a parent context to
-  // share its reactive properties with the child context
-  extend(t) {
-    Object.assign(this.data, t.data);
-  }
-  teardown() {
-    var r;
-    this.effects.forEach((n) => n.effect.stop()), this.effects.length = 0;
-    const t = this.root.cloneNode(!0);
-    (r = this.root.parentElement) == null || r.replaceChild(t, this.root), Reflect.set(this, "data", /* @__PURE__ */ Object.create(null)), this.init = !1;
-  }
+var F = Object.defineProperty;
+var q = (e, t, s) => t in e ? F(e, t, { enumerable: !0, configurable: !0, writable: !0, value: s }) : e[t] = s;
+var h = (e, t, s) => (q(e, typeof t != "symbol" ? t + "" : t, s), s);
+import { reactive as $, effect as K } from "@vue/reactivity";
+const D = /* @__PURE__ */ Object.create(null);
+function T(e, t, s) {
+  return L(e, `return(${t})`, s);
 }
-const k = {}, M = /* @__PURE__ */ Object.create(null);
-function m(e, t, r) {
-  return V(e, `return(${t})`, r);
-}
-function V(e, t, r, n) {
+function L(e, t, s, n) {
   JSON.stringify(e);
-  const s = M[t] || (M[t] = z(t));
+  const r = D[t] || (D[t] = X(t));
   try {
-    return s(e, r, n);
-  } catch (o) {
-    console.error(o);
+    return r(e, s, n);
+  } catch (a) {
+    console.error(a);
   }
 }
-function z(e) {
+function X(e) {
   try {
     return new Function("data", "$el", "$event", `with(data){${e}}`);
   } catch (t) {
@@ -56,112 +23,179 @@ function z(e) {
     };
   }
 }
-function O(e, t) {
-  const r = e.attributes.getNamedItem(t);
-  return r ? (e.removeAttribute(t), r.value ?? !0) : null;
+class x {
+  constructor(t, s, n) {
+    // TODO: implement x-scope:scopeName="" attribute 
+    // Naming a scope is purely for debugging reasons, as it will show up
+    // on error messages and warnings
+    h(this, "__name");
+    // Store the context's root element
+    h(this, "root");
+    // Reactive dataset available to the entire scope
+    h(this, "data");
+    h(this, "init");
+    // Hold all context runners for disposal
+    h(this, "effects", []);
+    // Stores a referene to the root app instance
+    h(this, "app");
+    this.root = t, this.data = $(Object.assign({ $refs: {} }, s.rootState, n)), this.init = !1, this.app = s;
+  }
+  /**
+   * Executes the provided callback fn whenever the context's reactive
+   * dataset updates
+   *
+   * @param fn Callback
+   */
+  effect(t) {
+    const s = K(t);
+    this.effects.push(s);
+  }
+  /**
+   * Stores a reference to a DOM element by the provided key. This
+   * allows us to use $refs object within expressions
+   *
+   * @param key Ref key
+   * @param ref Element
+   */
+  addRef(t, s) {
+    Object.assign(this.data.$refs, { [t]: s });
+  }
+  /**
+   * When creating sub contexts, this allows for a parent context to
+   * share its reactive properties with the child context
+   *
+   * @param ctx Context
+   */
+  extend(t) {
+    Object.assign(this.data, t.data);
+  }
+  /**
+   * Evaluates the provided expression against the context dataset
+   * 
+   * @param expr Expression 
+   * @param el Optionally, make the current element available as $el
+   * @returns 
+   */
+  eval(t, s) {
+    return T(this.data, t, s);
+  }
+  /**
+   * Turns the scope's elements to the original static HTML. Removes
+   * event listeners and stops reactive watchers.
+   */
+  teardown() {
+    var s;
+    this.effects.forEach((n) => n.effect.stop()), this.effects.length = 0;
+    const t = this.root.cloneNode(!0);
+    (s = this.root.parentElement) == null || s.replaceChild(t, this.root), Reflect.set(this, "data", /* @__PURE__ */ Object.create(null)), this.init = !1;
+  }
 }
-function R(e) {
+function k(e, t) {
+  const s = e.attributes.getNamedItem(t);
+  return s ? (e.removeAttribute(t), s.value ?? !0) : null;
+}
+function j(e) {
   return e == null;
 }
-function C(e) {
+function N(e) {
   return !!e && e.constructor === Object;
 }
-const P = Array.isArray;
+const _ = Array.isArray;
 function G(e) {
   for (; e.lastElementChild; )
     e.removeChild(e.lastElementChild);
 }
-function j(e, t) {
-  return e in t.data ? m(t.data, e) : e === "undefined" ? void 0 : e === "null" ? null : e === "true" || e === "false" ? !!e : isNaN(e) ? e : Number(e);
+function E(e, t) {
+  return e in t.data ? T(t.data, e) : e === "undefined" ? void 0 : e === "null" ? null : e === "true" || e === "false" ? !!e : isNaN(e) ? e : Number(e);
 }
-function S(e) {
-  return [...e].reduce((t, r) => t += `\\${r}`, "");
+function M(e) {
+  return [...e].reduce((t, s) => t += `\\${s}`, "");
 }
-const J = function(e, t, { value: r, name: n }) {
-  t.removeAttribute(n), e.addRef(r, t), new MutationObserver(() => {
-    e.addRef(r, t);
+const H = function(e, t, { value: s, name: n }) {
+  t.removeAttribute(n), e.addRef(s, t), new MutationObserver(() => {
+    e.addRef(s, t);
   }).observe(t, {
     attributes: !0,
     childList: !0,
     subtree: !0,
     characterData: !0
   });
-}, Q = function(e, t, { name: r, value: n }) {
-  t.removeAttribute(r);
-  const s = n;
+}, U = function(e, t, { name: s, value: n }) {
+  t.removeAttribute(s);
+  const r = n;
   e.effect(() => {
-    t.textContent = m(e.data, s, t);
+    t.textContent = e.eval(r, t);
   });
-}, Y = function(e, t, { value: r, name: n }) {
+}, z = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
-  const s = r;
+  const r = s;
   e.effect(() => {
-    const o = m(e.data, s, t);
-    if (C(o))
-      for (const l of Object.keys(o))
-        Reflect.has(t, "style") && Reflect.set(t.style, l, o[l]);
+    const a = e.eval(r, t);
+    if (N(a))
+      for (const l of Object.keys(a))
+        Reflect.has(t, "style") && Reflect.set(t.style, l, a[l]);
   });
-}, Z = function(e, t, { value: r, name: n }) {
+}, J = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
-  const s = r;
+  const r = s;
   Reflect.has(t, "style") && e.effect(() => {
-    m(e.data, s, t) ? t.style.removeProperty("display") : t.style.setProperty("display", "none");
+    e.eval(r, t) ? t.style.removeProperty("display") : t.style.setProperty("display", "none");
   });
-}, ee = function(e, t, { value: r, name: n }) {
+}, Q = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
-  const s = r;
+  const r = s;
   e.effect(() => {
-    t.innerHTML = m(e.data, s, t);
+    t.innerHTML = e.eval(r, t);
   });
-}, te = function(e, t, { name: r, value: n }) {
-  t.removeAttribute(r);
-  const [s, o] = r.split(":"), l = (i, a) => {
-    R(a) ? t.removeAttribute(i) : t.setAttribute(i, a);
+}, Y = function(e, t, { name: s, value: n }) {
+  t.removeAttribute(s);
+  const [r, a] = s.split(":"), l = (i, o) => {
+    j(o) || o === !1 ? t.removeAttribute(i) : t.setAttribute(i, o);
   };
-  o ? e.effect(() => {
-    const i = m(e.data, n, t);
-    l(r, i);
+  a ? e.effect(() => {
+    const i = e.eval(n, t);
+    l(a, i);
   }) : e.effect(() => {
-    const i = m(e.data, n, t) ?? {};
-    for (const a of Object.keys(i)) {
-      const u = i[a];
-      l(a, u);
+    const i = e.eval(n, t) ?? {};
+    for (const o of Object.keys(i)) {
+      const u = i[o];
+      l(o, u);
     }
   });
-}, re = function(e, t, { value: r }) {
-  const n = (s) => {
-    for (const o of Object.keys(s))
-      s[o] ? t.classList.add(o) : t.classList.remove(o);
+}, Z = function(e, t, { value: s }) {
+  const n = (r) => {
+    for (const a of Object.keys(r))
+      r[a] ? t.classList.add(a) : t.classList.remove(a);
   };
-  if (r.startsWith("[")) {
-    const s = /* @__PURE__ */ Object.create(null);
+  if (s.startsWith("[")) {
+    const r = /* @__PURE__ */ Object.create(null);
     e.effect(() => {
-      const o = m(e.data, r);
-      for (let l = 0; l < o.length; l++) {
-        const i = o[l];
+      const a = e.eval(s);
+      for (let l = 0; l < a.length; l++) {
+        const i = a[l];
         if (i)
-          typeof i == "string" ? (t.classList.add(i), s[l] = i) : C(i) && n(i);
+          typeof i == "string" ? (t.classList.add(i), r[l] = i) : N(i) && n(i);
         else {
-          const a = s[l];
-          a && (t.classList.remove(a), s[l] = null);
+          const o = r[l];
+          o && (t.classList.remove(o), r[l] = null);
         }
       }
     });
-  } else if (r.startsWith("{") && r.endsWith("}"))
+  } else if (s.startsWith("{") && s.endsWith("}"))
     e.effect(() => {
-      const s = m(e.data, r, t);
-      n(s);
+      const r = e.eval(s, t);
+      n(r);
     });
   else {
-    let s;
+    let r;
     e.effect(() => {
-      s && t.classList.remove(s), s = m(e.data, r, t), t.classList.add(s);
+      r && t.classList.remove(r), r = e.eval(s, t), t.classList.add(r);
     });
   }
-}, N = {
-  throttle: (e, { lastCall: t }, r = 300) => typeof r != "number" ? !1 : Date.now() - t >= r,
-  if: (e, t, r) => !!r,
-  only: (e, { calledTimes: t }, r = 1) => typeof r != "number" ? !1 : t < r,
+}, ee = {
+  throttle: (e, { lastCall: t }, s = 300) => typeof s != "number" ? !1 : Date.now() - t >= s,
+  if: (e, t, s) => !!s,
+  only: (e, { calledTimes: t }, s = 1) => typeof s != "number" ? !1 : t < s,
   once: (e, { calledTimes: t }) => t < 1,
   self: (e) => e.target === e.currentTarget,
   left: (e) => "button" in e && e.button === 0,
@@ -170,362 +204,491 @@ const J = function(e, t, { value: r, name: n }) {
   prevent: (e) => (e.preventDefault(), !0),
   stop: (e) => (e.stopPropagation(), !0),
   stopImmediate: (e) => (e.stopImmediatePropagation(), !0)
-}, se = function(e, t, { name: r, value: n }) {
-  t.removeAttribute(r);
-  const s = (r.startsWith("x-on") ? r.split(":")[1] : r.substring(1)).split("."), o = s[0], l = s.slice(1).map((a) => {
-    const [u, p] = a.split("[");
-    let h;
-    if (p) {
-      const c = p.replace("]", "");
-      h = j(c, e);
+}, te = function(e, t, { name: s, value: n }) {
+  t.removeAttribute(s);
+  const r = (s.startsWith("x-on") ? s.split(":")[1] : s.substring(1)).split("."), a = r[0], l = r.slice(1).map((o) => {
+    const [u, m] = o.split("[");
+    let c;
+    if (m) {
+      const d = m.replace("]", "");
+      c = E(d, e);
     }
-    return { key: u, param: h };
-  }).filter((a) => Object.keys(N).includes(a.key));
-  n.startsWith("()") && (n = `(${n})()`);
+    return { key: u, param: c };
+  }).filter((o) => Object.keys(e.app.eventModifiers).includes(o.key));
+  n.startsWith("(") && (n = `(${n})()`);
   const i = {
     calledTimes: 0,
     lastCall: 0
   };
-  t.addEventListener(o, (a) => {
-    l.every((u) => N[u.key](a, i, u.param)) && (V(e.data, n, t, a), i.calledTimes++, i.lastCall = Date.now());
+  t.addEventListener(a, (o) => {
+    l.every((u) => e.app.eventModifiers[u.key](o, i, u.param)) && L(e.data, n, t, o), i.calledTimes++, i.lastCall = Date.now();
   });
-}, ne = function(e, t, { name: r, value: n }) {
-  t.removeAttribute(r);
-  const s = t.parentElement, o = new Comment("x-if");
-  s.insertBefore(o, t);
+}, se = function(e, t, { name: s, value: n }) {
+  t.removeAttribute(s);
+  const r = t.parentElement, a = new Comment("x-if");
+  r.insertBefore(a, t);
   const l = [{
     node: t,
     expr: n
   }];
-  let i, a;
-  for (; (i = t.nextElementSibling) !== null && ((a = O(i, "x-else")) !== null || (a = O(i, "x-else-if"))); )
+  let i, o;
+  for (; (i = t.nextElementSibling) !== null && ((o = k(i, "x-else")) !== null || (o = k(i, "x-else-if"))); )
     l.push({
       node: i,
-      expr: a
-    }), s.removeChild(i);
-  s.removeChild(t);
-  let u, p;
-  function h() {
-    p && (s.removeChild(p.node), p = null);
+      expr: o
+    }), r.removeChild(i);
+  let u, m;
+  function c() {
+    m && (r.removeChild(m.node), m = null);
   }
-  e.effect(() => {
-    console.log(l);
-    for (let c = 0; c < l.length; c++) {
-      const f = l[c];
-      if (!f.expr || m(e.data, f.expr, t)) {
-        u !== c && (p && h(), s.insertBefore(f.node, o), console.log(f.node), T(e, f.node), p = f, u = c);
+  let d = !1;
+  return e.effect(() => {
+    for (let f = 0; f < l.length; f++) {
+      const p = l[f];
+      if (!p.expr || e.eval(p.expr, t)) {
+        u !== f ? (m && c(), r.insertBefore(p.node, a), A(e, p.node), m = p, u = f) : d = !0;
         return;
-      }
+      } else
+        d = !0;
     }
-    u = -1, h();
-  });
-}, L = {
+    u = -1, c();
+  }), requestAnimationFrame(() => {
+    r.removeChild(t);
+  }), d;
+}, re = {
   trim: (e) => e.trim(),
   number: (e, t) => Number.isNaN(Number(e)) ? Number(t) : Number(e)
-}, ie = function(e, t, { name: r, value: n }) {
-  var p, h;
-  let s = t;
-  const [o, l] = r.split("."), i = (p = s.attributes.getNamedItem("value")) == null ? void 0 : p.value, a = (c, f) => {
+}, ne = function(e, t, { name: s, value: n }) {
+  var m;
+  let r = t;
+  const [a, l] = s.split("."), i = (m = r.attributes.getNamedItem("value")) == null ? void 0 : m.value, o = (c, d) => {
     if (!l)
       return c;
-    const [d, b] = l.split("[");
-    let g;
-    if (b) {
-      const y = b.replace("]", "");
-      g = j(y, e);
+    const [f, p] = l.split("[");
+    let b;
+    if (p) {
+      const g = p.replace("]", "");
+      b = E(g, e);
     }
-    return L[d](c, f, g);
+    return e.app.modelModifiers[f](c, d, b);
   }, u = () => {
     let c;
-    const f = m(e.data, n);
-    f ? c = f : i && (c = i), Object.assign(e.data, { [r]: c }), s = s, s.value = c;
+    const d = e.eval(n);
+    d ? c = d : i && (c = i), Object.assign(e.data, { [s]: c }), r = r, r.value = c;
   };
-  switch (s.tagName) {
+  switch (r.tagName) {
     case "INPUT":
     case "TEXTAREA": {
-      switch (s = s, (h = s.attributes.getNamedItem("type")) == null ? void 0 : h.value) {
+      switch (r = r, r.type) {
         case "checkbox": {
-          const c = Reflect.get(e.data, n), f = (d, b) => {
-            P(c) ? c.includes(d) ? c.splice(c.indexOf(d), 1) : c.push(d) : Reflect.set(e.data, d, R(d) ? !b : d);
+          const c = Reflect.get(e.data, n), d = (f, p) => {
+            _(c) ? c.includes(f) ? c.splice(c.indexOf(f), 1) : c.push(f) : Reflect.set(e.data, f, j(f) ? !p : f);
           };
-          (!c || c.length === 0) && s.hasAttribute("checked") && (f(s.value, !0), s.removeAttribute("checked")), s.addEventListener("change", (d) => {
-            const { checked: b, value: g } = d == null ? void 0 : d.target;
-            f(g, b);
+          (!c || c.length === 0) && r.hasAttribute("checked") && (d(r.value, !0), r.removeAttribute("checked")), r.addEventListener("change", (f) => {
+            const { checked: p, value: b } = f == null ? void 0 : f.target;
+            d(b, p);
           }), e.effect(() => {
-            s = s;
-            const d = m(e.data, n);
-            d.includes(s.value) || s.value === d ? s.checked = !0 : s.checked = !1;
+            r = r;
+            const f = e.eval(n);
+            f.includes(r.value) || r.value === f ? r.checked = !0 : r.checked = !1;
           });
           break;
         }
         case "radio": {
-          s.hasAttribute("checked") && (s.removeAttribute("checked"), Object.assign(e.data, { [n]: s.value })), s.addEventListener("change", (c) => {
-            const { checked: f, value: d } = c.target;
-            f && Object.assign(e.data, { [d]: d });
+          r.hasAttribute("checked") && (r.removeAttribute("checked"), Object.assign(e.data, { [n]: r.value })), r.addEventListener("change", (c) => {
+            const { checked: d, value: f } = c.target;
+            d && Object.assign(e.data, { [f]: f });
           }), e.effect(() => {
-            s = s;
-            const c = m(e.data, n);
-            s.checked = s.value === c;
+            r = r;
+            const c = e.eval(n);
+            r.checked = r.value === c;
           });
           break;
         }
         default:
-          u(), s.removeAttribute("x-model"), s.addEventListener("input", (c) => {
-            const f = c.target, d = f.value, b = a(d, Reflect.get(e.data, n));
-            d !== b && (f.value = String(b)), Object.assign(e.data, { [n]: b });
-          }), e.effect(() => s.value = m(e.data, n));
+          u(), r.removeAttribute("x-model"), r.addEventListener("input", (c) => {
+            const d = c.target, f = d.value, p = o(f, Reflect.get(e.data, n));
+            f !== p && (d.value = String(p)), Object.assign(e.data, { [n]: p });
+          }), e.effect(() => r.value = e.eval(n));
       }
       break;
     }
     case "SELECT": {
-      s = s, u(), s.addEventListener("change", (c) => {
-        const f = j(c.target.value, e);
-        Object.assign(e.data, { [n]: f });
-      }), e.effect(() => s.value = m(e.data, n));
+      r = r, u(), r.addEventListener("change", (c) => {
+        const d = E(c.target.value, e);
+        Object.assign(e.data, { [n]: d });
+      }), e.effect(() => r.value = e.eval(n));
       break;
     }
     case "DETAILS": {
-      s = s;
-      const c = s.attributes.getNamedItem("open"), f = m(e.data, n);
-      s.open = R(f) ? c ?? !1 : f, s.addEventListener("toggle", (d) => {
-        const b = d.target.open;
-        Object.assign(e.data, { [n]: b });
-      }), e.effect(() => s.open = m(e.data, n));
+      r = r;
+      const c = r.attributes.getNamedItem("open"), d = e.eval(n);
+      r.open = j(d) ? c ?? !1 : d, r.addEventListener("toggle", (f) => {
+        const p = f.target.open;
+        Object.assign(e.data, { [n]: p });
+      }), e.effect(() => r.open = e.eval(n));
       break;
     }
   }
-}, oe = function(e, t, { value: r, name: n }) {
+}, ie = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n), t.removeAttribute("x-if");
-  const [s, o, l] = r.split(/(?!\(.*)\s(?![^(]*?\))/g), i = t.parentElement, a = t.cloneNode(!0);
+  const [r, a, l] = s.split(/(?!\(.*)\s(?![^(]*?\))/g), i = t.parentElement, o = t.cloneNode(!0);
   t.remove();
   const u = () => {
-    const h = a.cloneNode(!0), c = new $(h);
-    return c.extend(e), { newEl: h, newCtx: c };
-  }, p = (h, c) => {
-    i == null || i.appendChild(h), T(c);
+    const c = o.cloneNode(!0), d = new x(c, e.app);
+    return d.extend(e), { newEl: c, newCtx: d };
+  }, m = (c, d) => {
+    i == null || i.appendChild(c), A(d);
   };
   e.effect(() => {
-    const h = m(e.data, l);
-    if (typeof h == "number") {
-      G(i);
-      for (const c in Array.from({ length: h })) {
-        const { newEl: f, newCtx: d } = u();
-        Object.assign(d.data, { [s]: Number(c) }), p(f, d);
+    const c = e.eval(l);
+    if (G(i), typeof c == "number")
+      for (const d in Array.from({ length: c })) {
+        const { newEl: f, newCtx: p } = u();
+        Object.assign(p.data, { [r]: Number(d) }), m(f, p);
       }
-    } else if (P(h)) {
-      const [c, f] = s.replace("(", "").replace(")", "").split(","), d = c.trim(), b = f == null ? void 0 : f.trim();
-      h.forEach((g, y) => {
-        const { newEl: x, newCtx: w } = u();
-        Object.assign(w.data, { [d]: g }), b && Object.assign(w.data, { [b]: Number(y) }), p(x, w);
+    else if (_(c)) {
+      const [d, f] = r.replace("(", "").replace(")", "").split(","), p = d.trim(), b = f == null ? void 0 : f.trim();
+      c.forEach((g, w) => {
+        const { newEl: O, newCtx: v } = u();
+        Object.assign(v.data, { [p]: g }), b && Object.assign(v.data, { [b]: Number(w) }), m(O, v);
       });
-    } else if (C(h)) {
-      const [c, f, d] = s.replace("(", "").replace(")", "").split(","), b = c.trim(), g = f == null ? void 0 : f.trim(), y = d == null ? void 0 : d.trim();
-      Object.entries(h).forEach(([x, w], X) => {
-        const { newEl: K, newCtx: v } = u();
-        Object.assign(v.data, { [b]: w }), g && Object.assign(v.data, { [g]: x }), y && Object.assign(v.data, { [y]: Number(X) }), p(K, v);
+    } else if (N(c)) {
+      const [d, f, p] = r.replace("(", "").replace(")", "").split(","), b = d.trim(), g = f == null ? void 0 : f.trim(), w = p == null ? void 0 : p.trim();
+      Object.entries(c).forEach(([O, v], V) => {
+        const { newEl: B, newCtx: y } = u();
+        Object.assign(y.data, { [b]: v }), g && Object.assign(y.data, { [g]: O }), w && Object.assign(y.data, { [w]: Number(V) }), m(B, y);
       });
     } else
       throw new TypeError("Unsupported value was used in 'x-for'. Please only use a number, array or an object");
   });
 };
-function _(e, t) {
-  if (!t.textContent || t.textContent === "")
+function W(e, t) {
+  if (!t.textContent || t.textContent.trim().length === 0 || !t.textContent.includes(e.app.delimiters.start))
     return;
-  const r = t.textContent, n = new RegExp(`(?=${S(A.start)})(.*?)(?<=${S(A.end)})`, "g"), s = r.match(n);
-  !s || s.length === 0 || e.effect(() => {
-    let o = r;
-    for (const l of s) {
-      const i = l.replace(A.start, "").replace(A.end, "");
-      if (!i)
+  const s = e.app.delimiters, n = t.textContent, r = new RegExp(`(?=${M(s.start)})(.*?)(?<=${M(s.end)})`, "g"), a = n.match(r);
+  !a || a.length === 0 || e.effect(() => {
+    let l = n;
+    for (const i of a) {
+      const o = i.replace(s.start, "").replace(s.end, "");
+      if (!o)
         continue;
-      const a = m(e.data, i, t);
-      o = o.replace(l, a);
+      const u = e.eval(o, t);
+      l = l.replace(i, u);
     }
-    t.textContent = o;
+    t.textContent = l;
   });
 }
-const ae = function(e, t, { name: r, value: n }) {
-  const s = t.cloneNode(!0), o = document.querySelector(n), [, l] = r.split(":");
-  if (!o) {
+const oe = function(e, t, { name: s, value: n }) {
+  const r = t.cloneNode(!0), a = document.querySelector(n), [, l] = s.split(":");
+  if (!a) {
     console.error("No valid target provided for `x-portal`");
     return;
   }
-  t.remove(), l === "prepend" ? o.prepend(s) : l === "replace" ? o.replaceChildren(s) : o.append(s);
-  const i = document.createTreeWalker(s);
-  let a = i.root;
-  for (; a; ) {
-    if (a.nodeType === I.ELEMENT) {
-      const u = a;
-      if (O(u, "x-skip") !== null) {
-        a = i.nextSibling();
+  t.remove(), l === "prepend" ? a.prepend(r) : l === "replace" ? a.replaceChildren(r) : a.append(r);
+  const i = document.createTreeWalker(r);
+  let o = i.root;
+  for (; o; ) {
+    if (o.nodeType === Node.ELEMENT_NODE) {
+      const u = o;
+      if (k(u, "x-skip") !== null) {
+        o = i.nextSibling();
         continue;
       }
-      B(e, u);
+      P(e, u);
     } else
-      a.nodeType === I.TEXT && _(e, a);
-    a = i.nextNode();
+      o.nodeType === Node.TEXT_NODE && W(e, o);
+    o = i.nextNode();
   }
-}, ce = function(e, t, { name: r, value: n }) {
-  if (t.removeAttribute(r), r === "x-scope" && e.root !== t)
+};
+function S() {
+  throw new Error(`[x-scope/x-data] Error when processing attribute. 
+ Most likely an issue with the the data object.`);
+}
+const R = function(e, t, { name: s, value: n }) {
+  if (t.removeAttribute(s), s === "x-scope" && e.root !== t)
     throw new Error("Can not initialize a new scope within an existing scope");
   try {
-    if (!n)
-      return !0;
-    const s = m({}, n);
-    if (!C(s))
-      return !0;
-    for (const o of Object.keys(s))
-      Object.defineProperty(e.data, o, {
-        value: s[o],
+    n || (n = "{ }");
+    const r = T({}, n);
+    N(r) || S();
+    for (const a of Object.keys(r))
+      Object.defineProperty(e.data, a, {
+        value: r[a],
         writable: !0,
         enumerable: !0,
         configurable: !0
       });
-  } catch (s) {
-    return console.warn("[x-scope/x-data] Error when processing attribute"), console.log(s), !0;
+  } catch (r) {
+    console.warn("[x-scope/x-data] Error when processing attribute"), console.log(r), S();
   }
   return !1;
-}, le = function(e, t, { value: r }) {
+}, ae = function(e, t, { value: s }) {
   t.removeAttribute("x-switch");
-  const n = [], s = Array.from(t.children).filter((i) => i.hasAttribute("x-case") || i.hasAttribute("x-default")).map((i) => {
-    var a;
+  const n = [], r = Array.from(t.children).filter((i) => i.hasAttribute("x-case") || i.hasAttribute("x-default")).map((i) => {
+    var o;
     return {
       isDefault: i.hasAttribute("x-default"),
       isCase: i.hasAttribute("x-case"),
-      expr: ((a = i.attributes.getNamedItem("x-case")) == null ? void 0 : a.value) ?? null,
+      expr: ((o = i.attributes.getNamedItem("x-case")) == null ? void 0 : o.value) ?? null,
       node: i
     };
   }).map((i) => {
-    const a = new Comment("x-switch");
-    return t.insertBefore(a, i.node), n.push(a), i.node.removeAttribute("x-case"), i.node.removeAttribute("x-default"), i.node.remove(), i;
+    const o = new Comment("x-switch");
+    return t.insertBefore(o, i.node), n.push(o), i.node.removeAttribute("x-case"), i.node.removeAttribute("x-default"), i.node.remove(), i;
   });
-  let o;
+  let a;
   function l() {
-    o && (o.node.remove(), o = null);
+    a && (a.node.remove(), a = null);
   }
   e.effect(() => {
-    const i = m(e.data, r);
-    let a;
-    for (let u = 0; u < s.length; u++) {
-      const p = s[u];
-      if (u < s.length - 1 && p.isDefault && (a = [p, u]), p.expr) {
-        if (j(p.expr, e) === i) {
-          a = [p, u];
+    const i = e.eval(s);
+    let o;
+    for (let u = 0; u < r.length; u++) {
+      const m = r[u];
+      if (u < r.length - 1 && m.isDefault && (o = [m, u]), m.expr) {
+        if (E(m.expr, e) === i) {
+          o = [m, u];
           break;
         }
       } else
-        u === s.length - 1 && (a = [p, u]);
+        u === r.length - 1 && (o = [m, u]);
     }
-    if (a) {
+    if (o) {
       l();
-      const [u, p] = a, h = n[p];
-      t.insertBefore(u.node, h), T(e, u.node), o = u;
+      const [u, m] = o, c = n[m];
+      t.insertBefore(u.node, c), A(e, u.node), a = u;
       return;
     }
     l();
   });
-}, fe = function(e, t, { name: r, value: n }) {
-  const [s, ...o] = r.split(":");
+}, ce = function(e, t, { name: s, value: n }) {
+  const [r, ...a] = s.split(":");
   let l = /* @__PURE__ */ Object.create(null);
   e.effect(() => {
-    if (o.length > 0) {
-      for (const i of o)
+    if (a.length > 0) {
+      for (const i of a)
         if (Reflect.get(l, i) !== Reflect.get(e.data, i)) {
-          m(e.data, n, t);
+          e.eval(n, t);
           break;
         }
       l = { ...e.data };
     } else
-      m(e.data, n, t);
+      e.eval(n, t);
   });
+}, I = (e, t, s) => {
+  t.removeAttribute(s.name), e.eval(s.value, t);
 };
-var I = /* @__PURE__ */ ((e) => (e[e.ELEMENT = 1] = "ELEMENT", e[e.TEXT = 3] = "TEXT", e))(I || {});
-function T(e, t) {
-  const r = document.createTreeWalker(t ?? e.root);
-  let n = r.root;
-  for (; n; ) {
-    if (n.nodeType === 1) {
-      const s = n;
-      if (O(s, "x-skip") !== null) {
-        n = r.nextSibling();
-        continue;
+function A(e, t) {
+  const s = t ?? e.root, n = document.createTreeWalker(s);
+  let r = n.root;
+  const a = s.querySelectorAll("[x-data]"), l = s.getAttributeNode("x-scope");
+  l && R(e, s, l);
+  for (const i of a)
+    R(e, i, i.getAttributeNode("x-data"));
+  for (; r; ) {
+    switch (r.nodeType) {
+      case Node.ELEMENT_NODE: {
+        const i = r;
+        if (k(i, "x-skip") !== null) {
+          r = n.nextSibling();
+          continue;
+        }
+        let o;
+        if ((o = Array.from(i.attributes).find((m) => m.name.startsWith("x-portal"))) && oe(e, i, o), P(e, i)) {
+          r = n.nextSibling();
+          continue;
+        }
+        break;
       }
-      let o;
-      (o = Array.from(s.attributes).find((l) => l.name.startsWith("x-portal"))) && ae(e, s, o), B(e, s);
-    } else
-      n.nodeType === 3 && _(e, n);
-    n = r.nextNode();
+      case Node.TEXT_NODE: {
+        W(e, r);
+        break;
+      }
+    }
+    r = n.nextNode();
   }
 }
-function B(e, t) {
-  for (const r of Array.from(t.attributes)) {
-    if ((r.name === "x-data" || r.name === "x-scope") && ce(e, t, r))
-      throw new Error(`[x-scope/x-data] Error when processing attribute. 
- Most likely an issue with the the data object.`);
-    r.name === "x-for" ? oe(e, t, r) : r.name === "x-if" && ne(e, t, r), r.name === "x-switch" && le(e, t, r), r.name === "x-ref" && J(e, t, r), r.name.startsWith("x-model") && ie(e, t, r), (r.name.startsWith("x-bind") || r.name.startsWith(":")) && te(e, t, r), (r.name.startsWith("@") || r.name.startsWith("x-on")) && se(e, t, r), r.name.startsWith("x-spy") && fe(e, t, r), r.name === "x-text" && Q(e, t, r), r.name === "x-class" && re(e, t, r), r.name === "x-html" && ee(e, t, r), r.name === "x-style" && Y(e, t, r), r.name === "x-show" && Z(e, t, r), Object.keys(k).length > 0 && Object.entries(k).forEach(([n, s]) => {
-      r.name.startsWith(n) && s(e, t, r);
-    });
+function P(e, t) {
+  for (const s of Array.from(t.attributes)) {
+    if (s.name === "x-init") {
+      I(e, t, s);
+      continue;
+    }
+    if (s.name === "x-for")
+      return ie(e, t, s), !0;
+    if (s.name === "x-if") {
+      if (se(e, t, s))
+        return !0;
+      continue;
+    }
+    if (s.name === "x-switch") {
+      ae(e, t, s);
+      continue;
+    }
+    if (s.name === "x-ref") {
+      H(e, t, s);
+      continue;
+    }
+    if (s.name.startsWith("x-model")) {
+      ne(e, t, s);
+      continue;
+    }
+    if (s.name.startsWith("x-bind") || s.name.startsWith(":")) {
+      Y(e, t, s);
+      continue;
+    }
+    if (s.name.startsWith("@") || s.name.startsWith("x-on")) {
+      te(e, t, s);
+      continue;
+    }
+    if (s.name.startsWith("x-spy")) {
+      ce(e, t, s);
+      continue;
+    }
+    if (s.name === "x-text") {
+      U(e, t, s);
+      continue;
+    }
+    if (s.name === "x-class") {
+      Z(e, t, s);
+      continue;
+    }
+    if (s.name === "x-html") {
+      Q(e, t, s);
+      continue;
+    }
+    if (s.name === "x-style") {
+      z(e, t, s);
+      continue;
+    }
+    if (s.name === "x-show") {
+      J(e, t, s);
+      continue;
+    }
+    const n = Object.keys(e.app.customDirectives);
+    if (n.length > 0)
+      for (const r of n) {
+        const a = e.app.customDirectives[r];
+        s.name.startsWith(r) && a(e, t, s);
+      }
+    if (s.name === "x-processed") {
+      I(e, t, s);
+      continue;
+    }
   }
 }
-const D = [], A = {
-  start: "{{",
-  end: "}}"
-}, F = W({});
-function ge(e, t) {
-  if (e in k)
-    throw new Error(`Directive ${e} is already defined`);
-  k[e] = t;
-}
-function ye(e, t) {
-  if (e in N)
-    throw new Error(`Event modifier ${e} is already defined`);
-  N[e] = t;
-}
-function we(e, t) {
-  if (e in L)
-    throw new Error(`Model modifier ${e} is already defined`);
-  L[e] = t;
-}
-function ue(e, t) {
-  Object.assign(A, { start: e, end: t });
-}
-class de {
+const C = "is a reserved name or its already been defined. Please use a different name.";
+class le {
   constructor(t) {
-    Object.assign(F, t);
+    h(this, "modelModifiers");
+    h(this, "eventModifiers");
+    h(this, "customDirectives");
+    h(this, "delimiters");
+    h(this, "scopes");
+    h(this, "rootState");
+    h(this, "onInitCbs");
+    h(this, "onTeardownCbs");
+    this.modelModifiers = Object.assign({}, re), this.eventModifiers = Object.assign({}, ee), this.customDirectives = {}, this.delimiters = {
+      start: "{{",
+      end: "}}"
+    }, this.scopes = [], this.rootState = $(Object.assign({}, t)), this.onInitCbs = [], this.onTeardownCbs = [];
   }
   /**
-   * Initialize Beskydy. It starts by collecting all the scopes and initializing them
+   * Define the way Beskydy will compile the delimiters {{ }} into a reactive part of a string.
+   * Delimiters contain text, which usually contains an expression. Think of it was as javascript being executed within a string when it is wrapped in the delimiters {{ }}
+   *
+   *
+   * @param start Starting delimiter
+   * @param end Ending delimiter
    */
-  init() {
-    const t = Array.from(document.querySelectorAll("[x-scope]"));
-    for (const r of t)
-      me(r);
+  setDelimiters(t, s) {
+    this.delimiters.start = t, this.delimiters.end = s;
   }
   /**
-   * Stops Beskydy instance, removes reactivity and event listeners and leaves the DOM in the state it was when the app was torn down./
+   * Add a custom directive (element attribute)
+   *
+   * @param name Directive name, preferably should start with `x-`
+   * @param fn Directive implementation
+   */
+  defineDirective(t, s) {
+    if (t in this.customDirectives)
+      throw new Error(`The directive "${t}" ${C}`);
+    this.customDirectives[t] = s;
+  }
+  /**
+   * Add a custom `x-on` event modifier
+   *
+   * @param name Modifier name
+   * @param fn Modifier implementation
+   */
+  defineEventModifier(t, s) {
+    if (t in this.eventModifiers)
+      throw new Error(`The event modifier "${t}" ${C}`);
+    this.eventModifiers[t] = s;
+  }
+  /**
+   * Add a custom `x-model` modifier
+   *
+   * @param name Modifier name
+   * @param fn Modifier implementation
+   */
+  defineModelModifier(t, s) {
+    if (t in this.modelModifiers)
+      throw new Error(`The model modifier "${t}" ${C}`);
+    this.modelModifiers[t] = s;
+  }
+  /**
+   *  Initialize Beskydy. It starts by collecting all the scope elements
+   *  and creating a context for each.
+   *
+   * @param selector Custom attribute selector. Defaults to 'x-scope'
+   */
+  collect(t = "[x-scope]") {
+    const s = Array.from(document.querySelectorAll(t));
+    s.length === 0 && console.warn(`No scopes were found for the selector "${t}". Make sure to define at least one.`);
+    for (const n of s) {
+      const r = new x(n, this, {});
+      n.setAttribute("style", "display:none;"), A(r), r.init = !0, n.removeAttribute("style"), this.scopes.push(r);
+    }
+    for (const n of this.onInitCbs)
+      n();
+  }
+  /**
+   * Registers a function which runs when app is fully initialized
+   */
+  onInit(t) {
+    this.onInitCbs.push(t);
+  }
+  /**
+   * Registers a callback which runs after application has been shut down
+   */
+  onTeardown(t) {
+    this.onTeardownCbs.push(t);
+  }
+  /**
+   *   Stops Beskydy instance, removes reactivity and event listeners
+   *   and leaves the DOM in the state it was when the app was torn down.
    */
   teardown() {
-    for (const t of D)
+    for (const t of this.scopes)
       t.teardown();
-    D.length = 0;
+    this.scopes.length = 0;
+    for (const t of this.onTeardownCbs)
+      t();
   }
 }
-function pe(e) {
-  return new de(e ?? {});
-}
-function me(e) {
-  const t = new $(e);
-  return e.setAttribute("style", "display:none;"), T(t), t.init = !0, e.removeAttribute("style"), D.push(t), { ctx: t };
-}
-ue("[[", "]]");
-pe().init();
+const fe = new le({
+  selected: "people",
+  loading: !1,
+  data: [],
+  fetchData() {
+    this.loading = !0, fetch(`https://swapi.dev/api/${this.selected}`).then((e) => e.json()).then((e) => {
+      this.loading = !1, this.data = e.results;
+    });
+  }
+});
+fe.collect();
 export {
-  de as Beskydy,
-  pe as createApp,
-  me as createScope,
-  ge as defineDirective,
-  ye as defineEventModifier,
-  we as defineModelModifier,
-  F as globalState,
-  ue as setDelimiters
+  le as Beskydy
 };
