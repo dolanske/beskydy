@@ -193,7 +193,7 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
     }
 
     // When scope has had its data registered, we can execute the init hook
-    if (attr.name === 'x-mounted') {
+    if (attr.name === 'x-processed') {
       processLifecycle(ctx, node, attr)
       continue
     }

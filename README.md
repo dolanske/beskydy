@@ -108,9 +108,9 @@ Inline expressions can be added to a text content of any element. You need to wr
 
 ## Directives
 
-There are 17 directives in total. Each simplifying the way we can interact or update the DOM.
+There are 18 directives in total. Each simplifying the way we can interact or update the DOM.
 
-[x-scope](#x-scope) • [x-data](#x-data) • [x-if](#x-if-x-else-if-x-else) • [x-switch](#x-switch) • [x-show](#x-show) • [x-for](#x-for) • [x-portal](#x-portal) • [x-spy](#x-spy) • [x-ref](#x-ref) • [x-on](#x-on) • [x-model](#x-model) • [x-bind](#x-bind) • [x-class](#x-class) • [x-style](#x-style) • [x-text](#x-text) • [x-html](#x-html) • [x-init](#x-init)
+[x-scope](#x-scope) • [x-data](#x-data) • [x-if](#x-if-x-else-if-x-else) • [x-switch](#x-switch) • [x-show](#x-show) • [x-for](#x-for) • [x-portal](#x-portal) • [x-spy](#x-spy) • [x-ref](#x-ref) • [x-on](#x-on) • [x-model](#x-model) • [x-bind](#x-bind) • [x-class](#x-class) • [x-style](#x-style) • [x-text](#x-text) • [x-html](#x-html) • [x-init](#x-init) • [x-processed](#x-processed)
 
 ### `x-scope`
 
@@ -399,11 +399,21 @@ Same as with `x-text`, but sets the `element.innerHTML` instead.
 
 ### `x-init`
 
-Runs the provided expression when the current scope is initialized.
+Runs the provided expression when the element's data attributes have been initialized, but not the rest of the directives.
 If you want to run some code when the entire app instance has been initialized, use the `app.onInit` hook instead.
 
 ```html
 <div class="{ scopeLoaded: false }" x-init="scopeLoaded = true">
   Loaded { scopeLoaded }
+</div>
+```
+
+### `x-processed`
+
+Runs the provided expression when all of the element's directives have been processed
+
+```html
+<div class="{ scopeProcessed: false }" x-init="scopeProcessed = true">
+  Loaded { scopeProcessed }
 </div>
 ```
