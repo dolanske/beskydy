@@ -89,6 +89,10 @@
       </button>
       <span x-init="console.log('hhhhh')"></span>
       [value]
+
+      <div x-if="value.length > 5">
+        <span>[value]</span>
+      </div>
     </div>
 
     <!-- <div x-scope="{ max: '', text: ''}" x-spy:max="console.log(max)">

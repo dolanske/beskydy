@@ -41,14 +41,12 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
   let elseEl: Element | null
   let elseExpr: string | null
   while ((elseEl = node.nextElementSibling) !== null) {
-    if (
-      (elseExpr = getAttr(elseEl, 'x-else')) !== null
-      || (elseExpr = getAttr(elseEl, 'x-else-if'))
-    ) {
+    if ((elseExpr = getAttr(elseEl, 'x-else')) !== null || (elseExpr = getAttr(elseEl, 'x-else-if'))) {
       blocks.push({
         node: elseEl as HTMLElement,
         expr: elseExpr,
       })
+
       // Remove them because they can be re-added during evaluation process
       parent.removeChild(elseEl)
     }
@@ -60,9 +58,7 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
     }
   }
 
-  // FIXME:
-  // This part breaks it
-  parent.removeChild(node)
+
 
   let currentIndex: number
   let currentResult: Block | null
@@ -113,7 +109,12 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
     clear()
   })
 
-
+  // REVIEW Any nodes after a failing x-if, were not being processed Moving this
+  // line of code at the end of this file and into requestAnimationFramge fixed
+  // it. But I am simply not actually sure how or why.
+  requestAnimationFrame(() => {
+    parent.removeChild(node)
+  })
 
   return shouldGoNextSibling
 }
