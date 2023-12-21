@@ -75,9 +75,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
       return Object.keys(ctx.app.eventModifiers).includes(modifier.key)
     })
 
-  // FIXME: this won't work if its defined as (event) => 
-  // Solution: just check for '('
-  if (value.startsWith('()'))
+  if (value.startsWith('('))
     value = `(${value})()`
 
   // State variables, which some of the modifiers use

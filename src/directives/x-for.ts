@@ -4,12 +4,6 @@ import { Context } from '../context'
 import { walk } from '../walker'
 import type { Directive } from './directives'
 
-// FIXME:
-// For some reason, in for loops, after a node is processed,
-// there's an item which gets the original context without the sub context
-// This results in a missing ctx property, which is added in the the loop
-
-
 export const processFor: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute(name)
   // Remove if from the iterated elements.
