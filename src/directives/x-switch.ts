@@ -1,7 +1,6 @@
-import { evaluate } from '../evaluate'
 import { parseValue } from '../helpers'
 import { walk } from '../walker'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 interface Block {
   isDefault: boolean
@@ -57,7 +56,7 @@ export const processSwitch: Directive = function (ctx, node, { value }) {
   }
 
   ctx.effect(() => {
-    const result = evaluate(ctx.data, value)
+    const result = ctx.eval(value)
     let res: [Block, number] | undefined
 
     for (let i = 0; i < blocks.length; i++) {

@@ -1,7 +1,6 @@
 import { getAttr } from '../helpers'
-import { evaluate } from '../evaluate'
 import { walk } from '../walker'
-import { type Directive } from '.'
+import { type Directive } from './directives'
 
 interface Block {
   expr: string | null
@@ -18,7 +17,7 @@ interface Block {
  *  x-else      // Requires adjacent x-if or x-else
  */
 
-export const processIf: Directive = function (ctx, node, { name, value }) {
+export const processIf: Directive<boolean> = function (ctx, node, { name, value }) {
   node.removeAttribute(name)
 
   // Holds the reference to the element and its parent node
@@ -39,14 +38,12 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
   let elseEl: Element | null
   let elseExpr: string | null
   while ((elseEl = node.nextElementSibling) !== null) {
-    if (
-      (elseExpr = getAttr(elseEl, 'x-else')) !== null
-      || (elseExpr = getAttr(elseEl, 'x-else-if'))
-    ) {
+    if ((elseExpr = getAttr(elseEl, 'x-else')) !== null || (elseExpr = getAttr(elseEl, 'x-else-if'))) {
       blocks.push({
         node: elseEl as HTMLElement,
         expr: elseExpr,
       })
+
       // Remove them because they can be re-added during evaluation process
       parent.removeChild(elseEl)
     }
@@ -58,7 +55,7 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
     }
   }
 
-  parent.removeChild(node)
+
 
   let currentIndex: number
   let currentResult: Block | null
@@ -70,14 +67,19 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
     }
   }
 
-  ctx.effect(() => {
-    console.log(blocks)
+  // This is ran just once on initialization. If an x-if has just one
+  // node and it doesnt pass the initial evaluation, we should stop the
+  // walker from walking through the node tree. By returned true from
+  // this process, we'll tell the walker to skip this. It's like
+  // conditionally adding x-skip to this.
+  let shouldGoNextSibling = false
 
+  ctx.effect(() => {
     // Iterate over each block and evaluate block expressions
     for (let index = 0; index < blocks.length; index++) {
       const block = blocks[index]
 
-      if (!block.expr || evaluate(ctx.data, block.expr, node)) {
+      if (!block.expr || ctx.eval(block.expr, node)) {
         // Passed
         if (currentIndex !== index) {
           if (currentResult)
@@ -85,20 +87,31 @@ export const processIf: Directive = function (ctx, node, { name, value }) {
 
           parent.insertBefore(block.node, anchor)
 
-          console.log(block.node)
-
           // Walk and process again
           walk(ctx, block.node)
 
           currentResult = block
           currentIndex = index
+        } else {
+          shouldGoNextSibling = true
         }
 
         return
+      } else {
+        shouldGoNextSibling = true
       }
     }
 
     currentIndex = -1
     clear()
   })
+
+  // REVIEW Any nodes after a failing x-if, were not being processed Moving this
+  // line of code at the end of this file and into requestAnimationFramge fixed
+  // it. But I am simply not actually sure how or why.
+  requestAnimationFrame(() => {
+    parent.removeChild(node)
+  })
+
+  return shouldGoNextSibling
 }

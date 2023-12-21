@@ -1,7 +1,7 @@
 import { getAttr } from '../helpers'
-import { NodeTypes, processAttrs } from '../walker'
+import { applyDirectives } from '../walker'
 import { processTextNode } from '../text-node'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 export const processPortal: Directive = function (ctx, original, { name, value }) {
   // Clone node, teleport clone to the new place, replace current node
@@ -10,6 +10,7 @@ export const processPortal: Directive = function (ctx, original, { name, value }
   const [, elPlacement] = name.split(':')
 
   if (!target) {
+    // Shouldn't throw, as targets can be removed at runtime
     console.error('No valid target provided for `x-portal`')
     return
   }
@@ -31,7 +32,7 @@ export const processPortal: Directive = function (ctx, original, { name, value }
   let node: Node | null = walker.root
 
   while (node) {
-    if (node.nodeType === NodeTypes.ELEMENT) {
+    if (node.nodeType === Node.ELEMENT_NODE) {
       const _node = node as HTMLElement
 
       if (getAttr(_node, 'x-skip') !== null) {
@@ -39,9 +40,9 @@ export const processPortal: Directive = function (ctx, original, { name, value }
         continue
       }
 
-      processAttrs(ctx, _node)
+      applyDirectives(ctx, _node)
     }
-    else if (node.nodeType === NodeTypes.TEXT) {
+    else if (node.nodeType === Node.TEXT_NODE) {
       processTextNode(ctx, node)
     }
 

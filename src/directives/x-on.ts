@@ -1,7 +1,8 @@
 import { execute } from '../evaluate'
 import { parseValue } from '../helpers'
-import type { Directive, EventModifierFn, Modifier, ModifierListenerState, Primitive } from '.'
+import type { Directive, EventModifierFn, Modifier, ModifierListenerState, Primitive } from './directives'
 
+// Default event modifiers which are bound to an app instance
 export const eventModifiers: Record<string, EventModifierFn> = {
   throttle: (_, { lastCall }, amount = 300) => {
     if (typeof amount !== 'number')
@@ -57,6 +58,7 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
     .slice(1)
     .map((modifier) => {
       // Split modifier into a key and possible parameter
+      // eventKey[param]=""
       const [key, rawParams] = modifier.split('[')
       let param: Primitive
 
@@ -70,10 +72,10 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
       return { key, param }
     })
     .filter((modifier) => {
-      return Object.keys(eventModifiers).includes(modifier.key)
+      return Object.keys(ctx.app.eventModifiers).includes(modifier.key)
     })
 
-  if (value.startsWith('()'))
+  if (value.startsWith('('))
     value = `(${value})()`
 
   // State variables, which some of the modifiers use
@@ -82,13 +84,11 @@ export const processOn: Directive = function (ctx, node, { name, value }) {
     lastCall: 0,
   }
 
-  node.addEventListener(eventKey, (event) => {
-    // In case there are modifiers and some of them did NOT pass, do not
-    // allow the callback to execute
-    if (!modifiers.every(modifier => eventModifiers[modifier.key](event, state, modifier.param)))
-      return
+  node.addEventListener(eventKey, (event: Event) => {
+    // Only execute callback if every modifier passes
+    if (modifiers.every(modifier => ctx.app.eventModifiers[modifier.key](event, state, modifier.param)))
+      execute(ctx.data, value, node, event)
 
-    execute(ctx.data, value, node, event)
     state.calledTimes++
     state.lastCall = Date.now()
   })

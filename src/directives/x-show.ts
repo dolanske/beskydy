@@ -1,5 +1,4 @@
-import { evaluate } from '../evaluate'
-import { type Directive } from '.'
+import { type Directive } from './directives'
 
 /**
  * Takes in and evaluates an expression. Based on the result the element
@@ -14,7 +13,7 @@ export const processShow: Directive = function (ctx, node, { value, name }) {
     return
 
   ctx.effect(() => {
-    const result = evaluate(ctx.data, expr, node)
+    const result = ctx.eval(expr, node)
     if (result)
       (node as HTMLElement).style.removeProperty('display')
     else

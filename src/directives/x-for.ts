@@ -2,8 +2,7 @@ import { isArr, isObj, removeChildren } from '../helpers'
 import type { ContextAny } from '../context'
 import { Context } from '../context'
 import { walk } from '../walker'
-import { evaluate } from '../evaluate'
-import type { Directive } from '.'
+import type { Directive } from './directives'
 
 export const processFor: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute(name)
@@ -45,7 +44,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
   // Create new node and context by cloning the original node.
   const createForItemCtx = () => {
     const newEl = <HTMLElement>originalNode.cloneNode(true)
-    const newCtx = new Context(newEl)
+    const newCtx = new Context(newEl, ctx.app)
     newCtx.extend(ctx)
     return { newEl, newCtx }
   }
@@ -57,14 +56,15 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
     walk(newCtx)
   }
 
+
   ctx.effect(() => {
-    const evalExpr = evaluate(ctx.data, rawValue)
+    const evalExpr = ctx.eval(rawValue)
+
+    // Before clearing, should remoev ALL children if they exist
+    removeChildren(parent!)
 
     // Range
     if (typeof evalExpr === 'number') {
-      // Before clearing, should remoev ALL children if they exist
-      removeChildren(parent!)
-
       for (const i in Array.from({ length: evalExpr })) {
         const { newEl, newCtx } = createForItemCtx()
         Object.assign(newCtx.data, { [params]: Number(i) })
@@ -89,7 +89,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
         appendAndWalkItem(newEl, newCtx)
       })
     }
-    // Iterating in objecy
+    // Iterating in object
     else if (isObj(evalExpr)) {
       // Extract values from '(value, key?, index?)' string
       const [valueName, keyName, indexName] = params.replace('(', '').replace(')', '').split(',')
