@@ -4,7 +4,7 @@
 
 ## Usage
 
-Create a reactive partition by adding `x-scope` directive on an element. This will create a reactive scope for said element and all its descendants.
+Create a reactive partition by adding `x-scope` directive on an element. This will create a reactive scope for said element and expose all of its properties to its descendants.
 
  ```html
 <div x-scope="{ count: 0 }">
@@ -17,13 +17,12 @@ Create a reactive partition by adding `x-scope` directive on an element. This wi
 </div>
  ```
 
-Include a script in the footer in which we can initialize all the scopes.
+The only real JS we need to write is the app initialization. This can be done by simply create `new Beskydy()` class and calling the `collect` function.
+Optionally, we can provide global reactive properties into the constructor, which will be shared and available across all scopes.
 
 ```ts
 import { Beskydy } from 'beskydy'
 
-// Every scope will be able to reference the properties declared here
-// All of them are also reactive, just as if you declared them in `x-scope`
 const app = new Beskydy({
   characters: [],
   isLoading: false,
