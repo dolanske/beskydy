@@ -7,9 +7,6 @@ interface Block {
   node: HTMLElement
 }
 
-// FIXME:
-// Any elements siblings behind a failing x-if do not get processed
-
 /**
  * Takes in an expression and based on its result, the elements are
  * either completely removed or (re)added to the DOM.

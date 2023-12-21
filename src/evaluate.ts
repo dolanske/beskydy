@@ -21,8 +21,10 @@ export function execute(scope: any, exp: string, el?: Node, event?: Event) {
     return fn(scope, el, event)
   }
   catch (e) {
-    if (import.meta.env.DEV)
+    if (import.meta.env.DEV) {
+      console.log(scope)
       console.warn(`Error when evaluating expression "${exp}":`)
+    }
     console.error(e)
   }
 }

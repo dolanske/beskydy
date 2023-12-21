@@ -4,6 +4,12 @@ import { Context } from '../context'
 import { walk } from '../walker'
 import type { Directive } from './directives'
 
+// FIXME:
+// For some reason, in for loops, after a node is processed,
+// there's an item which gets the original context without the sub context
+// This results in a missing ctx property, which is added in the the loop
+
+
 export const processFor: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute(name)
   // Remove if from the iterated elements.
@@ -56,6 +62,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
     walk(newCtx)
   }
 
+
   ctx.effect(() => {
     const evalExpr = ctx.eval(rawValue)
 
@@ -88,7 +95,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
         appendAndWalkItem(newEl, newCtx)
       })
     }
-    // Iterating in objecy
+    // Iterating in object
     else if (isObj(evalExpr)) {
       // Extract values from '(value, key?, index?)' string
       const [valueName, keyName, indexName] = params.replace('(', '').replace(')', '').split(',')

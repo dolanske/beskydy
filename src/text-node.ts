@@ -1,11 +1,10 @@
 import type { ContextAny } from './context'
-import { evaluate } from './evaluate'
 import { parseDelimiter } from './helpers'
 
 export function processTextNode(ctx: ContextAny, node: Node) {
   // This should never be hit as only text nodes are processed, but
   // typescript is a known crybaby
-  if (!node.textContent || node.textContent === '')
+  if (!node.textContent || node.textContent.trim().length === 0 || !node.textContent.includes(ctx.app.delimiters.start))
     return
 
   const delimiters = ctx.app.delimiters
@@ -36,7 +35,7 @@ export function processTextNode(ctx: ContextAny, node: Node) {
         continue
 
       // Evaluate and replace part of the original text content
-      const result = evaluate(ctx.data, extractedExpr, node)
+      const result = ctx.eval(extractedExpr, node)
 
       finalTextContent = finalTextContent.replace(expr, result)
     }

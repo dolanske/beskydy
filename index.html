@@ -80,34 +80,17 @@
 <body>
   <!-- App  -->
   <div id="app">
-    <div x-scope="{ value: 'hello' }">
-      <div x-if="value.length > 5">
-        <span>[value]</span>
-      </div>
-      <button @click="value += 'a'" x-init="console.log('w good')">
-        test
-      </button>
-      <span x-init="console.log('hhhhh')"></span>
-      [value]
-
-      <div x-if="value.length > 5">
-        <span>[value]</span>
+    <div x-scope="{  }">
+      <button @click="fetchData()">fetch</button>
+      <span x-if="loading">LOADING DATA</span>
+      <div x-if="data.length > 0">
+        <ul>
+          <li x-for="(item, index) in data">
+            <pre>{{item.name}}</pre>
+          </li>
+        </ul>
       </div>
     </div>
-
-    <!-- <div x-scope="{ max: '', text: ''}" x-spy:max="console.log(max)">
-        <input type="text" x-model.number="max">
-        <input type="text" x-model.maxlength[max]="text">
-      </div> -->
-
-    <!-- <div x-scope="{ visible: true }">
-        <div class="parent red">
-          <button @click="visible = !visible">Toggle</button>
-          <span x-portal="#target" x-show="visible">Hello!</span>
-        </div>
-      </div>
-      <p>The target is outside of the declared scope</p>
-      <div class="parent blue" id="target"> </div> -->
   </div>
   <script type="module" src="./src/index.ts"></script>
 </body>

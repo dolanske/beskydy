@@ -51,8 +51,6 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
 
   while (node) {
     switch (node.nodeType) {
-      case Node.COMMENT_NODE: break
-
       case Node.ELEMENT_NODE: {
         // Element
         const _node = node as HTMLElement
@@ -83,14 +81,6 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
       }
 
       case Node.TEXT_NODE: {
-        // Skip processing, if text is empty (contains line break) or does not
-        // contain delimiter start
-        const text = String(node.textContent)
-        if (text.trim().length === 0 || !text.includes(ctx.app.delimiters.start)) {
-          console.log("Aborted text node processing")
-          break;
-        }
-
         // SECTION Text Node 
         // 1. Save string
         // 2. Extract expression
@@ -121,7 +111,8 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
     // In case if and for are on the same element, the if is removed.
     if (attr.name === 'x-for') {
       processFor(ctx, node, attr)
-      continue
+
+      return true
     } else if (attr.name === 'x-if') {
       const shouldSkipNode = processIf(ctx, node, attr)
 

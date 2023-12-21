@@ -21,13 +21,13 @@ const app = new Beskydy({
     fetch(`https://swapi.dev/api/${this.selected}`)
       .then(r => r.json())
       .then(r => {
-        this.data = r.results
         this.loading = false
+        this.data = r.results
       })
   }
 })
 
-app.setDelimiters("[", "]")
+// app.setDelimiters("[", "]")
 
 // app.defineDirective('x-three', (ctx, el, attr) => {
 //   ctx.effect(() => {
