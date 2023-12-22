@@ -13,11 +13,6 @@ export type ContextAny = Context<Element, Beskydy<object>, object>
 // const ctx = new Context(root, new Beskydy())
 
 export class Context<R extends Element, A extends Beskydy<object>, T extends object> {
-  // TODO: implement x-scope:scopeName="" attribute 
-  // Naming a scope is purely for debugging reasons, as it will show up
-  // on error messages and warnings
-
-  __name: string | undefined
   // Store the context's root element
   root: Element
   // Reactive dataset available to the entire scope

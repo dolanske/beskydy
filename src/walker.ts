@@ -72,8 +72,9 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
         if (portalAttr = Array.from(_node.attributes).find(a => a.name.startsWith('x-portal')))
           processPortal(ctx, _node, portalAttr)
 
-        const shouldSkipNode = applyDirectives(ctx, _node)
-        if (shouldSkipNode) {
+        // If appliy directives returns true, we want to skip to the next
+        // sibling instead of going deeper.
+        if (applyDirectives(ctx, _node)) {
           node = walker.nextSibling()
           continue
         }

@@ -21,6 +21,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
   const [_, modifier] = name.split('.') as [unknown, Modifier]
   const defaultValue = node.attributes.getNamedItem('value')?.value
 
+  // Call back to execute model modifiers and return the modified value
   const modify = (newValue: string, oldValue: string) => {
     if (!modifier)
       return newValue
@@ -186,8 +187,5 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
       ctx.effect(() => (node as HTMLDetailsElement).open = ctx.eval(value))
       break
     }
-
-    // Let all other elements fallthrough
-    default: break
   }
 }

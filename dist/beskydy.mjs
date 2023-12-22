@@ -25,10 +25,6 @@ function X(e) {
 }
 class x {
   constructor(t, s, n) {
-    // TODO: implement x-scope:scopeName="" attribute 
-    // Naming a scope is purely for debugging reasons, as it will show up
-    // on error messages and warnings
-    h(this, "__name");
     // Store the context's root element
     h(this, "root");
     // Reactive dataset available to the entire scope
@@ -90,22 +86,22 @@ class x {
     (s = this.root.parentElement) == null || s.replaceChild(t, this.root), Reflect.set(this, "data", /* @__PURE__ */ Object.create(null)), this.init = !1;
   }
 }
-function k(e, t) {
+function E(e, t) {
   const s = e.attributes.getNamedItem(t);
   return s ? (e.removeAttribute(t), s.value ?? !0) : null;
 }
 function j(e) {
   return e == null;
 }
-function N(e) {
+function A(e) {
   return !!e && e.constructor === Object;
 }
-const _ = Array.isArray;
+const W = Array.isArray;
 function G(e) {
   for (; e.lastElementChild; )
     e.removeChild(e.lastElementChild);
 }
-function E(e, t) {
+function k(e, t) {
   return e in t.data ? T(t.data, e) : e === "undefined" ? void 0 : e === "null" ? null : e === "true" || e === "false" ? !!e : isNaN(e) ? e : Number(e);
 }
 function M(e) {
@@ -120,22 +116,22 @@ const H = function(e, t, { value: s, name: n }) {
     subtree: !0,
     characterData: !0
   });
-}, U = function(e, t, { name: s, value: n }) {
+}, z = function(e, t, { name: s, value: n }) {
   t.removeAttribute(s);
   const r = n;
   e.effect(() => {
     t.textContent = e.eval(r, t);
   });
-}, z = function(e, t, { value: s, name: n }) {
+}, J = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
   const r = s;
   e.effect(() => {
     const a = e.eval(r, t);
-    if (N(a))
+    if (A(a))
       for (const l of Object.keys(a))
         Reflect.has(t, "style") && Reflect.set(t.style, l, a[l]);
   });
-}, J = function(e, t, { value: s, name: n }) {
+}, U = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
   const r = s;
   Reflect.has(t, "style") && e.effect(() => {
@@ -174,7 +170,7 @@ const H = function(e, t, { value: s, name: n }) {
       for (let l = 0; l < a.length; l++) {
         const i = a[l];
         if (i)
-          typeof i == "string" ? (t.classList.add(i), r[l] = i) : N(i) && n(i);
+          typeof i == "string" ? (t.classList.add(i), r[l] = i) : A(i) && n(i);
         else {
           const o = r[l];
           o && (t.classList.remove(o), r[l] = null);
@@ -211,7 +207,7 @@ const H = function(e, t, { value: s, name: n }) {
     let c;
     if (m) {
       const d = m.replace("]", "");
-      c = E(d, e);
+      c = k(d, e);
     }
     return { key: u, param: c };
   }).filter((o) => Object.keys(e.app.eventModifiers).includes(o.key));
@@ -232,7 +228,7 @@ const H = function(e, t, { value: s, name: n }) {
     expr: n
   }];
   let i, o;
-  for (; (i = t.nextElementSibling) !== null && ((o = k(i, "x-else")) !== null || (o = k(i, "x-else-if"))); )
+  for (; (i = t.nextElementSibling) !== null && ((o = E(i, "x-else")) !== null || (o = E(i, "x-else-if"))); )
     l.push({
       node: i,
       expr: o
@@ -246,7 +242,7 @@ const H = function(e, t, { value: s, name: n }) {
     for (let f = 0; f < l.length; f++) {
       const p = l[f];
       if (!p.expr || e.eval(p.expr, t)) {
-        u !== f ? (m && c(), r.insertBefore(p.node, a), A(e, p.node), m = p, u = f) : d = !0;
+        u !== f ? (m && c(), r.insertBefore(p.node, a), N(e, p.node), m = p, u = f) : d = !0;
         return;
       } else
         d = !0;
@@ -268,7 +264,7 @@ const H = function(e, t, { value: s, name: n }) {
     let b;
     if (p) {
       const g = p.replace("]", "");
-      b = E(g, e);
+      b = k(g, e);
     }
     return e.app.modelModifiers[f](c, d, b);
   }, u = () => {
@@ -282,7 +278,7 @@ const H = function(e, t, { value: s, name: n }) {
       switch (r = r, r.type) {
         case "checkbox": {
           const c = Reflect.get(e.data, n), d = (f, p) => {
-            _(c) ? c.includes(f) ? c.splice(c.indexOf(f), 1) : c.push(f) : Reflect.set(e.data, f, j(f) ? !p : f);
+            W(c) ? c.includes(f) ? c.splice(c.indexOf(f), 1) : c.push(f) : Reflect.set(e.data, f, j(f) ? !p : f);
           };
           (!c || c.length === 0) && r.hasAttribute("checked") && (d(r.value, !0), r.removeAttribute("checked")), r.addEventListener("change", (f) => {
             const { checked: p, value: b } = f == null ? void 0 : f.target;
@@ -315,7 +311,7 @@ const H = function(e, t, { value: s, name: n }) {
     }
     case "SELECT": {
       r = r, u(), r.addEventListener("change", (c) => {
-        const d = E(c.target.value, e);
+        const d = k(c.target.value, e);
         Object.assign(e.data, { [n]: d });
       }), e.effect(() => r.value = e.eval(n));
       break;
@@ -338,7 +334,7 @@ const H = function(e, t, { value: s, name: n }) {
     const c = o.cloneNode(!0), d = new x(c, e.app);
     return d.extend(e), { newEl: c, newCtx: d };
   }, m = (c, d) => {
-    i == null || i.appendChild(c), A(d);
+    i == null || i.appendChild(c), N(d);
   };
   e.effect(() => {
     const c = e.eval(l);
@@ -347,23 +343,22 @@ const H = function(e, t, { value: s, name: n }) {
         const { newEl: f, newCtx: p } = u();
         Object.assign(p.data, { [r]: Number(d) }), m(f, p);
       }
-    else if (_(c)) {
+    else if (W(c)) {
       const [d, f] = r.replace("(", "").replace(")", "").split(","), p = d.trim(), b = f == null ? void 0 : f.trim();
       c.forEach((g, w) => {
         const { newEl: O, newCtx: v } = u();
         Object.assign(v.data, { [p]: g }), b && Object.assign(v.data, { [b]: Number(w) }), m(O, v);
       });
-    } else if (N(c)) {
+    } else if (A(c)) {
       const [d, f, p] = r.replace("(", "").replace(")", "").split(","), b = d.trim(), g = f == null ? void 0 : f.trim(), w = p == null ? void 0 : p.trim();
-      Object.entries(c).forEach(([O, v], V) => {
+      Object.entries(c).forEach(([O, v], P) => {
         const { newEl: B, newCtx: y } = u();
-        Object.assign(y.data, { [b]: v }), g && Object.assign(y.data, { [g]: O }), w && Object.assign(y.data, { [w]: Number(V) }), m(B, y);
+        Object.assign(y.data, { [b]: v }), g && Object.assign(y.data, { [g]: O }), w && Object.assign(y.data, { [w]: Number(P) }), m(B, y);
       });
-    } else
-      throw new TypeError("Unsupported value was used in 'x-for'. Please only use a number, array or an object");
+    }
   });
 };
-function W(e, t) {
+function _(e, t) {
   if (!t.textContent || t.textContent.trim().length === 0 || !t.textContent.includes(e.app.delimiters.start))
     return;
   const s = e.app.delimiters, n = t.textContent, r = new RegExp(`(?=${M(s.start)})(.*?)(?<=${M(s.end)})`, "g"), a = n.match(r);
@@ -391,27 +386,30 @@ const oe = function(e, t, { name: s, value: n }) {
   for (; o; ) {
     if (o.nodeType === Node.ELEMENT_NODE) {
       const u = o;
-      if (k(u, "x-skip") !== null) {
+      if (E(u, "x-skip") !== null) {
         o = i.nextSibling();
         continue;
       }
-      P(e, u);
+      if (V(e, u)) {
+        o = i.nextSibling();
+        continue;
+      }
     } else
-      o.nodeType === Node.TEXT_NODE && W(e, o);
+      o.nodeType === Node.TEXT_NODE && _(e, o);
     o = i.nextNode();
   }
 };
-function S() {
+function R() {
   throw new Error(`[x-scope/x-data] Error when processing attribute. 
  Most likely an issue with the the data object.`);
 }
-const R = function(e, t, { name: s, value: n }) {
+const S = function(e, t, { name: s, value: n }) {
   if (t.removeAttribute(s), s === "x-scope" && e.root !== t)
     throw new Error("Can not initialize a new scope within an existing scope");
   try {
     n || (n = "{ }");
     const r = T({}, n);
-    N(r) || S();
+    A(r) || R();
     for (const a of Object.keys(r))
       Object.defineProperty(e.data, a, {
         value: r[a],
@@ -420,7 +418,7 @@ const R = function(e, t, { name: s, value: n }) {
         configurable: !0
       });
   } catch (r) {
-    console.warn("[x-scope/x-data] Error when processing attribute"), console.log(r), S();
+    console.warn("[x-scope/x-data] Error when processing attribute"), console.log(r), R();
   }
   return !1;
 }, ae = function(e, t, { value: s }) {
@@ -447,7 +445,7 @@ const R = function(e, t, { name: s, value: n }) {
     for (let u = 0; u < r.length; u++) {
       const m = r[u];
       if (u < r.length - 1 && m.isDefault && (o = [m, u]), m.expr) {
-        if (E(m.expr, e) === i) {
+        if (k(m.expr, e) === i) {
           o = [m, u];
           break;
         }
@@ -457,7 +455,7 @@ const R = function(e, t, { name: s, value: n }) {
     if (o) {
       l();
       const [u, m] = o, c = n[m];
-      t.insertBefore(u.node, c), A(e, u.node), a = u;
+      t.insertBefore(u.node, c), N(e, u.node), a = u;
       return;
     }
     l();
@@ -479,37 +477,37 @@ const R = function(e, t, { name: s, value: n }) {
 }, I = (e, t, s) => {
   t.removeAttribute(s.name), e.eval(s.value, t);
 };
-function A(e, t) {
+function N(e, t) {
   const s = t ?? e.root, n = document.createTreeWalker(s);
   let r = n.root;
   const a = s.querySelectorAll("[x-data]"), l = s.getAttributeNode("x-scope");
-  l && R(e, s, l);
+  l && S(e, s, l);
   for (const i of a)
-    R(e, i, i.getAttributeNode("x-data"));
+    S(e, i, i.getAttributeNode("x-data"));
   for (; r; ) {
     switch (r.nodeType) {
       case Node.ELEMENT_NODE: {
         const i = r;
-        if (k(i, "x-skip") !== null) {
+        if (E(i, "x-skip") !== null) {
           r = n.nextSibling();
           continue;
         }
         let o;
-        if ((o = Array.from(i.attributes).find((m) => m.name.startsWith("x-portal"))) && oe(e, i, o), P(e, i)) {
+        if ((o = Array.from(i.attributes).find((u) => u.name.startsWith("x-portal"))) && oe(e, i, o), V(e, i)) {
           r = n.nextSibling();
           continue;
         }
         break;
       }
       case Node.TEXT_NODE: {
-        W(e, r);
+        _(e, r);
         break;
       }
     }
     r = n.nextNode();
   }
 }
-function P(e, t) {
+function V(e, t) {
   for (const s of Array.from(t.attributes)) {
     if (s.name === "x-init") {
       I(e, t, s);
@@ -547,7 +545,7 @@ function P(e, t) {
       continue;
     }
     if (s.name === "x-text") {
-      U(e, t, s);
+      z(e, t, s);
       continue;
     }
     if (s.name === "x-class") {
@@ -559,11 +557,11 @@ function P(e, t) {
       continue;
     }
     if (s.name === "x-style") {
-      z(e, t, s);
+      J(e, t, s);
       continue;
     }
     if (s.name === "x-show") {
-      J(e, t, s);
+      U(e, t, s);
       continue;
     }
     const n = Object.keys(e.app.customDirectives);
@@ -649,7 +647,7 @@ class le {
     s.length === 0 && console.warn(`No scopes were found for the selector "${t}". Make sure to define at least one.`);
     for (const n of s) {
       const r = new x(n, this, {});
-      n.setAttribute("style", "display:none;"), A(r), r.init = !0, n.removeAttribute("style"), this.scopes.push(r);
+      n.setAttribute("style", "display:none;"), N(r), r.init = !0, n.removeAttribute("style"), this.scopes.push(r);
     }
     for (const n of this.onInitCbs)
       n();

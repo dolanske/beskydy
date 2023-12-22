@@ -11,7 +11,7 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute('x-if')
 
   /**
-   * Much more limited that vue's synax.
+   * Much more limited that vue's synax. No destructuring.
    * Only supports 3 different types. Array, object and range (number)
    *
    * Iteration of objects
@@ -111,7 +111,8 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
         appendAndWalkItem(newEl, newCtx)
       })
     }
-    else {
+
+    else if (import.meta.env.DEV) {
       throw new TypeError('Unsupported value was used in \'x-for\'. Please only use a number, array or an object')
     }
   })

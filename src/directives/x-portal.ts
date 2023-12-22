@@ -3,6 +3,9 @@ import { applyDirectives } from '../walker'
 import { processTextNode } from '../text-node'
 import type { Directive } from './directives'
 
+// REVIEW
+// Should the target have mutation attached observer attached?
+
 export const processPortal: Directive = function (ctx, original, { name, value }) {
   // Clone node, teleport clone to the new place, replace current node
   const clone = original.cloneNode(true) as HTMLElement
@@ -40,7 +43,10 @@ export const processPortal: Directive = function (ctx, original, { name, value }
         continue
       }
 
-      applyDirectives(ctx, _node)
+      if (applyDirectives(ctx, _node)) {
+        node = walker.nextSibling()
+        continue
+      }
     }
     else if (node.nodeType === Node.TEXT_NODE) {
       processTextNode(ctx, node)
