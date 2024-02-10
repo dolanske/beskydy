@@ -142,7 +142,7 @@ const H = function(e, t, { value: s, name: n }) {
   const r = s;
   e.effect(() => {
     const o = e.eval(r, t);
-    o instanceof Element ? t.append(o) : t.innerHTML = o;
+    o instanceof Element ? (t.replaceChildren(), t.append(o)) : t.innerHTML = o;
   });
 }, Y = function(e, t, { name: s, value: n }) {
   t.removeAttribute(s);
@@ -685,6 +685,9 @@ const fe = new le({
     this.loading = !0, fetch(`https://swapi.dev/api/${this.selected}`).then((e) => e.json()).then((e) => {
       this.loading = !1, this.data = e.results;
     });
+  },
+  makeElement() {
+    return document.createElement("table");
   }
 });
 fe.collect();

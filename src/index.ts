@@ -24,6 +24,9 @@ const app = new Beskydy({
         this.loading = false
         this.data = r.results
       })
+  },
+  makeElement() {
+    return document.createElement("table")
   }
 })
 

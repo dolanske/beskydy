@@ -7,6 +7,7 @@ export const processHTML: Directive = function (ctx, node, { value, name }) {
     const result = ctx.eval(expr, node)
 
     if (result instanceof Element) {
+      node.replaceChildren()
       node.append(result)
     } else {
       node.innerHTML = result
