@@ -141,7 +141,7 @@ const H = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
   const r = s;
   e.effect(() => {
-    t.innerHTML = e.eval(r, t);
+    r instanceof Element ? t.append(r) : t.innerHTML = e.eval(r, t);
   });
 }, Y = function(e, t, { name: s, value: n }) {
   t.removeAttribute(s);
