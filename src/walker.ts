@@ -121,7 +121,8 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
       // sibling should be skipped. If not, we want this function to
       // continue further.
       if (shouldSkipNode) {
-        return true
+        // REVIEW: ive no fucking clue man
+        // return true
       }
 
       continue

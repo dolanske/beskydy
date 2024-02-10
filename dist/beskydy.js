@@ -249,8 +249,6 @@ const H = function(e, t, { value: s, name: n }) {
         d = !0;
     }
     u = -1, c();
-  }), requestAnimationFrame(() => {
-    r.removeChild(t);
   }), d;
 }, re = {
   trim: (e) => e.trim(),
@@ -517,8 +515,7 @@ function V(e, t) {
     if (s.name === "x-for")
       return ie(e, t, s), !0;
     if (s.name === "x-if") {
-      if (se(e, t, s))
-        return !0;
+      se(e, t, s);
       continue;
     }
     if (s.name === "x-switch") {
@@ -679,16 +676,16 @@ class le {
 }
 const fe = new le({
   selected: "people",
-  loading: !1,
+  loading: !0,
   data: [],
   fetchData() {
     this.loading = !0, fetch(`https://swapi.dev/api/${this.selected}`).then((e) => e.json()).then((e) => {
       this.loading = !1, this.data = e.results;
     });
-  },
-  makeElement() {
-    return document.createElement("table");
   }
+  // makeElement() {
+  //   return document.createElement("table")
+  // }
 });
 fe.collect();
 export {

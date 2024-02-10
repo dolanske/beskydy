@@ -22,7 +22,7 @@ export function execute(scope: any, exp: string, el?: Node, event?: Event) {
   }
   catch (e) {
     if (import.meta.env.DEV) {
-      console.log(scope)
+      // console.log(scope)
       console.warn(`Error when evaluating expression "${exp}":`)
     }
     console.error(e)

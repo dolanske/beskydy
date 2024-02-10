@@ -20,8 +20,8 @@ interface Block {
 export const processIf: Directive<boolean> = function (ctx, node, { name, value }) {
   node.removeAttribute(name)
 
+
   // Holds the reference to the element and its parent node
-  // const savedEl = node
   const parent = node.parentElement!
 
   // This serves as an "anchor" to mount the element back in if the provided expression returns true
@@ -54,8 +54,6 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
       break
     }
   }
-
-
 
   let currentIndex: number
   let currentResult: Block | null
@@ -109,9 +107,9 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
   // REVIEW Any nodes after a failing x-if, were not being processed Moving this
   // line of code at the end of this file and into requestAnimationFramge fixed
   // it. But I am simply not actually sure how or why.
-  requestAnimationFrame(() => {
-    parent.removeChild(node)
-  })
+  // requestAnimationFrame(() => {
+  //   parent.removeChild(node)
+  // })
 
   return shouldGoNextSibling
 }

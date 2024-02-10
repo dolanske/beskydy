@@ -14,7 +14,7 @@ export {
 
 const app = new Beskydy({
   selected: 'people',
-  loading: false,
+  loading: true,
   data: [],
   fetchData() {
     this.loading = true
@@ -25,9 +25,9 @@ const app = new Beskydy({
         this.data = r.results
       })
   },
-  makeElement() {
-    return document.createElement("table")
-  }
+  // makeElement() {
+  //   return document.createElement("table")
+  // }
 })
 
 // app.setDelimiters("[", "]")

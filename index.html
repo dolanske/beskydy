@@ -81,6 +81,8 @@
   <!-- App  -->
   <div id="app">
     <div x-scope="{  }">
+      <!-- <span x-if="loading">CUM</span>
+      <button @click="loading = !loading">asdasd</button> -->
       <button @click="fetchData()">fetch</button>
       <span x-if="loading">LOADING DATA</span>
       <div x-if="data.length > 0">
@@ -90,7 +92,6 @@
           </li>
         </ul>
       </div>
-      <div x-html="makeElement()"></div>
     </div>
   </div>
   <script type="module" src="./src/index.ts"></script>
