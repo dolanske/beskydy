@@ -11,8 +11,8 @@ function L(e, t, s, n) {
   const r = D[t] || (D[t] = X(t));
   try {
     return r(e, s, n);
-  } catch (a) {
-    console.error(a);
+  } catch (o) {
+    console.error(o);
   }
 }
 function X(e) {
@@ -126,10 +126,10 @@ const H = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
   const r = s;
   e.effect(() => {
-    const a = e.eval(r, t);
-    if (A(a))
-      for (const l of Object.keys(a))
-        Reflect.has(t, "style") && Reflect.set(t.style, l, a[l]);
+    const o = e.eval(r, t);
+    if (A(o))
+      for (const l of Object.keys(o))
+        Reflect.has(t, "style") && Reflect.set(t.style, l, o[l]);
   });
 }, U = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
@@ -141,39 +141,40 @@ const H = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n);
   const r = s;
   e.effect(() => {
-    r instanceof Element ? t.append(r) : t.innerHTML = e.eval(r, t);
+    const o = e.eval(r, t);
+    o instanceof Element ? t.append(o) : t.innerHTML = o;
   });
 }, Y = function(e, t, { name: s, value: n }) {
   t.removeAttribute(s);
-  const [r, a] = s.split(":"), l = (i, o) => {
-    j(o) || o === !1 ? t.removeAttribute(i) : t.setAttribute(i, o);
+  const [r, o] = s.split(":"), l = (i, a) => {
+    j(a) || a === !1 ? t.removeAttribute(i) : t.setAttribute(i, a);
   };
-  a ? e.effect(() => {
+  o ? e.effect(() => {
     const i = e.eval(n, t);
-    l(a, i);
+    l(o, i);
   }) : e.effect(() => {
     const i = e.eval(n, t) ?? {};
-    for (const o of Object.keys(i)) {
-      const u = i[o];
-      l(o, u);
+    for (const a of Object.keys(i)) {
+      const u = i[a];
+      l(a, u);
     }
   });
 }, Z = function(e, t, { value: s }) {
   const n = (r) => {
-    for (const a of Object.keys(r))
-      r[a] ? t.classList.add(a) : t.classList.remove(a);
+    for (const o of Object.keys(r))
+      r[o] ? t.classList.add(o) : t.classList.remove(o);
   };
   if (s.startsWith("[")) {
     const r = /* @__PURE__ */ Object.create(null);
     e.effect(() => {
-      const a = e.eval(s);
-      for (let l = 0; l < a.length; l++) {
-        const i = a[l];
+      const o = e.eval(s);
+      for (let l = 0; l < o.length; l++) {
+        const i = o[l];
         if (i)
           typeof i == "string" ? (t.classList.add(i), r[l] = i) : A(i) && n(i);
         else {
-          const o = r[l];
-          o && (t.classList.remove(o), r[l] = null);
+          const a = r[l];
+          a && (t.classList.remove(a), r[l] = null);
         }
       }
     });
@@ -202,36 +203,36 @@ const H = function(e, t, { value: s, name: n }) {
   stopImmediate: (e) => (e.stopImmediatePropagation(), !0)
 }, te = function(e, t, { name: s, value: n }) {
   t.removeAttribute(s);
-  const r = (s.startsWith("x-on") ? s.split(":")[1] : s.substring(1)).split("."), a = r[0], l = r.slice(1).map((o) => {
-    const [u, m] = o.split("[");
+  const r = (s.startsWith("x-on") ? s.split(":")[1] : s.substring(1)).split("."), o = r[0], l = r.slice(1).map((a) => {
+    const [u, m] = a.split("[");
     let c;
     if (m) {
       const d = m.replace("]", "");
       c = k(d, e);
     }
     return { key: u, param: c };
-  }).filter((o) => Object.keys(e.app.eventModifiers).includes(o.key));
+  }).filter((a) => Object.keys(e.app.eventModifiers).includes(a.key));
   n.startsWith("(") && (n = `(${n})()`);
   const i = {
     calledTimes: 0,
     lastCall: 0
   };
-  t.addEventListener(a, (o) => {
-    l.every((u) => e.app.eventModifiers[u.key](o, i, u.param)) && L(e.data, n, t, o), i.calledTimes++, i.lastCall = Date.now();
+  t.addEventListener(o, (a) => {
+    l.every((u) => e.app.eventModifiers[u.key](a, i, u.param)) && L(e.data, n, t, a), i.calledTimes++, i.lastCall = Date.now();
   });
 }, se = function(e, t, { name: s, value: n }) {
   t.removeAttribute(s);
-  const r = t.parentElement, a = new Comment("x-if");
-  r.insertBefore(a, t);
+  const r = t.parentElement, o = new Comment("x-if");
+  r.insertBefore(o, t);
   const l = [{
     node: t,
     expr: n
   }];
-  let i, o;
-  for (; (i = t.nextElementSibling) !== null && ((o = E(i, "x-else")) !== null || (o = E(i, "x-else-if"))); )
+  let i, a;
+  for (; (i = t.nextElementSibling) !== null && ((a = E(i, "x-else")) !== null || (a = E(i, "x-else-if"))); )
     l.push({
       node: i,
-      expr: o
+      expr: a
     }), r.removeChild(i);
   let u, m;
   function c() {
@@ -242,7 +243,7 @@ const H = function(e, t, { value: s, name: n }) {
     for (let f = 0; f < l.length; f++) {
       const p = l[f];
       if (!p.expr || e.eval(p.expr, t)) {
-        u !== f ? (m && c(), r.insertBefore(p.node, a), N(e, p.node), m = p, u = f) : d = !0;
+        u !== f ? (m && c(), r.insertBefore(p.node, o), N(e, p.node), m = p, u = f) : d = !0;
         return;
       } else
         d = !0;
@@ -257,7 +258,7 @@ const H = function(e, t, { value: s, name: n }) {
 }, ne = function(e, t, { name: s, value: n }) {
   var m;
   let r = t;
-  const [a, l] = s.split("."), i = (m = r.attributes.getNamedItem("value")) == null ? void 0 : m.value, o = (c, d) => {
+  const [o, l] = s.split("."), i = (m = r.attributes.getNamedItem("value")) == null ? void 0 : m.value, a = (c, d) => {
     if (!l)
       return c;
     const [f, p] = l.split("[");
@@ -303,7 +304,7 @@ const H = function(e, t, { value: s, name: n }) {
         }
         default:
           u(), r.removeAttribute("x-model"), r.addEventListener("input", (c) => {
-            const d = c.target, f = d.value, p = o(f, Reflect.get(e.data, n));
+            const d = c.target, f = d.value, p = a(f, Reflect.get(e.data, n));
             f !== p && (d.value = String(p)), Object.assign(e.data, { [n]: p });
           }), e.effect(() => r.value = e.eval(n));
       }
@@ -328,10 +329,10 @@ const H = function(e, t, { value: s, name: n }) {
   }
 }, ie = function(e, t, { value: s, name: n }) {
   t.removeAttribute(n), t.removeAttribute("x-if");
-  const [r, a, l] = s.split(/(?!\(.*)\s(?![^(]*?\))/g), i = t.parentElement, o = t.cloneNode(!0);
+  const [r, o, l] = s.split(/(?!\(.*)\s(?![^(]*?\))/g), i = t.parentElement, a = t.cloneNode(!0);
   t.remove();
   const u = () => {
-    const c = o.cloneNode(!0), d = new x(c, e.app);
+    const c = a.cloneNode(!0), d = new x(c, e.app);
     return d.extend(e), { newEl: c, newCtx: d };
   }, m = (c, d) => {
     i == null || i.appendChild(c), N(d);
@@ -361,42 +362,42 @@ const H = function(e, t, { value: s, name: n }) {
 function _(e, t) {
   if (!t.textContent || t.textContent.trim().length === 0 || !t.textContent.includes(e.app.delimiters.start))
     return;
-  const s = e.app.delimiters, n = t.textContent, r = new RegExp(`(?=${M(s.start)})(.*?)(?<=${M(s.end)})`, "g"), a = n.match(r);
-  !a || a.length === 0 || e.effect(() => {
+  const s = e.app.delimiters, n = t.textContent, r = new RegExp(`(?=${M(s.start)})(.*?)(?<=${M(s.end)})`, "g"), o = n.match(r);
+  !o || o.length === 0 || e.effect(() => {
     let l = n;
-    for (const i of a) {
-      const o = i.replace(s.start, "").replace(s.end, "");
-      if (!o)
+    for (const i of o) {
+      const a = i.replace(s.start, "").replace(s.end, "");
+      if (!a)
         continue;
-      const u = e.eval(o, t);
+      const u = e.eval(a, t);
       l = l.replace(i, u);
     }
     t.textContent = l;
   });
 }
 const oe = function(e, t, { name: s, value: n }) {
-  const r = t.cloneNode(!0), a = document.querySelector(n), [, l] = s.split(":");
-  if (!a) {
+  const r = t.cloneNode(!0), o = document.querySelector(n), [, l] = s.split(":");
+  if (!o) {
     console.error("No valid target provided for `x-portal`");
     return;
   }
-  t.remove(), l === "prepend" ? a.prepend(r) : l === "replace" ? a.replaceChildren(r) : a.append(r);
+  t.remove(), l === "prepend" ? o.prepend(r) : l === "replace" ? o.replaceChildren(r) : o.append(r);
   const i = document.createTreeWalker(r);
-  let o = i.root;
-  for (; o; ) {
-    if (o.nodeType === Node.ELEMENT_NODE) {
-      const u = o;
+  let a = i.root;
+  for (; a; ) {
+    if (a.nodeType === Node.ELEMENT_NODE) {
+      const u = a;
       if (E(u, "x-skip") !== null) {
-        o = i.nextSibling();
+        a = i.nextSibling();
         continue;
       }
       if (V(e, u)) {
-        o = i.nextSibling();
+        a = i.nextSibling();
         continue;
       }
     } else
-      o.nodeType === Node.TEXT_NODE && _(e, o);
-    o = i.nextNode();
+      a.nodeType === Node.TEXT_NODE && _(e, a);
+    a = i.nextNode();
   }
 };
 function R() {
@@ -410,9 +411,9 @@ const S = function(e, t, { name: s, value: n }) {
     n || (n = "{ }");
     const r = T({}, n);
     A(r) || R();
-    for (const a of Object.keys(r))
-      Object.defineProperty(e.data, a, {
-        value: r[a],
+    for (const o of Object.keys(r))
+      Object.defineProperty(e.data, o, {
+        value: r[o],
         writable: !0,
         enumerable: !0,
         configurable: !0
@@ -424,48 +425,48 @@ const S = function(e, t, { name: s, value: n }) {
 }, ae = function(e, t, { value: s }) {
   t.removeAttribute("x-switch");
   const n = [], r = Array.from(t.children).filter((i) => i.hasAttribute("x-case") || i.hasAttribute("x-default")).map((i) => {
-    var o;
+    var a;
     return {
       isDefault: i.hasAttribute("x-default"),
       isCase: i.hasAttribute("x-case"),
-      expr: ((o = i.attributes.getNamedItem("x-case")) == null ? void 0 : o.value) ?? null,
+      expr: ((a = i.attributes.getNamedItem("x-case")) == null ? void 0 : a.value) ?? null,
       node: i
     };
   }).map((i) => {
-    const o = new Comment("x-switch");
-    return t.insertBefore(o, i.node), n.push(o), i.node.removeAttribute("x-case"), i.node.removeAttribute("x-default"), i.node.remove(), i;
+    const a = new Comment("x-switch");
+    return t.insertBefore(a, i.node), n.push(a), i.node.removeAttribute("x-case"), i.node.removeAttribute("x-default"), i.node.remove(), i;
   });
-  let a;
+  let o;
   function l() {
-    a && (a.node.remove(), a = null);
+    o && (o.node.remove(), o = null);
   }
   e.effect(() => {
     const i = e.eval(s);
-    let o;
+    let a;
     for (let u = 0; u < r.length; u++) {
       const m = r[u];
-      if (u < r.length - 1 && m.isDefault && (o = [m, u]), m.expr) {
+      if (u < r.length - 1 && m.isDefault && (a = [m, u]), m.expr) {
         if (k(m.expr, e) === i) {
-          o = [m, u];
+          a = [m, u];
           break;
         }
       } else
-        u === r.length - 1 && (o = [m, u]);
+        u === r.length - 1 && (a = [m, u]);
     }
-    if (o) {
+    if (a) {
       l();
-      const [u, m] = o, c = n[m];
-      t.insertBefore(u.node, c), N(e, u.node), a = u;
+      const [u, m] = a, c = n[m];
+      t.insertBefore(u.node, c), N(e, u.node), o = u;
       return;
     }
     l();
   });
 }, ce = function(e, t, { name: s, value: n }) {
-  const [r, ...a] = s.split(":");
+  const [r, ...o] = s.split(":");
   let l = /* @__PURE__ */ Object.create(null);
   e.effect(() => {
-    if (a.length > 0) {
-      for (const i of a)
+    if (o.length > 0) {
+      for (const i of o)
         if (Reflect.get(l, i) !== Reflect.get(e.data, i)) {
           e.eval(n, t);
           break;
@@ -480,9 +481,9 @@ const S = function(e, t, { name: s, value: n }) {
 function N(e, t) {
   const s = t ?? e.root, n = document.createTreeWalker(s);
   let r = n.root;
-  const a = s.querySelectorAll("[x-data]"), l = s.getAttributeNode("x-scope");
+  const o = s.querySelectorAll("[x-data]"), l = s.getAttributeNode("x-scope");
   l && S(e, s, l);
-  for (const i of a)
+  for (const i of o)
     S(e, i, i.getAttributeNode("x-data"));
   for (; r; ) {
     switch (r.nodeType) {
@@ -492,8 +493,8 @@ function N(e, t) {
           r = n.nextSibling();
           continue;
         }
-        let o;
-        if ((o = Array.from(i.attributes).find((u) => u.name.startsWith("x-portal"))) && oe(e, i, o), V(e, i)) {
+        let a;
+        if ((a = Array.from(i.attributes).find((u) => u.name.startsWith("x-portal"))) && oe(e, i, a), V(e, i)) {
           r = n.nextSibling();
           continue;
         }
@@ -567,8 +568,8 @@ function V(e, t) {
     const n = Object.keys(e.app.customDirectives);
     if (n.length > 0)
       for (const r of n) {
-        const a = e.app.customDirectives[r];
-        s.name.startsWith(r) && a(e, t, s);
+        const o = e.app.customDirectives[r];
+        s.name.startsWith(r) && o(e, t, s);
       }
     if (s.name === "x-processed") {
       I(e, t, s);
