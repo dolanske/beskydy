@@ -19,11 +19,11 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/beskydy.mjs"
+      "import": "./dist/beskydy.js"
     }
   },
-  "main": "./dist/beskydy.mjs",
-  "module": "./dist/beskydy.mjs",
+  "main": "./dist/beskydy.js",
+  "module": "./dist/beskydy.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
