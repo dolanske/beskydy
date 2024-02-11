@@ -13,6 +13,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['@vue/reactivity'],
     },
+    sourcemap: true
   },
   plugins: [dts({
     rollupTypes: true,

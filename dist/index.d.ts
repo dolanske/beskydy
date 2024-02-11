@@ -1,7 +1,7 @@
 import type { Directive } from './directives/directives';
 import type { EventModifierFn } from './directives/directives';
 import type { Primitive } from './directives/directives';
-import { UnwrapNestedRefs } from '@vue/reactivity';
+import type { UnwrapNestedRefs } from '@vue/reactivity';
 
 export declare class Beskydy<T extends object> {
     modelModifiers: Record<string, ModelModifierFn>;

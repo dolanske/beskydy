@@ -67,10 +67,10 @@ class x {
   }
   /**
    * Evaluates the provided expression against the context dataset
-   * 
-   * @param expr Expression 
+   *
+   * @param expr Expression
    * @param el Optionally, make the current element available as $el
-   * @returns 
+   * @returns Evaluated value
    */
   eval(t, s) {
     return T(this.data, t, s);
@@ -417,8 +417,8 @@ const S = function(e, t, { name: s, value: n }) {
         enumerable: !0,
         configurable: !0
       });
-  } catch (r) {
-    console.warn("[x-scope/x-data] Error when processing attribute"), console.log(r), R();
+  } catch {
+    console.warn("[x-scope/x-data] Error when processing attribute"), R();
   }
   return !1;
 }, ae = function(e, t, { value: s }) {
@@ -692,3 +692,4 @@ fe.collect();
 export {
   le as Beskydy
 };
+//# sourceMappingURL=beskydy.js.map
