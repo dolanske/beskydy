@@ -234,6 +234,7 @@ const H = function(e, t, { value: s, name: n }) {
       node: i,
       expr: a
     }), r.removeChild(i);
+  r.removeChild(t);
   let u, m;
   function c() {
     m && (r.removeChild(m.node), m = null);
