@@ -55,6 +55,8 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
     }
   }
 
+  parent.removeChild(node)
+
   let currentIndex: number
   let currentResult: Block | null
 
