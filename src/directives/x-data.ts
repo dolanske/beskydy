@@ -13,9 +13,9 @@ export const processData: Directive<boolean> = function (ctx, node, { name, valu
     throw new Error('Can not initialize a new scope within an existing scope')
 
   try {
-    if (!value) {
+    if (!value)
       value = '{ }'
-    }
+
     // throwDataErr()
 
     const data = evaluate({}, value)
@@ -34,7 +34,7 @@ export const processData: Directive<boolean> = function (ctx, node, { name, valu
   }
   catch (e) {
     console.warn('[x-scope/x-data] Error when processing attribute')
-    console.log(e)
+    // console.log(e)
     throwDataErr()
   }
 

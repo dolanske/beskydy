@@ -56,7 +56,6 @@ export const processFor: Directive = function (ctx, node, { value, name }) {
     walk(newCtx)
   }
 
-
   ctx.effect(() => {
     const evalExpr = ctx.eval(rawValue)
 

@@ -1,4 +1,4 @@
-import { type Directive } from './directives'
+import type { Directive } from './directives'
 
 export const processHTML: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute(name)
@@ -9,7 +9,8 @@ export const processHTML: Directive = function (ctx, node, { value, name }) {
     if (result instanceof Element) {
       node.replaceChildren()
       node.append(result)
-    } else {
+    }
+    else {
       node.innerHTML = result
     }
   })

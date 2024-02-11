@@ -1,9 +1,9 @@
-import { expect, test } from "vitest";
-import {prepareBareCtx} from "../test-utils"
+import { expect } from 'vitest'
+import { prepareBareCtx } from '../test-utils'
 
 // @vitest-environment jsdom
 
-  const template = `
+const template = `
   <div x-scope="{ open: true }">
     <div x-skip x-data="{ nope: true }"> 
       <div x-data="{ nope2: true }">
@@ -12,9 +12,9 @@ import {prepareBareCtx} from "../test-utils"
         <div x-data="{ nope4: true }"></div>
       </div>
     </div>
-  </div>`;
+  </div>`
 
-test("[directives] x-skip", () => {
+it('[directives] x-skip', () => {
   const { ctx } = prepareBareCtx(document, template)
   // Open was defined in root scope
   expect(ctx.data.open).toBeTruthy()

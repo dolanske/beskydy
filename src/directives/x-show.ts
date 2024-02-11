@@ -1,4 +1,4 @@
-import { type Directive } from './directives'
+import type { Directive } from './directives'
 
 /**
  * Takes in and evaluates an expression. Based on the result the element

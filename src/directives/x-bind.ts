@@ -1,5 +1,5 @@
 import { isNil } from '../helpers'
-import { type Directive } from './directives'
+import type { Directive } from './directives'
 
 /**
  * Dynamically bind attribute or attributes if the expression passes
@@ -18,7 +18,7 @@ export const processBind: Directive = function (ctx, node, { name, value }) {
 
   const setOrDelAttr = (key: string, value: any) => {
     // If no value is provided or the value is a boolean, remove the
-    // attribute instead of simply setting it to the value. 
+    // attribute instead of simply setting it to the value.
 
     // The reason for that is disabled="false" will still disable the
     // attribute, as boolean attributes dont care about the value

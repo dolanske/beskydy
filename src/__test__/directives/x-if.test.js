@@ -1,8 +1,7 @@
-
 // @vitest-environment jsdom
 
-import { expect, test } from "vitest"
-import { prepareBareCtx } from "../test-utils"
+import { expect, it } from 'vitest'
+import { prepareBareCtx } from '../test-utils'
 
 const template = `
 <div x-scope="{ count: 0 }">
@@ -12,16 +11,16 @@ const template = `
 </div>
 `
 
-test("[directives] x-if", () => {
+it('[directives] x-if', () => {
   const { ctx, root } = prepareBareCtx(document, template)
-  expect(root.children[0].textContent).toBe("Less than 3")
+  expect(root.children[0].textContent).toBe('Less than 3')
 
   ctx.data.count = 5
-  expect(root.children[0].textContent).toBe("Between and including 3 and 6")
+  expect(root.children[0].textContent).toBe('Between and including 3 and 6')
 
   ctx.data.count = 999
-  expect(root.children[0].textContent).toBe("More than 6")
+  expect(root.children[0].textContent).toBe('More than 6')
 
   ctx.data.count = 0
-  expect(root.children[0].textContent).toBe("Less than 3")
+  expect(root.children[0].textContent).toBe('Less than 3')
 })

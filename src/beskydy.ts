@@ -1,4 +1,5 @@
-import { UnwrapNestedRefs, reactive } from '@vue/reactivity'
+import type { UnwrapNestedRefs } from '@vue/reactivity'
+import { reactive } from '@vue/reactivity'
 import type { ContextAny } from './context'
 import { Context } from './context'
 import type { Directive, EventModifierFn } from './directives/directives'
@@ -19,6 +20,7 @@ export class Beskydy<T extends object> {
     start: string
     end: string
   }
+
   private scopes: ContextAny[]
   rootState: UnwrapNestedRefs<T>
   private onInitCbs: Cb[]

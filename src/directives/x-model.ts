@@ -96,7 +96,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
           }
 
           node.addEventListener('change', (evt) => {
-            const { checked, value } = (evt?.target as HTMLInputElement)
+            const { checked, value } = evt?.target as HTMLInputElement
             setCheckboxValue(value, checked)
           })
 
@@ -122,7 +122,7 @@ export const processModel: Directive = function (ctx, el, { name, value }) {
           }
 
           node.addEventListener('change', (evt) => {
-            const { checked, value } = (evt.target as HTMLInputElement)
+            const { checked, value } = evt.target as HTMLInputElement
             if (checked)
               Object.assign(ctx.data, { [value]: value })
           })

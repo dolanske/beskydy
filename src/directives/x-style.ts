@@ -1,5 +1,5 @@
 import { isObj } from '../helpers'
-import { type Directive } from './directives'
+import type { Directive } from './directives'
 
 export const processStyle: Directive = function (ctx, node, { value, name }) {
   node.removeAttribute(name)

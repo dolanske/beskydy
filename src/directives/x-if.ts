@@ -1,6 +1,6 @@
 import { getAttr } from '../helpers'
 import { walk } from '../walker'
-import { type Directive } from './directives'
+import type { Directive } from './directives'
 
 interface Block {
   expr: string | null
@@ -19,7 +19,6 @@ interface Block {
 
 export const processIf: Directive<boolean> = function (ctx, node, { name, value }) {
   node.removeAttribute(name)
-
 
   // Holds the reference to the element and its parent node
   const parent = node.parentElement!
@@ -92,12 +91,14 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
 
           currentResult = block
           currentIndex = index
-        } else {
+        }
+        else {
           shouldGoNextSibling = true
         }
 
         return
-      } else {
+      }
+      else {
         shouldGoNextSibling = true
       }
     }

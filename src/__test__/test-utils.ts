@@ -1,6 +1,6 @@
-import { Beskydy } from ".."
-import { Context } from "../context"
-import { walk } from "../walker"
+import { Beskydy } from '..'
+import { Context } from '../context'
+import { walk } from '../walker'
 
 export function prepareBareCtx(document: Document, template: string) {
   const wrapper = document.createElement('div')

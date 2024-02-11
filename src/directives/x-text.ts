@@ -1,4 +1,4 @@
-import { type Directive } from './directives'
+import type { Directive } from './directives'
 
 export const processText: Directive = function (ctx, node, { name, value }) {
   node.removeAttribute(name)

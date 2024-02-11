@@ -1,13 +1,13 @@
 import { Beskydy } from './beskydy'
-import type { Directive, Primitive, EventModifierFn } from './directives/directives'
-import type { ModelModifierFn, } from './directives/x-model'
+import type { Directive, EventModifierFn, Primitive } from './directives/directives'
+import type { ModelModifierFn } from './directives/x-model'
 
 export {
   Beskydy,
   Directive,
   Primitive,
   EventModifierFn,
-  ModelModifierFn
+  ModelModifierFn,
 }
 
 //////////////////////////////////////////////
@@ -20,7 +20,7 @@ const app = new Beskydy({
     this.loading = true
     fetch(`https://swapi.dev/api/${this.selected}`)
       .then(r => r.json())
-      .then(r => {
+      .then((r) => {
         this.loading = false
         this.data = r.results
       })

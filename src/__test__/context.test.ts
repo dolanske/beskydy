@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { Context } from '../context'
 import { Beskydy } from '..'
 import { walk } from '../walker'
@@ -17,17 +17,17 @@ function prepareCtx() {
   return { root, app, ctx }
 }
 
-describe("Beskydy scope context initialization", () => {
+describe('beskydy scope context initialization', () => {
   const { ctx, app, root } = prepareCtx()
 
-  test("Root matching", () => {
+  it('root matching', () => {
     expect(ctx.root).toStrictEqual(root)
     expect(ctx.init).toBeTruthy()
     expect(ctx.app).toStrictEqual(app)
     expect(ctx.effects).toStrictEqual([])
   })
 
-  test("Data object, setup", () => {
+  it('data object, setup', () => {
     expect(ctx.data).toStrictEqual({
       $refs: {},
       // Comes from the template
@@ -35,7 +35,7 @@ describe("Beskydy scope context initialization", () => {
       // Comes from instance inital global state
       title: 'hello',
       // Comes from context default dataset
-      other: 20
+      other: 20,
     })
   })
 })

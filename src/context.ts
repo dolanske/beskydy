@@ -65,10 +65,10 @@ export class Context<R extends Element, A extends Beskydy<object>, T extends obj
 
   /**
    * Evaluates the provided expression against the context dataset
-   * 
-   * @param expr Expression 
+   *
+   * @param expr Expression
    * @param el Optionally, make the current element available as $el
-   * @returns 
+   * @returns Evaluated value
    */
   eval(expr: string, el?: Node | undefined) {
     return evaluate(this.data, expr, el)

@@ -1,4 +1,4 @@
-import { Directive } from "..";
+import type { Directive } from '..'
 
 // Simply runs the provided expression
 // This is used for lifecycle methods

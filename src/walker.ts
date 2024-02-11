@@ -26,7 +26,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
   // Before we process directives, we first iterate over any data
   // defining elements This will make sure that all the data objects are
   // available to all elements within a scope/ That means we can
-  // reference a variable before it is defined. 
+  // reference a variable before it is defined.
 
   // This approach might be against javascript conventions, but it is
   // important to remember that the nesting of elements should not
@@ -36,9 +36,8 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
   const rootDatasets = (rootEl).querySelectorAll('[x-data]')
   const rootScopeAttr = (rootEl).getAttributeNode('x-scope')
 
-  if (rootScopeAttr) {
+  if (rootScopeAttr)
     processData(ctx, rootEl, rootScopeAttr)
-  }
 
   for (const rootDataset of rootDatasets) {
     // We can ignore the fact that getAttributeNode can return null, as
@@ -78,16 +77,16 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
           node = walker.nextSibling()
           continue
         }
-        break;
+        break
       }
 
       case Node.TEXT_NODE: {
-        // SECTION Text Node 
+        // SECTION Text Node
         // 1. Save string
         // 2. Extract expression
         // 3. Replace entire content between delimiters with the result of the expression
         processTextNode(ctx, node)
-        break;
+        break
       }
     }
 
@@ -98,7 +97,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
 // Can be re-run on sub-sequent dom changes
 export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | void {
   for (const attr of Array.from(node.attributes)) {
-    // REVIEW 
+    // REVIEW
     // Unsure if the order of attribute processing is correct,
     // but so far it hasn't posed any issues. Just adding this here so
     // later we do a real review
@@ -114,7 +113,8 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
       processFor(ctx, node, attr)
 
       return true
-    } else if (attr.name === 'x-if') {
+    }
+    else if (attr.name === 'x-if') {
       const shouldSkipNode = processIf(ctx, node, attr)
 
       // This looks wonky, but we only want to return a value if the

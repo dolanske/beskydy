@@ -33,12 +33,12 @@ const app = new Beskydy({
   }
 })
 
-// Calling this method will start the app initialization. 
+// Calling this method will start the app initialization.
 // All declared scopes will be collected and activated.
 app.collect()
 
-// If needed, you can destroy Beskydy instance. 
-// This will remove event listeners, all reactive bindings 
+// If needed, you can destroy Beskydy instance.
+// This will remove event listeners, all reactive bindings
 // and turn the DOM back into being static
 app.teardown()
 ```
@@ -70,7 +70,7 @@ app.defineDirective('x-funny', (ctx, node, attr) => {
   // Whenever a reactive property is updated (text), this function is ran
   ctx.effect(() => {
     // Eval returns a value from a string we provide
-    // In our example, attr.value is a "text", 
+    // In our example, attr.value is a "text",
     // which means we're referencing a value defined in the data object
     const value = ctx.eval(attr.value)
 
@@ -221,7 +221,7 @@ Allows you to move piece of a scope anywhere in the DOM, while retaining its rea
       <span x-portal="#target" x-data="{ append: ' hehe' }">{{ text + append }}</span>
     </div>
   </div>
-</div> 
+</div>
 
 <!-- Anywhere else in the DOM -->
 <div class="wrapper red" id="target" />
@@ -236,7 +236,7 @@ Allows you to execute a provided callback whenever the reactive scope is updated
 ```html
 <div x-scope="{ first: 1 }">
   <button @click="first++" x-spy="console.log('Updated!', first)">Increment</button>
-</div> 
+</div>
 ```
 
 If you want to spy on a specific property, you can add its key as a parameter to `x-spy`. Just note, this way you can only watch for changes in the top-level properties in your scope.
@@ -248,7 +248,7 @@ If you want to spy on a specific property, you can add its key as a parameter to
 
   <!-- The spy callback only runs if the `second` property is updated -->
   <div x-spy:second="console.log('Updated second', second)"></div>
-</div> 
+</div>
 ```
 
 ### `x-ref`
@@ -262,7 +262,7 @@ Saves the element to the `$refs` object which is available in the scope. Any cha
     <span x-ref="item">{{ text }}</span>
     <!-- $refs object is updated whenever the element is modified -->
     <span>{{ $refs.item.textContent }}</span>
-  </div> 
+  </div>
 </div>
 ```
 
@@ -332,9 +332,9 @@ Binds an attribute or an attribute object to an element.
 <div x-scope="{ isDisabled: false }">
   <div x-bind:disabled="isDisabled" />
   <div :disabled="isDisabled" />
-  <div x-bind="{ 
-    disabled: isDisabled, 
-    class: isDisabled ? 'is-disabled' : 'is-enabled' 
+  <div x-bind="{
+    disabled: isDisabled,
+    class: isDisabled ? 'is-disabled' : 'is-enabled'
   }" />
 </div>
 ```
