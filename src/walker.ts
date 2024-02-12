@@ -1,4 +1,4 @@
-import { getAttr } from './helpers'
+import { getAttr, getElementIndex } from './helpers'
 import type { ContextAny } from './context'
 import { processRef } from './directives/x-ref'
 import { processText } from './directives/x-text'
@@ -18,9 +18,9 @@ import { processSwitch } from './directives/x-switch'
 import { processSpy } from './directives/x-spy'
 import { processLifecycle } from './directives/x-lifecycle'
 
-export function walk(ctx: ContextAny, forcedRoot?: Element) {
+export async function walk(ctx: ContextAny, forcedRoot?: Element) {
   const rootEl = forcedRoot ?? ctx.root
-  const walker = document.createTreeWalker(rootEl)
+  let walker = document.createTreeWalker(rootEl)
   let node: Node | null = walker.root
 
   // Before we process directives, we first iterate over any data
@@ -46,7 +46,7 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
     processData(ctx, rootDataset, rootDataset.getAttributeNode('x-data')!)
   }
 
-  ////////////////////////
+  /// /////////////////////
 
   while (node) {
     switch (node.nodeType) {
@@ -72,11 +72,28 @@ export function walk(ctx: ContextAny, forcedRoot?: Element) {
           processPortal(ctx, _node, portalAttr)
 
         // If appliy directives returns true, we want to skip to the next
-        // sibling instead of going deeper.
+        // sibling instead of going deeper. This requires creating a new walker
+        // because the DOM has changed after using x-if/x-for.
+
+        // Save node index
+        const nodeIndex = getElementIndex(node)
+
         if (applyDirectives(ctx, _node)) {
-          node = walker.nextSibling()
+          const tempWalker = document.createTreeWalker(rootEl)
+          let tempNode: Node | null = tempWalker.root
+          // Iterate until we are left off where the last walker ended (on the index)
+          let i = 0
+          while (tempNode && i !== nodeIndex) {
+            tempNode = tempWalker.nextNode()
+            i++
+          }
+
+          walker = tempWalker
+          node = tempWalker.currentNode
+
           continue
         }
+
         break
       }
 
@@ -122,7 +139,7 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
       // continue further.
       if (shouldSkipNode) {
         // REVIEW: ive no fucking clue man
-        // return true
+        return true
       }
 
       continue

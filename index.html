@@ -81,14 +81,14 @@
   <!-- App  -->
   <div id="app">
     <div x-scope="{  }">
-      <!-- <span x-if="loading">CUM</span>
-      <button @click="loading = !loading">asdasd</button> -->
       <button @click="fetchData()">fetch</button>
       <span x-if="loading">LOADING DATA</span>
       <div x-if="data.length > 0">
         <ul>
           <li x-for="(item, index) in data">
-            <pre>{{item.name}}</pre>
+            <span x-if="index % 2 === 0">
+              {{item.name}}
+            </span>
           </li>
         </ul>
       </div>

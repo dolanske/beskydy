@@ -14,7 +14,7 @@ export {
 
 const app = new Beskydy({
   selected: 'people',
-  loading: true,
+  loading: false,
   data: [],
   fetchData() {
     this.loading = true
@@ -56,4 +56,6 @@ const app = new Beskydy({
 //   return state.calledTimes % Number(param) === 0
 // })
 
+// eslint-disable-next-line no-console
+console.clear()
 app.collect()

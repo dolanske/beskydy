@@ -107,12 +107,5 @@ export const processIf: Directive<boolean> = function (ctx, node, { name, value 
     clear()
   })
 
-  // REVIEW Any nodes after a failing x-if, were not being processed Moving this
-  // line of code at the end of this file and into requestAnimationFramge fixed
-  // it. But I am simply not actually sure how or why.
-  // requestAnimationFrame(() => {
-  //   parent.removeChild(node)
-  // })
-
   return shouldGoNextSibling
 }
