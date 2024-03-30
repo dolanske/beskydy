@@ -26,6 +26,9 @@ export class Beskydy<T extends object> {
   private onInitCbs: Cb[]
   private onTeardownCbs: Cb[]
 
+  // This context will be appended to a
+  stashedContext: Map<string, object>
+
   constructor(initialDataset?: T) {
     this.modelModifiers = Object.assign({}, modelModifiers)
     this.eventModifiers = Object.assign({}, eventModifiers)
@@ -42,7 +45,7 @@ export class Beskydy<T extends object> {
 
   // Define
   scope(scopeId: string, ScopeObject) {
-
+    this.stashedContext[scop]
   }
 
   /**
