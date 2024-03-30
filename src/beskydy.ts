@@ -40,6 +40,11 @@ export class Beskydy<T extends object> {
     this.onTeardownCbs = []
   }
 
+  // Define
+  scope(scopeId: string, ScopeObject) {
+
+  }
+
   /**
    * Define the way Beskydy will compile the delimiters {{ }} into a reactive part of a string.
    * Delimiters contain text, which usually contains an expression. Think of it was as javascript being executed within a string when it is wrapped in the delimiters {{ }}
