@@ -2,7 +2,7 @@ import type { UnwrapNestedRefs } from '@vue/reactivity'
 import { reactive } from '@vue/reactivity'
 import type { ContextAny } from './context'
 import { Context } from './context'
-import type { Directive, EventModifierFn } from './directives/directives'
+import type { Directive, EventModifierFn, Primitive } from './directives/directives'
 import { walk } from './walker'
 import { eventModifiers } from './directives/x-on'
 import type { ModelModifierFn } from './directives/x-model'
@@ -11,6 +11,8 @@ import { modelModifiers } from './directives/x-model'
 // Custom modifiers warning message, which is shared across all three of them
 const warnEnd = 'is a reserved name or its already been defined. Please use a different name.'
 type Cb = () => void
+
+type BindFn = () => Record<string, Primitive | ((this: ContextAny) => void)
 
 export class Beskydy<T extends object> {
   modelModifiers: Record<string, ModelModifierFn>
@@ -27,7 +29,8 @@ export class Beskydy<T extends object> {
   private onTeardownCbs: Cb[]
 
   // This context will be appended to a
-  stashedContext: Map<string, object>
+  // stashedContext: Map<string, object>
+  globalBinds: Map<string, BindFn>
 
   constructor(initialDataset?: T) {
     this.modelModifiers = Object.assign({}, modelModifiers)
@@ -41,11 +44,17 @@ export class Beskydy<T extends object> {
     this.rootState = reactive(Object.assign({}, initialDataset))
     this.onInitCbs = []
     this.onTeardownCbs = []
+    this.globalBinds = new Map()
   }
 
   // Define
-  scope(scopeId: string, ScopeObject) {
-    this.stashedContext[scop]
+  // scope(scopeId: string, ScopeObject) {
+  //   this.stashedContext[scop]
+  // }
+
+  // Reusable binding
+  bind(key: string, setupFn: BindFn) {
+    this.globalBinds.set(key, setupFn)
   }
 
   /**

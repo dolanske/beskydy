@@ -30,6 +30,10 @@ const app = new Beskydy({
   // }
 })
 
+// app.scope('id', () => {
+
+// })
+
 // app.setDelimiters("[", "]")
 
 // app.defineDirective('x-three', (ctx, el, attr) => {

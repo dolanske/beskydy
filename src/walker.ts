@@ -125,6 +125,22 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
       continue
     }
 
+    // Before anything else, we check if a x-bind value is matching a custom
+    // bind attribute key
+    // const val = attr.value
+    const bindItems = ctx.app.globalBinds.get(attr.value)
+    if (attr.name === 'x-bind' && bindItems) {
+      for (const key of Object.keys(bindItems())) {
+        const value = bindItems[key]
+        if (typeof value === 'string')
+          node.setAttribute(key, value)
+        else
+          node.setAttribute(key, value.apply())
+      }
+
+      // for (const bindItem of bindItem.values())
+    }
+
     // In case if and for are on the same element, the if is removed.
     if (attr.name === 'x-for') {
       processFor(ctx, node, attr)
