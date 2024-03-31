@@ -114,6 +114,22 @@ export async function walk(ctx: ContextAny, forcedRoot?: Element) {
 // Can be re-run on sub-sequent dom changes
 export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | void {
   for (const attr of Array.from(node.attributes)) {
+    // Before anything else, we check if a x-bind value is matching a custom
+    // bind attribute key
+    // const val = attr.value
+    const bindItems = ctx.app.globalBinds.get(attr.value)
+    if (attr.name === 'x-bind' && bindItems) {
+      for (const key of Object.keys(bindItems(ctx))) {
+        const value = bindItems[key]
+        if (typeof value === 'function')
+          node.setAttribute(key, v)
+        else
+          node.setAttribute(key, String())
+      }
+
+      // for (const bindItem of bindItem.values())
+    }
+
     // REVIEW
     // Unsure if the order of attribute processing is correct,
     // but so far it hasn't posed any issues. Just adding this here so
@@ -123,22 +139,6 @@ export function applyDirectives(ctx: ContextAny, node: HTMLElement): boolean | v
     if (attr.name === 'x-init') {
       processLifecycle(ctx, node, attr)
       continue
-    }
-
-    // Before anything else, we check if a x-bind value is matching a custom
-    // bind attribute key
-    // const val = attr.value
-    const bindItems = ctx.app.globalBinds.get(attr.value)
-    if (attr.name === 'x-bind' && bindItems) {
-      for (const key of Object.keys(bindItems())) {
-        const value = bindItems[key]
-        if (typeof value === 'string')
-          node.setAttribute(key, value)
-        else
-          node.setAttribute(key, value.apply())
-      }
-
-      // for (const bindItem of bindItem.values())
     }
 
     // In case if and for are on the same element, the if is removed.

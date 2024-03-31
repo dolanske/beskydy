@@ -12,7 +12,7 @@ import { modelModifiers } from './directives/x-model'
 const warnEnd = 'is a reserved name or its already been defined. Please use a different name.'
 type Cb = () => void
 
-type BindFn = () => Record<string, Primitive | ((this: ContextAny) => void)
+type BindFn = (ctx: ContextAny) => Record<string, Primitive | (() => void)>
 
 export class Beskydy<T extends object> {
   modelModifiers: Record<string, ModelModifierFn>
@@ -52,9 +52,17 @@ export class Beskydy<T extends object> {
   //   this.stashedContext[scop]
   // }
 
-  // Reusable binding
-  bind(key: string, setupFn: BindFn) {
-    this.globalBinds.set(key, setupFn)
+  /**
+   * Creates a generic binding, which can be added to any elements within a
+   * scope using the `x-bind` directive. Just provide the bindKey, eg.:
+   * `x-bind="bindKey"` and anything returned by the factory function will be
+   * added to the element.
+   *
+   * @param bindKey Key of the generic scope
+   * @param factory Function which returns an object. The function has
+   */
+  bind(bindKey: string, factory: BindFn) {
+    this.globalBinds.set(bindKey, factory)
   }
 
   /**

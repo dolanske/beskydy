@@ -30,6 +30,15 @@ const app = new Beskydy({
   // }
 })
 
+app.bind('clickOutside', (ctx) => {
+  return {
+    'type': '',
+    '@click': ($el, ctx) => {
+
+    },
+  }
+})
+
 // app.scope('id', () => {
 
 // })
