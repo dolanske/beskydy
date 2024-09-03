@@ -30,7 +30,7 @@ const app = new Beskydy({
   // }
 })
 
-// app.setDelimiters("[", "]")
+app.setDelimiters('{', '}')
 
 // app.defineDirective('x-three', (ctx, el, attr) => {
 //   ctx.effect(() => {

@@ -80,18 +80,11 @@
 <body>
   <!-- App  -->
   <div id="app">
-    <div x-scope="{  }">
-      <button @click="fetchData()">fetch</button>
-      <span x-if="loading">LOADING DATA</span>
-      <div x-if="data.length > 0">
-        <ul>
-          <li x-for="(item, index) in data">
-            <span x-if="index % 2 === 0">
-              {{item.name}}
-            </span>
-          </li>
-        </ul>
-      </div>
+    <div x-scope="{ text: 'hi' }">
+      <h1>Hello {text}</h1>
+      <h1>Hello {`${text}iiiiii`}</h1>
+
+
     </div>
   </div>
   <script type="module" src="./src/index.ts"></script>
