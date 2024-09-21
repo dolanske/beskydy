@@ -22,7 +22,6 @@ export function processTextNode(ctx: ContextAny, node: Node) {
   const originalTextContent = node.textContent
 
   ctx.effect(() => {
-    // const data = (node as Text).data
     if (originalTextContent.includes(delimiters.start)) {
       const segments: string[] = []
       let lastIndex = 0
