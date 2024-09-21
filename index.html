@@ -80,10 +80,10 @@
 <body>
   <!-- App  -->
   <div id="app">
-    <div x-scope="{ text: 'hi' }">
-      <h1>Hello {text}</h1>
-      <h1>Hello {`${text}iiiiii`}</h1>
-
+    <div x-scope="{ text: 'boop' }">
+      <!-- <h1>Hello {{text}}</h1> -->
+      <h2>Hello {{`${text} lol`}} and {{text}}</h2>
+      <span x-text="text"></span>
 
     </div>
   </div>

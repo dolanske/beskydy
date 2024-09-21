@@ -12,6 +12,17 @@ import { modelModifiers } from './directives/x-model'
 const warnEnd = 'is a reserved name or its already been defined. Please use a different name.'
 type Cb = () => void
 
+function escapeRegex(str: string) {
+  return str.replace(/[-.*+?^${}()|[\]\/\\]/g, '\\$&')
+}
+
+function createDelimiterRegex(start: string, end: string) {
+  return new RegExp(
+    `${escapeRegex(start)}([^]+?)${escapeRegex(end)}`,
+    'g',
+  )
+}
+
 export class Beskydy<T extends object> {
   modelModifiers: Record<string, ModelModifierFn>
   eventModifiers: Record<string, EventModifierFn>
@@ -19,6 +30,7 @@ export class Beskydy<T extends object> {
   delimiters: {
     start: string
     end: string
+    re: RegExp
   }
 
   private scopes: ContextAny[]
@@ -33,6 +45,7 @@ export class Beskydy<T extends object> {
     this.delimiters = {
       start: '{{',
       end: '}}',
+      re: createDelimiterRegex('{{', '}}'),
     }
     this.scopes = []
     this.rootState = reactive(Object.assign({}, initialDataset))
@@ -49,8 +62,9 @@ export class Beskydy<T extends object> {
    * @param end Ending delimiter
    */
   setDelimiters(start: string, end: string) {
-    this.delimiters.start = start
-    this.delimiters.end = end
+    if (start === '{' || end === '}')
+      console.warn('You are using {} as delimiters, please keep in mind that you will not be able to use template literals  inside of them.')
+    this.delimiters = { start, end, re: createDelimiterRegex(start, end) }
   }
 
   /**

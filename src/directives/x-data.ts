@@ -16,8 +16,6 @@ export const processData: Directive<boolean> = function (ctx, node, { name, valu
     if (!value)
       value = '{ }'
 
-    // throwDataErr()
-
     const data = evaluate({}, value)
 
     if (!isObj(data))

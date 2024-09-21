@@ -403,7 +403,7 @@ If you want to run some code when the entire app instance has been initialized, 
 
 ```html
 <div class="{ scopeLoaded: false }" x-init="scopeLoaded = true">
-  Loaded { scopeLoaded }
+  Loaded {{ scopeLoaded }}
 </div>
 ```
 
@@ -413,6 +413,6 @@ Runs the provided expression when all of the element's directives have been proc
 
 ```html
 <div class="{ scopeProcessed: false }" x-init="scopeProcessed = true">
-  Loaded { scopeProcessed }
+  Loaded {{ scopeProcessed }}
 </div>
 ```
