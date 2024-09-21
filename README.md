@@ -61,7 +61,7 @@ app.onInit(() => {})
 app.onTeardown(() => {})
 
 // Add custom directives
-// This directive will append HAHAHA before the provided text property
+// This directive will append HIHI after the provided text property
 app.defineDirective('x-funny', (ctx, node, attr) => {
   // Usage
   // <div x-data="{ text: 'hello' }">
@@ -75,12 +75,12 @@ app.defineDirective('x-funny', (ctx, node, attr) => {
     const value = ctx.eval(attr.value)
 
     // Here's the funny, we add HAHAHA before the text value
-    // Result is <span>HAHAHA hello</span>
-    node.textContent = `HAHAHA ${String(value)}`
+    // Result is <span>hello HIHI</span>
+    node.textContent = `${String(value)} HIHI`
 
     // If the text property is changed to 'world' (or anything else)
     // This element will automatically update
-    // <span>HAHAHA world</span>
+    // <span>world HIHI</span>
   })
 })
 
@@ -403,7 +403,7 @@ If you want to run some code when the entire app instance has been initialized, 
 
 ```html
 <div class="{ scopeLoaded: false }" x-init="scopeLoaded = true">
-  Loaded { scopeLoaded }
+  Loaded {{ scopeLoaded }}
 </div>
 ```
 
@@ -413,6 +413,6 @@ Runs the provided expression when all of the element's directives have been proc
 
 ```html
 <div class="{ scopeProcessed: false }" x-init="scopeProcessed = true">
-  Loaded { scopeProcessed }
+  Loaded {{ scopeProcessed }}
 </div>
 ```

@@ -55,12 +55,6 @@ export function parseValue(value: string, ctx: ContextAny): Primitive {
   }
 }
 
-export function parseDelimiter(delimiter: string) {
-  return [...delimiter].reduce((group, item) => {
-    return group += `\\${item}`
-  }, '')
-}
-
 /**
  * Execute given callback on the next browser repaint. It also returns a
  * promise, so instead of a callback, it can be awaited.

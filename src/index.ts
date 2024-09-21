@@ -21,16 +21,16 @@ const app = new Beskydy({
     fetch(`https://swapi.dev/api/${this.selected}`)
       .then(r => r.json())
       .then((r) => {
-        this.loading = false
         this.data = r.results
+      })
+      .finally(() => {
+        this.loading = false
       })
   },
   // makeElement() {
   //   return document.createElement("table")
   // }
 })
-
-// app.setDelimiters("[", "]")
 
 // app.defineDirective('x-three', (ctx, el, attr) => {
 //   ctx.effect(() => {
@@ -56,6 +56,4 @@ const app = new Beskydy({
 //   return state.calledTimes % Number(param) === 0
 // })
 
-// eslint-disable-next-line no-console
-console.clear()
 app.collect()
