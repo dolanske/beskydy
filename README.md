@@ -2,6 +2,10 @@
 
  Like alps, but smaller. Alpine / vue-petite inspired but mostly implemented by me. Define small interactive partitions within your HTML without needing to write javascript.
 
+ ```bash
+npm i @dolanske/beskydy
+ ```
+
 ## The Concept
 
 Create a reactive partition by adding `x-scope` directive on an element. This will create a reactive scope for said element and expose all of its properties to its descendants.
@@ -21,7 +25,7 @@ The only real JS we need to write is the app initialization. This can be done by
 Optionally, we can provide global reactive properties into the constructor, which will be shared and available across all scopes.
 
 ```ts
-import { Beskydy } from 'beskydy'
+import { Beskydy } from '@dolanske/beskydy'
 
 const app = new Beskydy({
   characters: [],
@@ -46,7 +50,7 @@ app.teardown()
 Beskydy offers a flexible and very extensible API. You can creative as many new directives as you please or extend model & event modifiers. Below are a few examples.
 
 ```ts
-import { Beskydy } from 'beskydy'
+import { Beskydy } from '@dolanske/beskydy'
 
 const app = new Beskydy()
 
