@@ -1,8 +1,8 @@
 {
   "name": "@dolanske/beskydy",
   "type": "module",
-  "version": "2.0.1",
-  "private": true,
+  "version": "2.0.2",
+  "private": false,
   "description": "Like alps, but smaller. Inspired by alpine.js and petite-vue with my own simplified implementation.",
   "author": "dolanske",
   "license": "GPL-3.0",

@@ -63,7 +63,7 @@ export class Beskydy<T extends object> {
    */
   setDelimiters(start: string, end: string) {
     if (start === '{' || end === '}')
-      console.warn('You are using {} as delimiters, please keep in mind that you will not be able to use template literals  inside of them.')
+      console.warn('You are using {} as delimiters, please keep in mind that you will not be able to use template literals inside of them.')
     this.delimiters = { start, end, re: createDelimiterRegex(start, end) }
   }
 
